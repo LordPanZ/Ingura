@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="eu" data-lang="eu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INGURA · Ingurumen estrategiak eta ekintzak</title>
+<meta name="description" content="Ingurumen-sentsibilizazioko kanpainak euskal udal eta erakundeentzat. Campañas de sensibilización ambiental para ayuntamientos e instituciones vascas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,0..100;1,9..144,400..900,0..100&family=Karla:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     INGURA · paleta extraída del catálogo de servicios
+     ============================================================ */
+  :root{
+    --tierra:#5C4F3C;
+    --tierra-900:#3A3123;
+    --verde:#0B8A6B;
+    --verde-900:#065442;
+    --naranja:#E85D04;
+    --crema:#FBF9F4;
+    --arena:#FBF3EA;
+    --arena-media:#D8CBA0;
+    --menta:#C3EEE2;
+    --carbon:#3A3A3A;
+    --gris:#6E6E6E;
+
+    --display:"Fraunces","Playfair Display",Georgia,"Times New Roman",serif;
+    --body:"Karla","Helvetica Neue",Helvetica,sans-serif;
+
+    --rule:1px solid color-mix(in srgb, var(--tierra) 22%, transparent);
+    --maxw:1240px;
+    --gutter:clamp(1.25rem,4vw,4rem);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--crema);
+    color:var(--carbon);
+    font-family:var(--body);
+    font-size:clamp(1rem,.55vw + .9rem,1.1rem);
+    line-height:1.62;
+    font-weight:400;
+    overflow-x:hidden;
+  }
+
+  /* grano de papel */
+  body::before{
+    content:"";
+    position:fixed; inset:0; z-index:9999; pointer-events:none;
+    opacity:.32; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- bilingüe: conmutación pura en CSS ---------- */
+  html[data-lang="eu"] [data-l="es"]{display:none}
+  html[data-lang="es"] [data-l="eu"]{display:none}
+
+  /* ---------- tipografía ---------- */
+  h1,h2,h3,h4{
+    font-family:var(--display);
+    font-weight:600;
+    font-variation-settings:"SOFT" 28,"opsz" 100;
+    line-height:1.02;
+    letter-spacing:-.022em;
+    color:var(--tierra-900);
+    margin:0;
+    text-wrap:balance;
+  }
+  p{margin:0 0 1.1em; max-width:64ch}
+  a{color:inherit}
+
+  .wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gutter)}
+
+  .eyebrow{
+    font-family:var(--body);
+    font-size:.7rem; font-weight:700;
+    letter-spacing:.24em; text-transform:uppercase;
+    color:var(--verde-900);
+    display:flex; align-items:flex-start; gap:.85rem;
+    line-height:1.5;
+  }
+  .eyebrow::before{
+    content:""; width:clamp(18px,4vw,46px); height:2px;
+    background:var(--naranja); flex:none; margin-top:.62em;
+  }
+
+  /* ============================================================
+     CABECERA
+     ============================================================ */
+  header.top{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--crema) 88%, transparent);
+    backdrop-filter:blur(10px) saturate(1.4);
+    border-bottom:var(--rule);
+  }
+  .top-in{
+    max-width:var(--maxw); margin-inline:auto; padding:.85rem var(--gutter);
+    display:flex; align-items:center; gap:1.5rem;
+  }
+  .brand{
+    font-family:var(--display);
+    font-variation-settings:"SOFT" 40,"opsz" 120;
+    font-weight:800; font-size:1.32rem; letter-spacing:.03em;
+    color:var(--tierra-900); text-decoration:none; line-height:1;
+  }
+  .brand span{color:var(--naranja)}
+  nav.links{
+    margin-left:auto; display:flex; gap:1.6rem;
+    font-size:.83rem; letter-spacing:.02em;
+  }
+  nav.links a{
+    text-decoration:none; color:var(--tierra); padding:.2rem 0;
+    border-bottom:2px solid transparent; transition:border-color .25s, color .25s;
+  }
+  nav.links a:hover{color:var(--tierra-900); border-color:var(--naranja)}
+  @media(max-width:860px){nav.links{display:none}}
+
+  .lang{
+    display:flex; border:1.5px solid var(--tierra); border-radius:999px;
+    overflow:hidden; font-size:.72rem; font-weight:700; letter-spacing:.1em;
+    flex:none;
+  }
+  .lang button{
+    appearance:none; border:0; background:transparent; cursor:pointer;
+    font:inherit; color:var(--tierra); padding:.34rem .7rem;
+    transition:background .2s,color .2s;
+  }
+  .lang button[aria-pressed="true"]{background:var(--tierra); color:var(--crema)}
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    position:relative;
+    border-bottom:2px solid var(--tierra-900);
+    overflow:hidden;
+  }
+  .hero-grid{
+    max-width:var(--maxw); margin-inline:auto;
+    padding:clamp(2.6rem,7vw,5.5rem) var(--gutter) 0;
+    display:grid; grid-template-columns:1.08fr .92fr;
+    gap:clamp(1.5rem,4vw,3.5rem); align-items:end;
+  }
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr; padding-bottom:0}}
+
+  .hero h1{
+    font-size:clamp(2.15rem,4.5vw,3.85rem);
+    font-weight:700;
+    font-variation-settings:"SOFT" 20,"opsz" 144;
+    margin:1.4rem 0 0;
+    max-width:22ch;
+  }
+  .hero h1 em{
+    font-style:normal; color:var(--naranja);
+    position:relative; white-space:nowrap;
+  }
+  .hero h1 em::after{
+    content:""; position:absolute; left:0; right:0; bottom:.09em; height:.1em;
+    background:var(--menta); z-index:-1;
+  }
+  .hero .lede{
+    font-size:clamp(1.02rem,.4vw + .95rem,1.22rem);
+    color:var(--tierra); margin-top:1.6rem; max-width:46ch;
+  }
+  .hero-cta{display:flex; flex-wrap:wrap; gap:.8rem; margin:2rem 0 clamp(2rem,5vw,3.6rem)}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:.6rem;
+    font-family:var(--body); font-size:.86rem; font-weight:700;
+    letter-spacing:.08em; text-transform:uppercase; text-decoration:none;
+    padding:.95rem 1.5rem; border:2px solid var(--tierra-900);
+    transition:transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s, background .18s, color .18s;
+  }
+  .btn-solid{background:var(--tierra-900); color:var(--crema); box-shadow:5px 5px 0 var(--naranja)}
+  .btn-solid:hover{transform:translate(-3px,-3px); box-shadow:8px 8px 0 var(--naranja)}
+  .btn-ghost{background:transparent; color:var(--tierra-900)}
+  .btn-ghost:hover{background:var(--menta)}
+
+  .hero-photo{
+    position:relative; align-self:stretch; min-height:min(58vh,460px);
+    border-left:2px solid var(--tierra-900);
+    border-top:2px solid var(--tierra-900);
+    margin-bottom:-2px;
+    overflow:hidden;
+  }
+  .hero-photo img{
+    width:100%; height:100%; object-fit:cover; object-position:center 62%;
+    display:block; filter:saturate(.92) contrast(1.04);
+  }
+  .hero-photo figcaption{
+    position:absolute; left:0; bottom:0; right:0;
+    background:var(--tierra-900); color:var(--crema);
+    font-size:.74rem; letter-spacing:.02em; padding:.6rem .9rem;
+  }
+  @media(max-width:900px){
+    .hero-photo{border-left:0; min-height:44vh; margin-inline:calc(-1 * var(--gutter)); border-top:2px solid var(--tierra-900)}
+  }
+
+  /* ============================================================
+     CIFRAS
+     ============================================================ */
+  .figures{background:var(--tierra-900); color:var(--crema); border-bottom:2px solid var(--tierra-900)}
+  .figures-in{
+    max-width:var(--maxw); margin-inline:auto; padding:clamp(2rem,4vw,3rem) var(--gutter);
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:2rem 2.5rem;
+  }
+  .fig .n{
+    font-family:var(--display); font-weight:800;
+    font-variation-settings:"SOFT" 10,"opsz" 144;
+    font-size:clamp(2.6rem,5.5vw,3.9rem); line-height:.9;
+    color:var(--naranja); display:block; letter-spacing:-.03em;
+  }
+  .fig p{
+    margin:.75rem 0 0; font-size:.9rem; line-height:1.45;
+    color:color-mix(in srgb, var(--crema) 84%, var(--tierra));
+    max-width:26ch;
+  }
+  .figures .foot{
+    max-width:var(--maxw); margin-inline:auto; padding:0 var(--gutter) 1.8rem;
+    font-size:.75rem; color:color-mix(in srgb, var(--crema) 58%, var(--tierra));
+  }
+
+  /* ============================================================
+     SECCIONES
+     ============================================================ */
+  section{padding:clamp(3.2rem,8vw,6rem) 0; border-bottom:var(--rule)}
+  .sec-head{display:grid; grid-template-columns:1fr; gap:1rem; margin-bottom:clamp(2rem,4vw,3.2rem)}
+  .sec-head h2{font-size:clamp(1.9rem,4.4vw,3.1rem); margin-top:.7rem}
+  .sec-head .sub{color:var(--gris); max-width:56ch; margin:0}
+
+  /* --- por qué / razones --- */
+  /* 6 razones → 3×2 exacto, sin celdas huérfanas */
+  .reasons{
+    display:grid; grid-template-columns:repeat(3,1fr);
+    gap:0; border-top:1px solid var(--tierra-900);
+  }
+  @media(max-width:900px){.reasons{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:600px){.reasons{grid-template-columns:1fr}}
+  .reason{
+    padding:1.6rem 1.5rem 1.9rem;
+    border-bottom:1px solid var(--tierra-900);
+    border-right:1px solid var(--tierra-900);
+    position:relative; background:transparent;
+    transition:background .3s;
+  }
+  .reason:hover{background:var(--arena)}
+  .reasons .reason:nth-child(3n){border-right:0}
+  .reason .k{
+    font-family:var(--display); font-weight:800; font-size:.8rem;
+    letter-spacing:.16em; color:var(--verde); display:block; margin-bottom:.7rem;
+  }
+  .reason h3{font-size:1.12rem; letter-spacing:-.01em; margin-bottom:.5rem}
+  .reason p{font-size:.92rem; color:var(--gris); margin:0}
+  @media(max-width:640px){.reason{border-right:0}}
+
+  /* --- líneas de servicio --- */
+  .lines{border-top:1px solid var(--tierra-900)}
+  .line{
+    display:grid; grid-template-columns:5.5rem 1fr minmax(0,1.15fr) auto;
+    gap:1.4rem; align-items:baseline;
+    padding:1.6rem 0; border-bottom:1px solid var(--tierra-900);
+    position:relative; transition:padding-left .3s ease, background .3s;
+  }
+  .line:hover{background:var(--arena); padding-left:1rem}
+  .line .num{
+    font-family:var(--display); font-weight:800;
+    font-variation-settings:"SOFT" 0,"opsz" 144;
+    font-size:clamp(2rem,4vw,2.8rem); line-height:.85;
+    color:var(--arena-media); letter-spacing:-.04em;
+    transition:color .3s;
+  }
+  .line:hover .num{color:var(--naranja)}
+  .line h3{font-size:clamp(1.08rem,1.6vw,1.32rem); letter-spacing:-.012em}
+  .line .desc{font-size:.93rem; color:var(--gris)}
+  .line .price{
+    font-family:var(--body); font-size:.78rem; font-weight:700;
+    letter-spacing:.09em; text-transform:uppercase; white-space:nowrap;
+    color:var(--verde-900); border:1.5px solid var(--verde);
+    padding:.32rem .62rem; border-radius:999px;
+  }
+  @media(max-width:820px){
+    .line{grid-template-columns:3.4rem 1fr; gap:.5rem 1rem}
+    .line .num{grid-row:span 2; font-size:2rem}
+    .line .price{grid-column:2; justify-self:start; margin-top:.5rem}
+  }
+
+  /* --- método --- */
+  .method{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(165px,1fr));
+    gap:0; border:1px solid var(--tierra-900);
+  }
+  .step{
+    padding:1.4rem 1.2rem 1.7rem;
+    border-right:1px solid var(--tierra-900);
+    position:relative;
+  }
+  .step:last-child{border-right:0}
+  .step .s{
+    font-family:var(--display); font-weight:800; font-size:2.1rem; line-height:.8;
+    color:var(--menta); display:block; margin-bottom:.8rem;
+    -webkit-text-stroke:1px var(--verde-900);
+  }
+  .step h4{font-size:.98rem; margin-bottom:.35rem}
+  .step p{font-size:.83rem; color:var(--gris); margin:0}
+  @media(max-width:900px){
+    .step{border-right:0; border-bottom:1px solid var(--tierra-900)}
+    .step:last-child{border-bottom:0}
+  }
+
+  /* --- galería --- */
+  /* 6 fotos: la primera 2×2 + 5 sencillas = 3×3 exacto */
+  .gallery{
+    display:grid; gap:2px;
+    grid-template-columns:repeat(3,1fr);
+    grid-auto-rows:clamp(130px,15vw,205px);
+    background:var(--tierra-900); border:2px solid var(--tierra-900);
+  }
+  .gallery figure{margin:0; overflow:hidden; position:relative}
+  .gallery img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .7s cubic-bezier(.2,.8,.2,1), filter .5s; filter:saturate(.88)}
+  .gallery figure:hover img{transform:scale(1.055); filter:saturate(1.05)}
+  .gallery .tall{grid-row:span 2}
+  .gallery .wide{grid-column:span 2}
+  .gallery figcaption{
+    position:absolute; inset:auto 0 0 0; padding:.55rem .8rem;
+    font-size:.72rem; color:#fff; line-height:1.3;
+    background:linear-gradient(to top, rgba(58,49,35,.92), rgba(58,49,35,0));
+    opacity:0; transform:translateY(6px); transition:opacity .35s, transform .35s;
+  }
+  .gallery figure:hover figcaption{opacity:1; transform:none}
+  @media(max-width:760px){
+    .gallery{grid-template-columns:repeat(2,1fr)}
+    .gallery .wide{grid-column:span 2}
+    .gallery .tall{grid-row:span 1}
+  }
+
+  /* --- euskera / bloque destacado --- */
+  .pledge{background:var(--verde-900); color:var(--crema); border-bottom:2px solid var(--tierra-900)}
+  .pledge-in{
+    max-width:var(--maxw); margin-inline:auto; padding:clamp(3rem,7vw,5rem) var(--gutter);
+    display:grid; grid-template-columns:1fr 1fr; gap:clamp(1.5rem,4vw,4rem); align-items:center;
+  }
+  @media(max-width:840px){.pledge-in{grid-template-columns:1fr}}
+  .pledge h2{color:var(--crema); font-size:clamp(1.8rem,4.2vw,2.9rem)}
+  .pledge p{color:color-mix(in srgb, var(--crema) 82%, var(--verde)); margin-bottom:0}
+  .pledge .big{
+    font-family:var(--display); font-weight:700; font-style:italic;
+    font-size:clamp(1.15rem,2vw,1.5rem); line-height:1.32;
+    color:var(--menta); max-width:34ch; margin:0;
+  }
+
+  /* --- marcos institucionales --- */
+  .tags{display:flex; flex-wrap:wrap; gap:.55rem; padding:0; margin:0; list-style:none}
+  .tags li{
+    font-size:.8rem; letter-spacing:.02em;
+    border:1px solid var(--arena-media); background:var(--arena);
+    padding:.4rem .8rem; border-radius:999px; color:var(--tierra);
+  }
+  .tags li strong{color:var(--tierra-900); font-weight:700}
+
+  /* --- CTA final --- */
+  .final{background:var(--arena)}
+  .steps3{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:1.6rem; margin:2.4rem 0 2.6rem;
+  }
+  .steps3 > div{border-top:3px solid var(--naranja); padding-top:1rem}
+  .steps3 b{
+    font-family:var(--display); font-size:1.5rem; font-weight:800;
+    color:var(--naranja); display:block; line-height:1;
+  }
+  .steps3 h4{margin:.6rem 0 .3rem; font-size:1.02rem}
+  .steps3 p{font-size:.9rem; color:var(--gris); margin:0}
+
+  /* --- pie --- */
+  footer{background:var(--tierra-900); color:var(--crema); padding:clamp(2.6rem,6vw,4rem) 0 2rem}
+  .foot-grid{
+    max-width:var(--maxw); margin-inline:auto; padding-inline:var(--gutter);
+    display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:2rem;
+    border-bottom:1px solid color-mix(in srgb, var(--crema) 22%, transparent);
+    padding-bottom:2rem;
+  }
+  @media(max-width:760px){.foot-grid{grid-template-columns:1fr}}
+  footer .brand{color:var(--crema); font-size:1.6rem}
+  footer h5{
+    font-family:var(--body); font-size:.7rem; font-weight:700; letter-spacing:.2em;
+    text-transform:uppercase; color:var(--arena-media); margin:0 0 .8rem;
+  }
+  footer p,footer a{font-size:.88rem; color:color-mix(in srgb, var(--crema) 80%, var(--tierra))}
+  footer a{text-decoration:none; display:block; padding:.15rem 0}
+  footer a:hover{color:var(--naranja)}
+  .legal{
+    max-width:var(--maxw); margin:1.4rem auto 0; padding-inline:var(--gutter);
+    font-size:.74rem; color:color-mix(in srgb, var(--crema) 52%, var(--tierra));
+    display:flex; flex-wrap:wrap; gap:.4rem 1.5rem;
+  }
+  .pending{
+    display:inline-block; background:var(--naranja); color:#fff;
+    font-size:.66rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    padding:.12rem .45rem; border-radius:3px; vertical-align:.08em;
+  }
+
+  /* --- entrada escalonada --- */
+  @media (prefers-reduced-motion:no-preference){
+    .rise{animation:rise .9s cubic-bezier(.16,.84,.24,1) both}
+    @keyframes rise{from{opacity:0; transform:translateY(22px)} to{opacity:1; transform:none}}
+    .d1{animation-delay:.06s}.d2{animation-delay:.14s}.d3{animation-delay:.22s}
+    .d4{animation-delay:.3s}.d5{animation-delay:.4s}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="brand" href="#">INGUR<span>A</span></a>
+    <nav class="links">
+      <a href="#zerbitzuak"><span data-l="eu">Zerbitzuak</span><span data-l="es">Servicios</span></a>
+      <a href="#metodoa"><span data-l="eu">Metodoa</span><span data-l="es">Método</span></a>
+      <a href="#lanak"><span data-l="eu">Lanak</span><span data-l="es">Trabajo de campo</span></a>
+      <a href="#euskara"><span data-l="eu">Euskara</span><span data-l="es">Euskera</span></a>
+      <a href="#kontaktua"><span data-l="eu">Kontaktua</span><span data-l="es">Contacto</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Hizkuntza / Idioma">
+      <button type="button" data-set="eu" aria-pressed="true">EU</button>
+      <button type="button" data-set="es" aria-pressed="false">ES</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<div class="hero">
+  <div class="hero-grid">
+    <div>
+      <p class="eyebrow rise d1">
+        <span data-l="eu">Ingurumen estrategiak eta ekintzak · 2022tik</span>
+        <span data-l="es">Estrategia y acción medioambiental · desde 2022</span>
+      </p>
+
+      <h1 class="rise d2">
+        <span data-l="eu">Zure herritarrek <em>ikusi, ukitu</em> eta gogoratzen duten ingurumen-sentsibilizazioa.</span>
+        <span data-l="es">Sensibilización ambiental que su ciudadanía <em>ve, toca</em> y recuerda.</span>
+      </h1>
+
+      <p class="lede rise d3">
+        <span data-l="eu">Sentsibilizazio-, hezkuntza- eta ingurumen-estrategiako kanpainak, giltzarrapo-eran, Euskadiko udal, mankomunitate eta erakunde publikoentzat. Euskaraz eta gaztelaniaz, euskarari lehentasuna emanez.</span>
+        <span data-l="es">Campañas de sensibilización, educación y estrategia ambiental llave en mano para ayuntamientos, mancomunidades e instituciones públicas de Euskadi. En euskera y castellano, priorizando el euskera.</span>
+      </p>
+
+      <div class="hero-cta rise d4">
+        <a class="btn btn-solid" href="#kontaktua">
+          <span data-l="eu">Eskatu zure proposamena</span>
+          <span data-l="es">Solicite su propuesta</span>
+        </a>
+        <a class="btn btn-ghost" href="#zerbitzuak">
+          <span data-l="eu">Ikusi zazpi zerbitzu-lerroak</span>
+          <span data-l="es">Ver las siete líneas</span>
+        </a>
+      </div>
+    </div>
+
+    <figure class="hero-photo rise d3">
+      <img src="img/modulo-calle.jpg" alt="Módulo expositivo de INGURA instalado en una plaza pública">
+      <figcaption>
+        <span data-l="eu">Gure modulu erakusgarria kalean, herritarrekin aurrez aurre.</span>
+        <span data-l="es">Nuestro módulo expositivo en la calle, a pie de acera.</span>
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<!-- ================= CIFRAS ================= -->
+<div class="figures">
+  <div class="figures-in">
+    <div class="fig">
+      <span class="n">330+</span>
+      <p><span data-l="eu">lagun gerturatu ziren gure modulura kanpaina-aste bakarrean, eguraldi txarra izan arren.</span>
+         <span data-l="es">personas se acercaron a nuestro módulo en una sola semana de campaña, a pesar del mal tiempo.</span></p>
+    </div>
+    <div class="fig">
+      <span class="n">2022</span>
+      <p><span data-l="eu">urtetik diseinatzen eta gauzatzen ditugu kanpainak euskal erakundeentzat.</span>
+         <span data-l="es">es el año desde el que diseñamos y ejecutamos campañas para instituciones vascas.</span></p>
+    </div>
+    <div class="fig">
+      <span class="n">7</span>
+      <p><span data-l="eu">zerbitzu-lerro, bakarka edo estrategia integral batean konbinagarriak.</span>
+         <span data-l="es">líneas de servicio, contratables por separado o combinadas en una estrategia integral.</span></p>
+    </div>
+    <div class="fig">
+      <span class="n">EU<span style="color:var(--arena-media)">/</span>ES</span>
+      <p><span data-l="eu">material eta arreta guztia bi hizkuntzatan, euskarari lehentasuna emanez.</span>
+         <span data-l="es">todos los materiales y la atención directa, con prioridad al euskera.</span></p>
+    </div>
+  </div>
+  <p class="foot">
+    <span data-l="eu">Landa-lanean jasotako datuak. Kanpaina bakoitzeko inpaktu-txosten zehatza ematen dugu.</span>
+    <span data-l="es">Datos recogidos en trabajo de campo. En cada campaña entregamos un informe de impacto detallado.</span>
+  </p>
+</div>
+
+<!-- ================= POR QUÉ ================= -->
+<section id="zergatik">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span data-l="eu">Zergatik gurekin</span><span data-l="es">Por qué con nosotros</span></p>
+      <h2><span data-l="eu">Erakundeak esan behar duen bakarra: bai.</span>
+          <span data-l="es">Lo único que la institución tiene que decir: sí.</span></h2>
+      <p class="sub"><span data-l="eu">Diseinua, materialen ekoizpena, saioen dinamizazioa eta emaitzen itzulketa: dena guk.</span>
+         <span data-l="es">Diseño, producción de materiales, dinamización de las sesiones y devolución de resultados: nos encargamos de todo.</span></p>
+    </div>
+
+    <div class="reasons">
+      <div class="reason">
+        <span class="k">01</span>
+        <h3><span data-l="eu">Toki-sektore publikoan esperientzia</span><span data-l="es">Experiencia con el sector público local</span></h3>
+        <p><span data-l="eu">2022tik euskal toki-administrazioentzat lan egiten dugu, haien errealitatea eta tramiteak ezagututa.</span>
+           <span data-l="es">Trabajamos para administraciones locales vascas desde 2022, conociendo su realidad y sus trámites.</span></p>
+      </div>
+      <div class="reason">
+        <span class="k">02</span>
+        <h3><span data-l="eu">Ekipamendu teknikoa geurea</span><span data-l="es">Equipamiento técnico propio</span></h3>
+        <p><span data-l="eu">Modulu erakusgarriak, plastikoa birrindu eta injektatzeko makineria, konpostagailu didaktikoak. Prest zabaltzeko.</span>
+           <span data-l="es">Módulos expositivos, maquinaria de trituración e inyección de plástico, compostadoras didácticas. Listos para desplegar.</span></p>
+      </div>
+      <div class="reason">
+        <span class="k">03</span>
+        <h3><span data-l="eu">Lurraldera egokitua</span><span data-l="es">Adaptado al territorio</span></h3>
+        <p><span data-l="eu">Kanpaina bakoitza udalerriaren datu propioekin eraikitzen da: birziklatze-mailak, sortutako hondakinak, egungo kudeaketa. Txantiloirik ez.</span>
+           <span data-l="es">Cada campaña se construye con los datos del propio municipio: niveles de reciclaje, residuos generados, gestión actual. Nada de plantillas.</span></p>
+      </div>
+      <div class="reason">
+        <span class="k">04</span>
+        <h3><span data-l="eu">Justifikatzeko modukoa</span><span data-l="es">Justificable ante quien decide</span></h3>
+        <p><span data-l="eu">Gure lerroak GJHekin eta Eusko Jaurlaritzaren eta Ihoberen diru-laguntza deialdiekin lotzen dira modu naturalean.</span>
+           <span data-l="es">Nuestras líneas conectan con los ODS y con las convocatorias de subvención del Gobierno Vasco e Ihobe, facilitando la justificación técnica.</span></p>
+      </div>
+      <div class="reason">
+        <span class="k">05</span>
+        <h3><span data-l="eu">Talde espezializatua</span><span data-l="es">Equipo especializado</span></h3>
+        <p><span data-l="eu">Haur, familia, eskola eta merkataritza publikoan esperientzia duten dinamizatzaileak.</span>
+           <span data-l="es">Dinamizadores y dinamizadoras con experiencia en público infantil, familiar, escolar y comercial.</span></p>
+      </div>
+      <div class="reason">
+        <span class="k">06</span>
+        <h3><span data-l="eu">Neurtzen duguna</span><span data-l="es">Medimos lo que hacemos</span></h3>
+        <p><span data-l="eu">Ez dugu bertaratutakoen zerrenda soilik ematen: irismena, profila, aldatutako ohiturak eta emaitza behagarriak.</span>
+           <span data-l="es">No entregamos un recuento de asistentes: alcance, perfil, cambio declarado de hábitos y resultado observable.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LÍNEAS DE SERVICIO ================= -->
+<section id="zerbitzuak">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span data-l="eu">Zerbitzu-lerroak</span><span data-l="es">Líneas de servicio</span></p>
+      <h2><span data-l="eu">Zazpi lerro osagarri.</span><span data-l="es">Siete líneas complementarias.</span></h2>
+      <p class="sub"><span data-l="eu">Bakarka kontratagarriak edo zure erakundera egokitutako estrategia integral batean konbinatuak. Prezioak orientagarriak dira, BEZ gabe.</span>
+         <span data-l="es">Contratables por separado o combinadas en una estrategia integral adaptada a su institución. Precios orientativos, sin IVA.</span></p>
+    </div>
+
+    <div class="lines">
+      <article class="line">
+        <span class="num">01</span>
+        <h3><span data-l="eu">Udal-estrategiak diseinatzea</span><span data-l="es">Estrategias municipales de concienciación</span></h3>
+        <p class="desc"><span data-l="eu">Diseinu integrala: barne-lantaldetik kalera eta ikastetxeetara. Komunikazio-estrategia, kalean moduluak, familia-tailerrak eta eskola-saioak.</span>
+           <span data-l="es">Diseño integral: del grupo de trabajo interno a la calle y a los centros educativos. Estrategia de comunicación, módulo en la calle, talleres familiares y sesiones escolares.</span></p>
+        <span class="price"><span data-l="eu">11.000 €-tik</span><span data-l="es">Desde 11.000 €</span></span>
+      </article>
+
+      <article class="line">
+        <span class="num">02</span>
+        <h3><span data-l="eu">Klima-aldaketari buruzko kanpainak</span><span data-l="es">Campañas sobre cambio climático</span></h3>
+        <p class="desc"><span data-l="eu">Modulu erakusgarria eta Lehen Hezkuntzarako hitzaldiak. 3Ren praktika-erakustaldiak, konpostagailu didaktikoa eta landare bat parte-hartzaile bakoitzarentzat.</span>
+           <span data-l="es">Módulo expositivo y charlas para Primaria. Demostraciones prácticas de las 3R, compostadora didáctica y una plántula para cada participante.</span></p>
+        <span class="price"><span data-l="eu">6.500 €-tik</span><span data-l="es">Desde 6.500 €</span></span>
+      </article>
+
+      <article class="line">
+        <span class="num">03</span>
+        <h3><span data-l="eu">Hondakinen tailer tematikoak</span><span data-l="es">Talleres temáticos de residuos</span></h3>
+        <p class="desc"><span data-l="eu">Olioa, papera, plastikoa, organikoa, ehungintza, aprobetxamendu-sukaldaritza eta jolasak. 1,5 h edo 3 h-ko saioak, 15-25 lagun.</span>
+           <span data-l="es">Aceite, papel, plástico, orgánico, textil, cocina de aprovechamiento y juegos. Sesiones de 1,5 h o 3 h, para 15–25 personas.</span></p>
+        <span class="price"><span data-l="eu">450 €-tik</span><span data-l="es">Desde 450 €</span></span>
+      </article>
+
+      <article class="line">
+        <span class="num">04</span>
+        <h3><span data-l="eu">Ikastetxe eta institutuetako programak</span><span data-l="es">Programas educativos en centros e institutos</span></h3>
+        <p class="desc"><span data-l="eu">Eskolako Agenda 2030rekin lerrokatuta eta eko-ordezkariekin lanean. Ikasturte osoko jarraipena eta inpaktu-ebaluazioa aukeran.</span>
+           <span data-l="es">Alineados con la Agenda Escolar 2030 y con la figura de los eco-delegados. Con opción de seguimiento durante el curso y evaluación de impacto.</span></p>
+        <span class="price"><span data-l="eu">1.200 €-tik</span><span data-l="es">Desde 1.200 €</span></span>
+      </article>
+
+      <article class="line">
+        <span class="num">05</span>
+        <h3><span data-l="eu">Merkataritza eta ostalaritza</span><span data-l="es">Comercio y hostelería</span></h3>
+        <p class="desc"><span data-l="eu">Establezimendu bakoitzean banakako bisitak, kanpainaren bereizgarri itsasgarria erakusleihorako eta sustapen-bideoa. 75 establezimendura arte.</span>
+           <span data-l="es">Visitas individuales a cada establecimiento, distintivo de campaña para el escaparate y vídeo promocional. Hasta 75 establecimientos.</span></p>
+        <span class="price"><span data-l="eu">11.500 €-tik</span><span data-l="es">Desde 11.500 €</span></span>
+      </article>
+
+      <article class="line">
+        <span class="num">06</span>
+        <h3><span data-l="eu">Azoka, jardunaldi eta ekitaldiak</span><span data-l="es">Ferias, jornadas y eventos</span></h3>
+        <p class="desc"><span data-l="eu">Formatu intentsiboa: hainbat tailer konbinatuta egun erdiz edo egun osoz, benetako jende-etorreraren arabera kudeatuta.</span>
+           <span data-l="es">Formato intensivo: varios talleres combinados en media jornada o jornada completa, gestionados según la afluencia real.</span></p>
+        <span class="price"><span data-l="eu">Neurrira</span><span data-l="es">A medida</span></span>
+      </article>
+
+      <article class="line">
+        <span class="num">07</span>
+        <h3><span data-l="eu">Materialen ekoizpena eta komunikazioa</span><span data-l="es">Producción de materiales y comunicación</span></h3>
+        <p class="desc"><span data-l="eu">Kartelak, triptikoak, seinaleztapena, iman informatiboak eta bideoak. Udalerriaren datu propioekin pertsonalizatuta, bi hizkuntzatan.</span>
+           <span data-l="es">Cartelería, trípticos, señalética, imanes informativos y vídeos. Personalizados con los datos del municipio, en las dos lenguas.</span></p>
+        <span class="price"><span data-l="eu">Neurrira</span><span data-l="es">A medida</span></span>
+      </article>
+    </div>
+
+    <p style="margin-top:1.8rem; font-size:.9rem; color:var(--gris)">
+      <span data-l="eu"><strong style="color:var(--tierra-900)">Aholkua:</strong> lerro bat baino gehiago estrategia bakarrean konbinatzeak — adibidez, modulu erakusgarria + ikastetxeak + merkataritza — aurrekontu osoa optimizatzen du, urtean sakabanatuta kontratatzearen aldean.</span>
+      <span data-l="es"><strong style="color:var(--tierra-900)">Consejo:</strong> combinar varias líneas en una misma estrategia —por ejemplo, módulo expositivo + centros escolares + comercio local— optimiza el presupuesto conjunto frente a contratarlas por separado en momentos distintos del año.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ================= MÉTODO ================= -->
+<section id="metodoa">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span data-l="eu">Lan-metodologia</span><span data-l="es">Metodología de trabajo</span></p>
+      <h2><span data-l="eu">Sei fase, koordinazioa etapa bakoitzean.</span><span data-l="es">Seis fases, coordinación en cada etapa.</span></h2>
+    </div>
+
+    <div class="method">
+      <div class="step"><span class="s">1</span>
+        <h4><span data-l="eu">Harremana</span><span data-l="es">Toma de contacto</span></h4>
+        <p><span data-l="eu">Hasierako bilera: lantaldea, helburuak eta metodologia.</span><span data-l="es">Reunión inicial: equipo, objetivos y metodología.</span></p></div>
+      <div class="step"><span class="s">2</span>
+        <h4><span data-l="eu">Edukiak</span><span data-l="es">Contenidos</span></h4>
+        <p><span data-l="eu">Gidoiak eta materialak, erakundearen datuekin pertsonalizatuta.</span><span data-l="es">Guiones y materiales, personalizados con los datos de la institución.</span></p></div>
+      <div class="step"><span class="s">3</span>
+        <h4><span data-l="eu">Balioztatzea</span><span data-l="es">Validación</span></h4>
+        <p><span data-l="eu">Bigarren bilera: edukien eta materialen oniritzia.</span><span data-l="es">Segunda reunión: visto bueno de contenidos y materiales.</span></p></div>
+      <div class="step"><span class="s">4</span>
+        <h4><span data-l="eu">Zabalkundea</span><span data-l="es">Difusión</span></h4>
+        <p><span data-l="eu">Ikastetxe, merkatari eta kolektiboekin harremana; egutegia ixtea.</span><span data-l="es">Contacto con centros, comercios y colectivos; cierre del calendario.</span></p></div>
+      <div class="step"><span class="s">5</span>
+        <h4><span data-l="eu">Gauzatzea</span><span data-l="es">Desarrollo</span></h4>
+        <p><span data-l="eu">Saioak, tailerrak eta jardunaldiak martxan.</span><span data-l="es">Ejecución de sesiones, talleres y jornadas.</span></p></div>
+      <div class="step"><span class="s">6</span>
+        <h4><span data-l="eu">Itzulketa</span><span data-l="es">Devolución</span></h4>
+        <p><span data-l="eu">Inpaktu-txostena, jasotako informazioa eta ikasitakoa.</span><span data-l="es">Informe de impacto, información recogida y aprendizajes.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALERÍA ================= -->
+<section id="lanak">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span data-l="eu">Landa-lana</span><span data-l="es">Trabajo de campo</span></p>
+      <h2><span data-l="eu">Ez da hitzaldia. Eskuekin egiten da.</span><span data-l="es">No es una charla. Se hace con las manos.</span></h2>
+    </div>
+
+    <div class="gallery">
+      <figure class="tall wide">
+        <img src="img/escolares-modulo.jpg" alt="Grupo escolar esperando su turno frente al módulo expositivo">
+        <figcaption><span data-l="eu">Eskola-taldeak modulu erakusgarrian, ikastetxeekin adostutako saioetan.</span>
+                    <span data-l="es">Grupos escolares en el módulo expositivo, en sesiones acordadas con los centros.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/centro-residuos.jpg" alt="Dinamizador explicando la gestión de residuos ante un panel del municipio">
+        <figcaption><span data-l="eu">Hondakinen kudeaketa azaltzen, udalerriaren datu propioekin.</span>
+                    <span data-l="es">Explicando la gestión de residuos con los datos del propio municipio.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/demostracion-clima.jpg" alt="Globo terráqueo iluminado usado en las demostraciones sobre cambio climático">
+        <figcaption><span data-l="eu">Klima-aldaketaren erakustaldiak, ikusteko eta ukitzeko.</span>
+                    <span data-l="es">Demostraciones sobre cambio climático, para ver y tocar.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/comercio-local.jpg" alt="Puesto de fruta y verdura en un comercio local">
+        <figcaption><span data-l="eu">Merkataritza hurbila: hondakinak murrizteko funtsezko aliatua.</span>
+                    <span data-l="es">El comercio de proximidad, aliado clave en la reducción de residuos.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/hosteleria.jpg" alt="Mesa de un establecimiento hostelero">
+        <figcaption><span data-l="eu">Ostalaritza: banakako bisitak eta erakusleihorako bereizgarria.</span>
+                    <span data-l="es">Hostelería: visitas individuales y distintivo para el escaparate.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/bolsa-organico.jpg" alt="Bolsa compostable de recogida de materia orgánica">
+        <figcaption><span data-l="eu">Materia organikoa: kanpaina askoren erronka nagusia.</span>
+                    <span data-l="es">La materia orgánica: el reto principal de muchas campañas.</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EUSKERA ================= -->
+<div class="pledge" id="euskara">
+  <div class="pledge-in">
+    <div>
+      <p class="eyebrow" style="color:var(--menta)"><span data-l="eu">Hizkuntza-konpromisoa</span><span data-l="es">Compromiso lingüístico</span></p>
+      <h2 style="margin-top:.8rem"><span data-l="eu">Euskaraz lehenik, beti.</span><span data-l="es">En euskera primero, siempre.</span></h2>
+      <p style="margin-top:1.2rem">
+        <span data-l="eu">Material eta saio guztiak euskaraz eta gaztelaniaz eskaintzen ditugu, eta euskarari lehentasuna ematen diogu herritarrei zuzeneko arreta emateko orduan. Ez da itzulpen bat: euskaraz sortzen dugu.</span>
+        <span data-l="es">Todos nuestros materiales y sesiones se ofrecen en euskera y castellano, dando prioridad al euskera en la atención directa a la ciudadanía. No es una traducción: redactamos en euskera.</span>
+      </p>
+      <p style="margin:0">
+        <span data-l="eu">Gainera, saio bakoitzeko arreta-hizkuntza erregistratzen dugu, eta zerbitzuaren adierazle gisa ematen dugu azken txostenean.</span>
+        <span data-l="es">Además, registramos el idioma de atención de cada interacción y lo entregamos como indicador del servicio en el informe final.</span>
+      </p>
+    </div>
+    <div>
+      <p class="big">
+        <span data-l="eu">«Kanpaina bakoitza erakundearen datu eta errealitate propioarekin eraikitzen da, herritarrek edukietan beren burua ezagutu dezaten.»</span>
+        <span data-l="es">«Cada campaña se construye con los datos y la realidad propios de la institución, para que la ciudadanía se reconozca en los contenidos.»</span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MARCOS ================= -->
+<section id="markoak">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span data-l="eu">Finantzaketa eta lerrokatzea</span><span data-l="es">Financiación y alineación institucional</span></p>
+      <h2><span data-l="eu">Zure deialdiarekin bat egiteko diseinatuta.</span><span data-l="es">Diseñado para encajar con su convocatoria.</span></h2>
+      <p class="sub"><span data-l="eu">Gure zerbitzu-lerroak euskal toki-erakundeei zuzendutako lan-marko eta diru-laguntza deialdi nagusiekin lotzen dira. Proposamen bakoitza dagokion deialdira egokitzen lagun dezakegu.</span>
+         <span data-l="es">Nuestras líneas de servicio conectan con los principales marcos y convocatorias dirigidas a entidades locales vascas. Podemos asesorar en la adaptación de cada propuesta a la convocatoria correspondiente.</span></p>
+    </div>
+    <ul class="tags">
+      <li><strong>ODS 4</strong> · <span data-l="eu">Kalitatezko hezkuntza</span><span data-l="es">Educación de calidad</span></li>
+      <li><strong>ODS 7</strong> · <span data-l="eu">Energia garbia</span><span data-l="es">Energía asequible y no contaminante</span></li>
+      <li><strong>ODS 11</strong> · <span data-l="eu">Hiri jasangarriak</span><span data-l="es">Ciudades y comunidades sostenibles</span></li>
+      <li><strong>ODS 13</strong> · <span data-l="eu">Klimaren aldeko ekintza</span><span data-l="es">Acción por el clima</span></li>
+      <li><strong>Agenda 2030</strong> <span data-l="eu">Lokala</span><span data-l="es">Local</span></li>
+      <li><strong><span data-l="eu">Eskolako Agenda 2030</span><span data-l="es">Agenda Escolar 2030</span></strong></li>
+      <li><strong>Asteklima</strong></li>
+      <li><strong><span data-l="eu">Hondakinak Prebenitzeko Astea</span><span data-l="es">Semana de Prevención de Residuos</span></strong></li>
+      <li><strong><span data-l="eu">Eusko Jaurlaritza eta Ihobe</span><span data-l="es">Gobierno Vasco e Ihobe</span></strong> · <span data-l="eu">toki-erakundeentzako diru-laguntzak</span><span data-l="es">subvenciones a entidades locales</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= CTA FINAL ================= -->
+<section class="final" id="kontaktua">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow"><span data-l="eu">Has gaitezen</span><span data-l="es">Empecemos</span></p>
+      <h2><span data-l="eu">Eskatu zure proposamena, konpromisorik gabe.</span><span data-l="es">Solicite su propuesta a medida, sin compromiso.</span></h2>
+    </div>
+
+    <div class="steps3">
+      <div>
+        <b>01</b>
+        <h4><span data-l="eu">Kontatu zure erronka</span><span data-l="es">Cuéntenos su reto</span></h4>
+        <p><span data-l="eu">Dei edo bilera labur bat, zure udalerriaren abiapuntua ulertzeko.</span><span data-l="es">Una breve llamada o reunión para entender el punto de partida de su municipio.</span></p>
+      </div>
+      <div>
+        <b>02</b>
+        <h4><span data-l="eu">Proposamena prestatzen dugu</span><span data-l="es">Le preparamos una propuesta</span></h4>
+        <p><span data-l="eu">Zerbitzuak, egutegia eta aurrekontua zure errealitatera eta, hala badagokio, zure deialdira egokituta.</span><span data-l="es">Servicios, calendario y presupuesto adaptados a su realidad y, si procede, a su convocatoria de subvención.</span></p>
+      </div>
+      <div>
+        <b>03</b>
+        <h4><span data-l="eu">Kanpaina gauzatzen dugu</span><span data-l="es">Ejecutamos la campaña</span></h4>
+        <p><span data-l="eu">Dena guk: diseinua, materialak, dinamizazioa eta emaitzen itzulketa.</span><span data-l="es">Nos encargamos de todo: diseño, materiales, dinamización y devolución de resultados.</span></p>
+      </div>
+    </div>
+
+    <a class="btn btn-solid" href="mailto:">
+      <span data-l="eu">Idatzi guri</span><span data-l="es">Escríbanos</span>
+    </a>
+    <span class="pending" title="Pendiente: ver docs/01-diagnostico-necesidades.md B1">
+      <span data-l="eu">e-posta osatzeko</span><span data-l="es">correo a completar</span>
+    </span>
+  </div>
+</section>
+
+<!-- ================= PIE ================= -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <a class="brand" href="#">INGUR<span>A</span></a>
+      <p style="margin-top:.6rem; max-width:34ch">
+        <span data-l="eu">Ingurumen estrategiak eta ekintzak</span>
+        <span data-l="es">Estrategia y acción medioambiental</span>
+      </p>
+    </div>
+    <div>
+      <h5><span data-l="eu">Kontaktua</span><span data-l="es">Contacto</span></h5>
+      <p style="margin:0 0 .3rem">Palatueta bidea 25C<br>48600 Sopela (Bizkaia)</p>
+      <p style="margin:0 0 .3rem">CIF: J098128850</p>
+      <p style="margin:0"><span class="pending"><span data-l="eu">Telefonoa eta e-posta osatzeko</span><span data-l="es">Teléfono y correo a completar</span></span></p>
+    </div>
+    <div>
+      <h5><span data-l="eu">Zerbitzuak</span><span data-l="es">Servicios</span></h5>
+      <a href="#zerbitzuak"><span data-l="eu">Zazpi zerbitzu-lerroak</span><span data-l="es">Las siete líneas</span></a>
+      <a href="#metodoa"><span data-l="eu">Lan-metodologia</span><span data-l="es">Metodología</span></a>
+      <a href="#euskara"><span data-l="eu">Hizkuntza-konpromisoa</span><span data-l="es">Compromiso lingüístico</span></a>
+      <a href="#markoak"><span data-l="eu">Finantzaketa-markoak</span><span data-l="es">Marcos de financiación</span></a>
+    </div>
+  </div>
+  <div class="legal">
+    <span>© <span id="y">2026</span> INGURA</span>
+    <span><span data-l="eu">Prezio guztiak orientagarriak dira, BEZ gabe.</span><span data-l="es">Todos los precios son orientativos, sin IVA.</span></span>
+    <span><span data-l="eu">Euskadiko udal eta erakundeentzat.</span><span data-l="es">Para ayuntamientos e instituciones de Euskadi.</span></span>
+  </div>
+</footer>
+
+<script>
+  // Conmutador de idioma: cambia el atributo y el CSS hace el resto.
+  const root = document.documentElement;
+  const buttons = document.querySelectorAll('.lang button');
+  buttons.forEach(b => b.addEventListener('click', () => {
+    const lang = b.dataset.set;
+    root.dataset.lang = lang;
+    root.setAttribute('lang', lang);
+    buttons.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    try { localStorage.setItem('ingura-lang', lang); } catch (e) {}
+  }));
+
+  // Recupera la preferencia previa.
+  try {
+    const saved = localStorage.getItem('ingura-lang');
+    if (saved === 'es' || saved === 'eu') {
+      document.querySelector(`.lang button[data-set="${saved}"]`).click();
+    }
+  } catch (e) {}
+
+  document.getElementById('y').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+# Catálogo de servicios INGURA — datos estructurados
+# Fuente: Catalogo_Servicios_INGURA.docx
+# Uso: ensamblado automático de propuestas (estación ② del loop maestro)
+# Importes en euros, sin IVA, orientativos.
+
+empresa:
+  nombre: INGURA
+  descriptor_eu: Ingurumen estrategiak eta ekintzak
+  descriptor_es: Estrategia y acción medioambiental
+  claim_es: Sensibilización ambiental que su ciudadanía ve, toca y recuerda
+  claim_eu: Zure herritarrek ikusi, ukitu eta gogoratzen duten ingurumen-sentsibilizazioa
+  direccion: Palatueta bidea 25C, 48600 Sopela (Bizkaia)
+  cif: J098128850
+  desde: 2022
+  ambito: Comunidad Autónoma del País Vasco
+  idiomas: [eu, es]
+  prioridad_linguistica: eu
+  contacto:
+    email: PENDIENTE          # ver docs/01-diagnostico-necesidades.md B1
+    telefono: PENDIENTE
+    web: PENDIENTE
+
+equipamiento_propio:
+  - id: modulo-expositivo
+    nombre: Módulo expositivo
+    uso: [linea-1, linea-2, linea-6]
+  - id: extrusora-inyectora
+    nombre: Extrusora-inyectora de plástico
+    uso: [linea-2, linea-3]
+    riesgo: alto            # ver docs/08-operaciones-y-cumplimiento.md §2
+  - id: trituradora-plastico
+    nombre: Trituradora de plástico
+    uso: [linea-2, linea-3]
+    riesgo: alto
+  - id: compostadoras
+    nombre: Compostadoras didácticas
+    uso: [linea-1, linea-2, linea-3]
+
+publico_objetivo:
+  - infantil-desde-8              # menores acompañados por persona adulta
+  - familias
+  - primaria
+  - secundaria
+  - eco-delegados
+  - comercio-hosteleria
+  - ciudadania-general
+  - personal-tecnico-politico
+
+metodologia:
+  - fase: 1
+    nombre: Toma de contacto
+    salida: Definición de equipo de trabajo, objetivos y metodología
+  - fase: 2
+    nombre: Preparación de contenidos y materiales
+    salida: Guiones, cuestionarios y materiales personalizados
+    añadido_loop: Pactar cláusula de acceso a datos de recogida (evidencia nivel 4)
+  - fase: 3
+    nombre: Validación
+    salida: Visto bueno de contenidos y materiales
+  - fase: 4
+    nombre: Difusión y planificación
+    salida: Calendario cerrado con centros, comercios o colectivos
+  - fase: 5
+    nombre: Desarrollo de la campaña
+    salida: Sesiones ejecutadas + hojas de sesión
+  - fase: 6
+    nombre: Cierre y devolución de resultados
+    salida: Informe final, valoraciones y aprendizajes
+    añadido_loop: Solicitar certificado de buena ejecución en la reunión de cierre
+
+lineas:
+  - id: linea-1
+    numero: 1
+    nombre: Diseño de estrategias municipales de concienciación ambiental
+    resumen: "Diseño integral: de la calle a los centros educativos"
+    escalon: 4
+    incluye:
+      - Constitución y acompañamiento de grupo de trabajo técnico-político
+      - "Estrategia de comunicación: claim, cartelería, tríptico impreso y web, contenidos para revista municipal"
+      - Documentación personalizada con datos del municipio
+      - Jornadas y talleres a pie de calle con módulo y atención en mañana y tarde
+      - Talleres infantiles y familiares con demostraciones de reciclaje y compostaje
+      - Sesiones en centros escolares con reparto de material y práctica de plantado
+    formato: Campaña completa (calle + centros educativos)
+    precio_desde: 11000
+    ods: [11, 12, 13, 17]
+    marcos: [Agenda 2030 Local, Udalsarea 2030]
+
+  - id: linea-2
+    numero: 2
+    nombre: Campañas de sensibilización sobre cambio climático
+    resumen: Módulo expositivo + charlas escolares
+    escalon: 3
+    incluye:
+      - Espacio expositivo con cartelería sobre cambio climático, efectos y acciones
+      - "Charlas para Primaria: ~50 min, grupos de ~25 alumnos/as"
+      - "Demostraciones prácticas de las 3R: papel, cartón, aceite usado, envases de plástico"
+      - Compostadora didáctica y entrega de plántula de temporada
+      - Opcional: sesiones familiares fuera de horario escolar
+    formato: Módulo + charlas escolares (≈ 1 semana)
+    precio_desde: 6500
+    ods: [4, 7, 13]
+    marcos: [Asteklima, Estrategia climática vasca]
+
+  - id: linea-3
+    numero: 3
+    nombre: Talleres temáticos de gestión de residuos y economía circular
+    resumen: Aceite, papel, plástico, orgánico, textil, cocina, juegos
+    escalon: 1
+    aforo: 15-25 personas, a partir de 8 años
+    formatos:
+      - duracion: 1.5h
+        descripcion: Contenido teórico ágil y un único taller
+        precio_desde: 450
+      - duracion: 3h
+        descripcion: Contenido completo, posibilidad de combinar varios talleres
+        precio_desde: 800
+    talleres:
+      - id: aceite
+        nombre: Gestión del aceite usado
+        contenido: Transformación de aceite doméstico usado en jabón y velas ecológicas (jabón líquido en sesión larga)
+        riesgo: alto            # sosa caústica
+      - id: papel
+        nombre: Gestión del papel y cartón
+        contenido: Papel reciclado artesanal y envases de cartón reutilizables; encuadernación de libreta en sesión larga
+        riesgo: bajo
+      - id: plastico
+        nombre: Gestión de plásticos
+        contenido: Clasificación por tipología y transformación con extrusora-inyectora en piezas útiles
+        riesgo: alto
+        precio_desde_1_5h: 600
+        precio_desde_3h: 1000
+      - id: organico
+        nombre: Materia orgánica y compostaje
+        contenido: Proceso de compostaje paso a paso, con entrega de plantón o kokedama
+        riesgo: bajo
+      - id: textil
+        nombre: Reparación y transformación textil
+        contenido: Costura, remiendo y personalización de prendas para alargar su vida útil
+        riesgo: medio
+      - id: cocina
+        nombre: Cocina de aprovechamiento «Zero Waste»
+        contenido: Recetas y técnicas para reducir el desperdicio alimentario
+        riesgo: medio           # higiene alimentaria y alérgenos
+      - id: juegos
+        nombre: Juegos con materiales reciclados
+        contenido: Fabricación de juegos clásicos (dominó, parchís, bolos, tres en raya) con materiales reutilizados
+        riesgo: bajo
+    ods: [11, 12]
+    marcos: [Semana Europea de Prevención de Residuos, Economía circular]
+
+  - id: linea-4
+    numero: 4
+    nombre: Programas educativos en centros escolares e institutos
+    resumen: Agenda Escolar 2030, eco-delegados/as
+    escalon: 2
+    incluye:
+      - "Jornadas formativas de 90 min en el centro, adaptadas a la etapa: energía, consumo responsable, cambio climático"
+      - "Trabajo con eco-delegados/as: diagnóstico de hábitos y proyectos-acción con compromisos alcanzables"
+      - Opcional: seguimiento del proyecto entre sesiones (canal de comunicación y repositorio compartido)
+      - Opcional: evaluación de impacto en sesión de cierre meses después
+    formato: Sesión de 90 min; programa de curso con acompañamiento
+    precio_desde: 1200
+    ods: [4, 12, 13]
+    marcos: [Agenda Escolar 2030, Eskolako Agenda 2030, Ingurugela]
+
+  - id: linea-5
+    numero: 5
+    nombre: Campañas de sensibilización para comercio y hostelería
+    resumen: Visitas 1 a 1, distintivo y vídeo promocional
+    escalon: 4
+    incluye:
+      - Reuniones individuales de 30-45 min con guion validado con la institución
+      - Diagnóstico y escucha activa; traslado de necesidades a la administración
+      - Distintivo vinílico de campaña para escaparate
+      - Vídeo promocional con testimonios de comercios participantes
+    capacidad: Hasta 75 establecimientos por campaña, ampliable
+    intentos_contacto: 3
+    formato: Campaña por fases
+    precio_desde: 11500
+    ods: [8, 11, 12]
+    nota_legal: INGURA actúa como encargada del tratamiento — contrato obligatorio
+
+  - id: linea-6
+    numero: 6
+    nombre: Presencia en ferias, jornadas y eventos
+    resumen: Formato intensivo, varios talleres combinados
+    escalon: 2
+    incluye:
+      - Selección de talleres adaptada al perfil de público y aforo
+      - Equipo de dinamizadores/as y todo el material necesario
+      - Gestión flexible del aforo según afluencia real
+    formato: Medio día o jornada completa (p. ej. 6 horas)
+    precio_desde: null
+    precio_nota: A medida según talleres, dinamizadores y duración
+    ods: [11, 12, 17]
+
+  - id: linea-7
+    numero: 7
+    nombre: Producción de materiales y comunicación de campaña
+    resumen: Cartelería, folletos, vídeo, señalética
+    escalon: 1
+    incluye:
+      - Cartelería para espacio público y espacios expositivos
+      - Trípticos y folletos informativos, impresos y web
+      - "Elementos promocionales: imanes, distintivos, señalética de módulo"
+      - Vídeos promocionales para redes sociales y web institucional
+      - Documentación personalizada con datos del municipio
+    formato: A medida
+    precio_desde: null
+    ods: [4, 12]
+
+combinaciones:
+  - lineas: [linea-3]
+    nombre: Producto de entrada
+    rango: [450, 1000]
+  - lineas: [linea-3, linea-7]
+    nombre: Taller con materiales propios del municipio
+    rango: [1000, 2500]
+  - lineas: [linea-2, linea-4]
+    nombre: Semana climática con recorrido escolar
+    rango: [7000, 10000]
+  - lineas: [linea-2, linea-4, linea-7]
+    nombre: Asteklima completo con producción propia
+    rango: [9000, 14000]
+  - lineas: [linea-1]
+    nombre: Estrategia integral anual
+    rango: [11000, null]
+  - lineas: [linea-1, linea-5]
+    nombre: Cobertura total del municipio
+    rango: [20000, null]
+
+escalera_comercial:
+  - Taller suelto
+  - Semana temática
+  - Programa escolar de curso
+  - Estrategia integral
+  - Acuerdo anual o plurianual
+
+marcos_financiacion:
+  - Objetivos de Desarrollo Sostenible y Agenda 2030
+  - Agenda 2030 Local
+  - Agenda Escolar 2030 / Eskolako Agenda 2030
+  - Asteklima
+  - Semana Europea de Prevención de Residuos
+  - Líneas de subvención del Gobierno Vasco e Ihobe a entidades locales
+  - Convocatorias de las diputaciones forales

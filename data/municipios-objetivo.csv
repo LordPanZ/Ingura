@@ -1,0 +1,63 @@
+# FICHERO SEMILLA — cartera institucional (estación ① del loop maestro)
+# Los nombres de institución son reales; TODOS los demás campos están vacíos a propósito:
+# se rellenan con fuentes oficiales (ver docs/03-mapa-institucional-euskadi.md §6). No inventar datos.
+# prioridad: 1 (máxima) a 4 (agrupada vía ente supramunicipal). Criterios en docs/03 §5.
+# estado: sin-contacto | contactado | propuesta-enviada | cliente | cliente-recurrente | perdido | dormido
+# escalon: 1..5 según docs/09-modelo-economico.md §1
+institucion,tipo,territorio,comarca,mancomunidad,poblacion,udalsarea_2030,prioridad,estado,escalon,contacto_tecnico,contacto_politico,email,telefono,kg_hab_organico,kg_hab_envases,proveedor_actual,ultima_interaccion,proxima_ventana,prescriptor,notas
+Sopela,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,1,,,,,,,,,,,,,"Sede de INGURA. Municipio de casa: prioridad absoluta como primer caso documentado."
+Berango,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,1,,,,,,,,,,,,,
+Urduliz,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,1,,,,,,,,,,,,,
+Barrika,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,3,,,,,,,,,,,,,"Pequeño: abordar vía mancomunidad"
+Gorliz,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,2,,,,,,,,,,,,,
+Plentzia,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,2,,,,,,,,,,,,,
+Lemoiz,ayuntamiento,Bizkaia,Uribe Kosta,Uribe Kosta,,,3,,,,,,,,,,,,,"Pequeño: abordar vía mancomunidad"
+Mancomunidad de Uribe Kosta,mancomunidad,Bizkaia,Uribe Kosta,,,,1,,,,,,,,,,,,,"MULTIPLICADOR PRIORITARIO: un contrato, 7 municipios. Tiene los datos de recogida."
+Getxo,ayuntamiento,Bizkaia,Uribe Kosta,,,,1,,,,,,,,,,,,,"Presupuesto alto. Requiere capacidad de licitar (E2)."
+Leioa,ayuntamiento,Bizkaia,Uribe Kosta,,,,1,,,,,,,,,,,,,
+Erandio,ayuntamiento,Bizkaia,Uribe Kosta,,,,2,,,,,,,,,,,,,
+Mungia,ayuntamiento,Bizkaia,Mungialdea,Mungialdea,,,1,,,,,,,,,,,,,
+Bakio,ayuntamiento,Bizkaia,Mungialdea,Mungialdea,,,2,,,,,,,,,,,,,
+Gatika,ayuntamiento,Bizkaia,Mungialdea,Mungialdea,,,3,,,,,,,,,,,,,
+Maruri-Jatabe,ayuntamiento,Bizkaia,Mungialdea,Mungialdea,,,4,,,,,,,,,,,,,
+Bermeo,ayuntamiento,Bizkaia,Busturialdea,Busturialdea,,,1,,,,,,,,,,,,,
+Gernika-Lumo,ayuntamiento,Bizkaia,Busturialdea,Busturialdea,,,1,,,,,,,,,,,,,
+Mundaka,ayuntamiento,Bizkaia,Busturialdea,Busturialdea,,,3,,,,,,,,,,,,,
+Sukarrieta,ayuntamiento,Bizkaia,Busturialdea,Busturialdea,,,3,,,,,,,,,,,,,"Sede de equipamiento de educación ambiental: interlocutor de alto valor pedagógico"
+Durango,ayuntamiento,Bizkaia,Durangaldea,Durangaldea,,,1,,,,,,,,,,,,,
+Amorebieta-Etxano,ayuntamiento,Bizkaia,Durangaldea,Durangaldea,,,1,,,,,,,,,,,,,
+Iurreta,ayuntamiento,Bizkaia,Durangaldea,Durangaldea,,,2,,,,,,,,,,,,,
+Abadiño,ayuntamiento,Bizkaia,Durangaldea,Durangaldea,,,2,,,,,,,,,,,,,
+Galdakao,ayuntamiento,Bizkaia,Txorierri-Nerbioi,,,,1,,,,,,,,,,,,,
+Basauri,ayuntamiento,Bizkaia,Nerbioi,,,,1,,,,,,,,,,,,,
+Derio,ayuntamiento,Bizkaia,Txorierri,Txorierri,,,2,,,,,,,,,,,,,
+Zamudio,ayuntamiento,Bizkaia,Txorierri,Txorierri,,,2,,,,,,,,,,,,,
+Loiu,ayuntamiento,Bizkaia,Txorierri,Txorierri,,,3,,,,,,,,,,,,,
+Portugalete,ayuntamiento,Bizkaia,Ezkerraldea,,,,1,,,,,,,,,,,,,
+Santurtzi,ayuntamiento,Bizkaia,Ezkerraldea,,,,1,,,,,,,,,,,,,
+Sestao,ayuntamiento,Bizkaia,Ezkerraldea,,,,2,,,,,,,,,,,,,
+Barakaldo,ayuntamiento,Bizkaia,Ezkerraldea,,,,2,,,,,,,,,,,,,"Grande: licitación compleja"
+Bilbao,ayuntamiento,Bizkaia,Bilbao,,,,3,,,,,,,,,,,,,"Máximo presupuesto y máxima competencia. Entrar cuando el kit de licitación esté cerrado."
+Lekeitio,ayuntamiento,Bizkaia,Lea Artibai,Lea Artibai,,,2,,,,,,,,,,,,,
+Markina-Xemein,ayuntamiento,Bizkaia,Lea Artibai,Lea Artibai,,,2,,,,,,,,,,,,,
+Ondarroa,ayuntamiento,Bizkaia,Lea Artibai,Lea Artibai,,,2,,,,,,,,,,,,,
+Balmaseda,ayuntamiento,Bizkaia,Enkarterri,Enkarterri,,,2,,,,,,,,,,,,,
+Güeñes,ayuntamiento,Bizkaia,Enkarterri,Enkarterri,,,3,,,,,,,,,,,,,
+Amurrio,ayuntamiento,Araba/Álava,Aiaraldea,,,,2,,,,,,,,,,,,,
+Laudio/Llodio,ayuntamiento,Araba/Álava,Aiaraldea,,,,2,,,,,,,,,,,,,
+Vitoria-Gasteiz,ayuntamiento,Araba/Álava,Vitoria-Gasteiz,,,,3,,,,,,,,,,,,,"Capital. Estructura propia de educación ambiental potente. Entrar con propuesta muy diferencial."
+Eibar,ayuntamiento,Gipuzkoa,Debabarrena,Debabarrena,,,2,,,,,,,,,,,,,
+Arrasate/Mondragón,ayuntamiento,Gipuzkoa,Debagoiena,Debagoiena,,,2,,,,,,,,,,,,,
+Bergara,ayuntamiento,Gipuzkoa,Debagoiena,Debagoiena,,,2,,,,,,,,,,,,,
+Zarautz,ayuntamiento,Gipuzkoa,Urola Kosta,Urola Kosta,,,2,,,,,,,,,,,,,
+Azpeitia,ayuntamiento,Gipuzkoa,Urola Erdia,,,,2,,,,,,,,,,,,,
+Tolosa,ayuntamiento,Gipuzkoa,Tolosaldea,Tolosaldea,,,2,,,,,,,,,,,,,
+Irun,ayuntamiento,Gipuzkoa,Bidasoa,Txingudi,,,2,,,,,,,,,,,,,
+Hondarribia,ayuntamiento,Gipuzkoa,Bidasoa,Txingudi,,,2,,,,,,,,,,,,,
+Donostia/San Sebastián,ayuntamiento,Gipuzkoa,Donostialdea,,,,3,,,,,,,,,,,,,"Grande y exigente. Larga carrera."
+Ihobe,agencia,CAPV,,,,,1,,,,,,,,,,,,,"NO es cliente típico: es el amplificador del loop. Coordina Udalsarea 2030 y las convocatorias."
+Udalsarea 2030,red,CAPV,,,,,1,,,,,,,,,,,,,"Foro de prescripción (estación ⑥). Objetivo: que un técnico presente un caso INGURA en un grupo de trabajo."
+EUDEL,asociacion,CAPV,,,,,2,,,,,,,,,,,,,"Grupos de trabajo transversales de personal técnico y político"
+Diputación Foral de Bizkaia,diputacion,Bizkaia,,,,,2,,,,,,,,,,,,,"Competencia foral en residuos + convocatorias propias"
+Diputación Foral de Gipuzkoa,diputacion,Gipuzkoa,,,,,2,,,,,,,,,,,,,
+Diputación Foral de Álava,diputacion,Araba/Álava,,,,,3,,,,,,,,,,,,,

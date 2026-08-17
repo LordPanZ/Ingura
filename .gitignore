@@ -1,0 +1,8 @@
+# Datos de campaña con información personal — nunca al repositorio
+data/impacto/**/*.csv
+data/impacto/**/*.xlsx
+consentimientos/
+# Sistema
+.DS_Store
+Thumbs.db
+node_modules/
