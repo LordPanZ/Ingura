@@ -1,0 +1,583 @@
+<title>Loop Maestro de INGURA</title>
+<style>
+/* ============================================================
+   Paleta derivada del catálogo de servicios de INGURA
+   (tierra 5C4F3C · verde 0B8A6B · naranja E85D04 · crema FBF9F4)
+   Tipografía: sans compacta para titulares, serif para lectura,
+   mono para índices y cifras. Sin webfonts: el CSP bloquea CDNs
+   y una sustitución silenciosa arruinaría la escala.
+   ============================================================ */
+:root{
+  --ground:#F6F4EE;
+  --surface:#FFFFFF;
+  --surface-2:#FBF3EA;
+  --ink:#241F16;
+  --ink-2:#6B6152;
+  --ink-3:#948977;
+  --line:#DDD6C6;
+  --line-strong:#BCB29B;
+  --verde:#0B8A6B;
+  --verde-ink:#064A38;
+  --naranja:#D14E02;
+  --menta:#DFF4EC;
+
+  /* La banda de la máquina mantiene su mundo en ambos temas */
+  --deep:#06392B;
+  --deep-2:#0A4B38;
+  --deep-ink:#EAF6F1;
+  --deep-ink-2:#9FC9BB;
+
+  --s1:#0B4A39; --s2:#08604A; --s3:#08795C;
+  --s4:#35B392; --s5:#63CCAE; --s6:#93DEC7;
+
+  --sans:ui-sans-serif,"Segoe UI Variable Text","Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+
+  --wrap:informe;
+  --maxw:78rem;
+  --pad:clamp(1.15rem,4vw,3.25rem);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#14120E;
+    --surface:#1C1913;
+    --surface-2:#221E16;
+    --ink:#F1ECE1;
+    --ink-2:#AAA08C;
+    --ink-3:#7E7565;
+    --line:#332D22;
+    --line-strong:#4A4234;
+    --verde:#38C6A0;
+    --verde-ink:#8FDCC6;
+    --naranja:#FF7F33;
+    --menta:#123A2E;
+    --deep:#08251C;
+    --deep-2:#0D3629;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#14120E;
+  --surface:#1C1913;
+  --surface-2:#221E16;
+  --ink:#F1ECE1;
+  --ink-2:#AAA08C;
+  --ink-3:#7E7565;
+  --line:#332D22;
+  --line-strong:#4A4234;
+  --verde:#38C6A0;
+  --verde-ink:#8FDCC6;
+  --naranja:#FF7F33;
+  --menta:#123A2E;
+  --deep:#08251C;
+  --deep-2:#0D3629;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--serif); font-size:1.0625rem; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--pad)}
+.narrow{max-width:44rem}
+
+h1,h2,h3,.eyebrow,th,.num,.metric,.label{font-family:var(--sans)}
+h1,h2,h3{margin:0; text-wrap:balance; letter-spacing:-.022em; line-height:1.08; font-weight:700}
+h1{font-size:clamp(2.1rem,5vw,3.5rem); letter-spacing:-.035em}
+h2{font-size:clamp(1.45rem,2.6vw,2rem)}
+h3{font-size:1.0625rem; letter-spacing:-.008em}
+p{margin:0 0 1em; max-width:64ch}
+p:last-child{margin-bottom:0}
+strong{font-weight:600; color:var(--ink)}
+a{color:var(--verde)}
+
+.eyebrow{
+  font-size:.7rem; font-weight:700; letter-spacing:.19em; text-transform:uppercase;
+  color:var(--verde); margin:0 0 .9rem; display:block;
+}
+.dek{font-size:1.1875rem; color:var(--ink-2); max-width:52ch}
+
+section{padding-block:clamp(2.75rem,6vw,4.75rem); border-top:1px solid var(--line)}
+section:first-of-type{border-top:0}
+
+/* ---------- cabecera ---------- */
+header{padding-block:clamp(2.5rem,7vw,5rem) clamp(2rem,4vw,3rem)}
+.rule{height:3px; background:var(--ink); width:3.5rem; margin-bottom:1.75rem}
+.thesis{
+  font-family:var(--serif); font-size:clamp(1.1rem,1.6vw,1.3rem);
+  line-height:1.5; max-width:38ch; margin:1.75rem 0 0;
+  padding-left:1.1rem; border-left:3px solid var(--naranja);
+}
+.premises{
+  list-style:none; padding:0; margin:2.5rem 0 0;
+  display:grid; gap:1px; background:var(--line);
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
+  border:1px solid var(--line);
+}
+.premises li{background:var(--ground); padding:1.15rem 1.15rem 1.3rem}
+.premises .k{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.06em;
+  color:var(--naranja); display:block; margin-bottom:.55rem;
+}
+.premises b{font-family:var(--sans); font-size:.98rem; display:block; margin-bottom:.3rem; letter-spacing:-.01em}
+.premises span.t{font-size:.94rem; color:var(--ink-2); line-height:1.5}
+
+/* ---------- banda de la máquina ---------- */
+.machine{
+  background:var(--deep); color:var(--deep-ink);
+  border-block:1px solid var(--deep-2); border-top-color:var(--line);
+  padding-block:clamp(2.5rem,6vw,4.5rem);
+}
+.machine .eyebrow{color:var(--s6)}
+.machine h2{color:var(--deep-ink)}
+.machine p{color:var(--deep-ink-2)}
+.machine-grid{
+  display:grid; gap:clamp(1.75rem,4vw,3.5rem);
+  grid-template-columns:minmax(0,1.2fr) minmax(0,23rem); align-items:center;
+}
+@media (max-width:62rem){.machine-grid{grid-template-columns:minmax(0,1fr)}}
+.ring{width:100%; height:auto; display:block; max-width:38rem; margin-inline:auto}
+.ring .arc{fill:none; stroke:var(--s4); stroke-width:2.5; opacity:.5}
+.ring .head path{fill:var(--s4); opacity:.75}
+.ring .node circle{stroke:var(--deep); stroke-width:3; transition:transform .25s ease, filter .25s ease}
+.ring .node .idx{font-family:var(--mono); font-size:31px; font-weight:600; text-anchor:middle}
+.ring .node .nm{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.02em; text-anchor:middle; text-transform:uppercase}
+/* Contraste por nodo: las tres primeras estaciones son verdes oscuros */
+.ring .node.on-dark text{fill:#E8F6F0}
+.ring .node.on-light text{fill:#04241A}
+.ring .node{cursor:default}
+.ring .node.on circle{filter:brightness(1.22); stroke:var(--s6)}
+.ring .core-t{font-family:var(--sans); font-size:12px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; fill:var(--s6); text-anchor:middle}
+.ring .core-a{font-family:var(--serif); font-size:16.5px; fill:var(--deep-ink); text-anchor:middle}
+.ring .ret{font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.08em; fill:var(--s6); text-anchor:middle; text-transform:uppercase}
+.machine .aside{max-width:34ch}
+.machine .aside .big{
+  font-family:var(--serif); font-size:clamp(1.05rem,1.5vw,1.22rem); line-height:1.5;
+  color:var(--deep-ink); margin:0 0 1.1rem;
+}
+.machine .aside .rulebox{
+  border:1px solid var(--s2); background:var(--deep-2);
+  padding:1rem 1.1rem; font-size:.95rem; color:var(--deep-ink-2);
+}
+.machine .aside .rulebox b{color:var(--s6); font-family:var(--sans); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; display:block; margin-bottom:.45rem}
+
+/* ---------- estaciones ---------- */
+.stations{
+  display:grid; gap:1px; background:var(--line); border:1px solid var(--line);
+  grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:2.25rem;
+}
+@media (max-width:60rem){.stations{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:40rem){.stations{grid-template-columns:minmax(0,1fr)}}
+.station{
+  background:var(--surface); padding:1.35rem 1.35rem 1.5rem;
+  border-left:3px solid transparent; transition:border-color .2s, background .2s;
+}
+.station:hover,.station:focus-visible{background:var(--surface-2); outline:none}
+.station:hover{border-left-color:var(--st)}
+.station:focus-visible{border-left-color:var(--naranja)}
+.station .top{display:flex; align-items:baseline; gap:.65rem; margin-bottom:.7rem}
+.station .n{font-family:var(--mono); font-size:1.6rem; font-weight:600; color:var(--st); line-height:1}
+.station .eu{font-family:var(--serif); font-style:italic; font-size:.9rem; color:var(--ink-3); margin-left:auto}
+.station p{font-size:.96rem; color:var(--ink-2); margin:0 0 .8rem}
+.station .out{
+  font-family:var(--mono); font-size:.74rem; letter-spacing:.02em; color:var(--ink-3);
+  border-top:1px solid var(--line); padding-top:.7rem; display:block;
+}
+.station .out b{color:var(--ink); font-weight:600}
+
+/* ---------- tablas ---------- */
+.scroll{overflow-x:auto; margin-top:2rem; border:1px solid var(--line)}
+table{border-collapse:collapse; width:100%; min-width:38rem; background:var(--surface)}
+caption{text-align:left; font-family:var(--sans); font-size:.8rem; color:var(--ink-3); padding:.7rem .9rem; letter-spacing:.02em}
+th,td{text-align:left; padding:.8rem .9rem; border-bottom:1px solid var(--line); font-size:.95rem; vertical-align:top}
+thead th{
+  font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700;
+  color:var(--ink-2); background:var(--surface-2); border-bottom:1px solid var(--line-strong);
+  white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:0}
+td.mono,th.mono{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+.tag{
+  font-family:var(--mono); font-size:.74rem; color:var(--verde-ink); background:var(--menta);
+  border:1px solid var(--verde); padding:.1rem .42rem; white-space:nowrap;
+}
+.thr{font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--naranja); font-weight:600; white-space:nowrap}
+
+/* ---------- velocidades ---------- */
+.speeds{
+  display:grid; gap:1px; background:var(--line); border:1px solid var(--line);
+  grid-template-columns:repeat(auto-fit,minmax(16rem,1fr)); margin-top:2.25rem;
+}
+.speed{background:var(--surface); padding:1.3rem 1.3rem 1.5rem}
+.speed .bar{height:4px; margin-bottom:1rem}
+.speed .len{font-family:var(--mono); font-size:.76rem; color:var(--ink-3); letter-spacing:.04em}
+.speed h3{margin:.35rem 0 .55rem}
+.speed .q{font-family:var(--serif); font-style:italic; color:var(--ink-2); font-size:.98rem; margin:0 0 .8rem}
+.speed dl{margin:0; font-size:.92rem}
+.speed dt{font-family:var(--sans); font-size:.68rem; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); margin-top:.7rem}
+.speed dd{margin:.15rem 0 0; color:var(--ink-2)}
+
+/* ---------- año ---------- */
+.year{
+  display:grid; grid-template-columns:repeat(12,minmax(0,1fr));
+  border:1px solid var(--line-strong); margin-top:2.25rem; overflow:hidden;
+}
+.mo{border-right:1px solid var(--line); padding:.7rem .45rem .8rem; background:var(--surface); position:relative}
+.mo:last-child{border-right:0}
+.mo .m{font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; color:var(--ink-3); display:block}
+.mo .st{font-family:var(--mono); font-size:1.05rem; font-weight:600; margin-top:.45rem; display:block; line-height:1}
+.mo .swatch{height:5px; margin-top:.6rem}
+.mo.peak{background:var(--surface-2)}
+.mo.win{background:var(--menta)}
+.year-key{
+  display:flex; flex-wrap:wrap; gap:.35rem 1.25rem; margin-top:.9rem;
+  font-family:var(--sans); font-size:.78rem; color:var(--ink-2);
+}
+.year-key i{display:inline-block; width:.85rem; height:.85rem; margin-right:.4rem; vertical-align:-.1rem}
+@media (max-width:52rem){
+  .year{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .mo:nth-child(6n){border-right:0}
+  .mo:nth-child(-n+6){border-bottom:1px solid var(--line)}
+}
+.jan{
+  margin-top:1.5rem; border-left:3px solid var(--naranja); padding:.9rem 0 .9rem 1.1rem;
+  font-family:var(--serif); max-width:52ch;
+}
+.jan b{font-family:var(--sans); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--naranja); display:block; margin-bottom:.35rem}
+
+/* ---------- salud ---------- */
+.health{
+  display:grid; gap:1px; background:var(--line); border:1px solid var(--line);
+  grid-template-columns:repeat(auto-fit,minmax(15rem,1fr)); margin-top:2.25rem;
+}
+.h{background:var(--surface); padding:1.3rem 1.3rem 1.5rem}
+.h .metric{
+  font-family:var(--mono); font-size:2.1rem; font-weight:600; line-height:1;
+  color:var(--verde); font-variant-numeric:tabular-nums; display:block;
+}
+.h .label{font-size:.98rem; font-weight:600; margin:.7rem 0 .4rem; display:block; letter-spacing:-.01em}
+.h .t{font-size:.92rem; color:var(--ink-2)}
+
+/* ---------- reglas ---------- */
+.rules{list-style:none; counter-reset:r; padding:0; margin:2.25rem 0 0; max-width:52rem}
+.rules li{
+  counter-increment:r; display:grid; grid-template-columns:2.5rem 1fr; gap:1rem;
+  padding:1.05rem 0; border-top:1px solid var(--line); align-items:baseline;
+}
+.rules li:last-child{border-bottom:1px solid var(--line)}
+.rules li::before{
+  content:counter(r,decimal-leading-zero);
+  font-family:var(--mono); font-size:.95rem; font-weight:600; color:var(--naranja);
+}
+.rules b{font-family:var(--sans); letter-spacing:-.01em}
+.rules span{color:var(--ink-2)}
+
+footer{
+  border-top:3px solid var(--ink); padding-block:2rem 3rem; margin-top:clamp(2.5rem,6vw,4rem);
+  font-family:var(--sans); font-size:.82rem; color:var(--ink-3);
+  display:flex; flex-wrap:wrap; gap:.4rem 2rem;
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important}}
+</style>
+
+<header class="wrap">
+  <div class="rule"></div>
+  <span class="eyebrow">INGURA · Ingurumen estrategiak eta ekintzak</span>
+  <h1>El loop maestro</h1>
+  <p class="dek" style="margin-top:1.25rem">El sistema que convierte cada campaña ejecutada en la razón por la que llega la siguiente.</p>
+  <p class="thesis">Un plan comercial clásico vuelve a empezar de cero después de cada trabajo. En el mercado de INGURA eso es el peor modelo posible — y de por qué lo es, se deduce el motor.</p>
+
+  <ul class="premises">
+    <li>
+      <span class="k">MERCADO</span>
+      <b>Cerrado y finito</b>
+      <span class="t">251 municipios, unas 40 mancomunidades y consorcios, 7 cuadrillas, 3 diputaciones e Ihobe. No se crece captando más mercado: se crece profundizando.</span>
+    </li>
+    <li>
+      <span class="k">COMPRADORES</span>
+      <b>Se conocen entre sí</b>
+      <span class="t">El personal técnico municipal se encuentra en Udalsarea 2030, en las jornadas de Ihobe y en las comisiones de mancomunidad. Lo que se dice de un proveedor circula sin fricción.</span>
+    </li>
+    <li>
+      <span class="k">COMPRA</span>
+      <b>Defendible, no impulsiva</b>
+      <span class="t">Un técnico no compra lo que le gusta: compra lo que puede justificar ante su concejalía, ante intervención y ante quien financia. La justificación es el producto.</span>
+    </li>
+  </ul>
+</header>
+
+<!-- ============ LA MÁQUINA ============ -->
+<div class="machine">
+  <div class="wrap machine-grid">
+    <svg class="ring" viewBox="0 0 720 720" role="img" aria-labelledby="ringT ringD">
+      <title id="ringT">El loop maestro de INGURA en seis estaciones</title>
+      <desc id="ringD">Un ciclo cerrado: Escucha, Propuesta, Ejecución, Evidencia, Devolución y Prescripción. La prescripción devuelve al inicio con más autoridad y menos coste de captación.</desc>
+
+      <circle cx="360" cy="360" r="240" fill="none" stroke="var(--s1)" stroke-width="1" opacity=".55"/>
+
+      <path class="arc" d="M430.2,130.5 A240,240 0 0 1 523.7,184.5"/>
+      <g class="head" transform="translate(523.7,184.5) rotate(43)"><path d="M0,-1 L-7,-11 L9,0 L-7,11 Z"/></g>
+      <path class="arc" d="M593.8,306 A240,240 0 0 1 593.8,414"/>
+      <g class="head" transform="translate(593.8,414) rotate(103)"><path d="M0,-1 L-7,-11 L9,0 L-7,11 Z"/></g>
+      <path class="arc" d="M523.7,535.5 A240,240 0 0 1 430.2,589.5"/>
+      <g class="head" transform="translate(430.2,589.5) rotate(163)"><path d="M0,-1 L-7,-11 L9,0 L-7,11 Z"/></g>
+      <path class="arc" d="M289.8,589.5 A240,240 0 0 1 196.3,535.5"/>
+      <g class="head" transform="translate(196.3,535.5) rotate(223)"><path d="M0,-1 L-7,-11 L9,0 L-7,11 Z"/></g>
+      <path class="arc" d="M126.2,414 A240,240 0 0 1 126.2,306"/>
+      <g class="head" transform="translate(126.2,306) rotate(283)"><path d="M0,-1 L-7,-11 L9,0 L-7,11 Z"/></g>
+      <path class="arc" d="M196.3,184.5 A240,240 0 0 1 289.8,130.5"/>
+      <g class="head" transform="translate(289.8,130.5) rotate(343)"><path d="M0,-1 L-7,-11 L9,0 L-7,11 Z"/></g>
+
+      <g class="node on-dark" data-n="1"><circle cx="360" cy="120" r="54" fill="var(--s1)"/><text class="idx" x="360" y="122.0">1</text><text class="nm" x="360" y="142.0">ESCUCHA</text></g>
+      <g class="node on-dark" data-n="2"><circle cx="567.8" cy="240" r="54" fill="var(--s2)"/><text class="idx" x="567.8" y="242.0">2</text><text class="nm" x="567.8" y="262.0">PROPUESTA</text></g>
+      <g class="node on-dark" data-n="3"><circle cx="567.8" cy="480" r="54" fill="var(--s3)"/><text class="idx" x="567.8" y="482.0">3</text><text class="nm" x="567.8" y="502.0">EJECUCIÓN</text></g>
+      <g class="node on-light" data-n="4"><circle cx="360" cy="600" r="54" fill="var(--s4)"/><text class="idx" x="360" y="602.0">4</text><text class="nm" x="360" y="622.0">EVIDENCIA</text></g>
+      <g class="node on-light" data-n="5"><circle cx="152.2" cy="480" r="54" fill="var(--s5)"/><text class="idx" x="152.2" y="482.0">5</text><text class="nm" x="152.2" y="502.0">DEVOLUCIÓN</text></g>
+      <g class="node on-light" data-n="6"><circle cx="152.2" cy="240" r="54" fill="var(--s6)"/><text class="idx" x="152.2" y="242.0">6</text><text class="nm" x="152.2" y="262.0">PRESCRIPCIÓN</text></g>
+
+      <text class="ret" x="360" y="286">cada vuelta acumula</text>
+      <text class="core-t" x="360" y="318">4 activos</text>
+      <text class="core-a" x="360" y="360">Datos · Casos</text>
+      <text class="core-a" x="360" y="384">Prescriptores · Encaje</text>
+      <text class="ret" x="360" y="424">no se compran</text>
+    </svg>
+
+    <div class="aside">
+      <p class="big">Si cada campaña genera evidencia que el cliente puede usar para justificarse, y esa evidencia circula entre personas que se conocen, la siguiente campaña llega sola.</p>
+      <div class="rulebox">
+        <b>La regla del loop</b>
+        Ninguna estación se salta. Una campaña de la que no se extrae evidencia y no se devuelve informe presentable no es media campaña: es una campaña que rompe el loop y obliga a empezar el ciclo siguiente desde cero.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ESTACIONES ============ -->
+<section class="wrap">
+  <span class="eyebrow">Las seis estaciones</span>
+  <h2>Qué hace cada una, y con qué sale</h2>
+  <p class="dek" style="margin-top:.9rem">El orden importa: es una secuencia, no una lista de funciones. Cada estación entrega la materia prima de la siguiente.</p>
+
+  <div class="stations">
+    <article class="station" tabindex="0" data-n="1" style="--st:var(--s1)">
+      <div class="top"><span class="n">1</span><h3>Escucha</h3><span class="eu">Entzun</span></div>
+      <p>Inteligencia institucional sostenida, no prospección. Plan de mandato, presupuesto aprobado, adhesión a Udalsarea 2030, convocatorias, datos de recogida selectiva, licitaciones publicadas, rotación del personal técnico.</p>
+      <span class="out">SALE → <b>una ficha viva por institución</b>: estado, contacto, señal detectada, próxima ventana</span>
+    </article>
+
+    <article class="station" tabindex="0" data-n="2" style="--st:var(--s2)">
+      <div class="top"><span class="n">2</span><h3>Propuesta</h3><span class="eu">Proposamena</span></div>
+      <p>Tres capas siempre: la <strong>ciudadana</strong> (qué vivirá la gente, convence a la concejalía), la <strong>técnica</strong> (tranquiliza al técnico) y la <strong>justificativa</strong> (encaje con ODS, Agenda 2030 Local y la convocatoria concreta). La tercera cierra la venta y casi nadie la escribe.</p>
+      <span class="out">SALE → <b>propuesta ensamblada</b> con módulos del catálogo, en horas y no en días</span>
+    </article>
+
+    <article class="station" tabindex="0" data-n="3" style="--st:var(--s3)">
+      <div class="top"><span class="n">3</span><h3>Ejecución</h3><span class="eu">Egikaritzea</span></div>
+      <p>La metodología de seis fases que ya existe, más una sola exigencia nueva: cada sesión tiene su hoja de sesión, rellenada <em>durante</em> la sesión. Es la bisagra entre ejecutar y construir activo.</p>
+      <span class="out">SALE → <b>campaña ejecutada</b> con calidad que no depende de quién dinamice</span>
+    </article>
+
+    <article class="station" tabindex="0" data-n="4" style="--st:var(--s4)">
+      <div class="top"><span class="n">4</span><h3>Evidencia</h3><span class="eu">Frogak</span></div>
+      <p>Cuatro niveles: alcance, perfil, cambio declarado y cambio observado. El nivel 4 —cruzar con los datos de recogida de la mancomunidad meses después— es el que crea un caso irrebatible, y exige pactar el acceso al dato al firmar el contrato.</p>
+      <span class="out">SALE → <b>dato defendible</b>, no un parte de actividad</span>
+    </article>
+
+    <article class="station" tabindex="0" data-n="5" style="--st:var(--s5)">
+      <div class="top"><span class="n">5</span><h3>Devolución</h3><span class="eu">Itzulketa</span></div>
+      <p>Un informe que el técnico pueda reenviar sin tocar una coma: resumen de una página, dos gráficos copiables, justificación adjuntable. Y una página de recomendaciones para el año siguiente, donde nace sin venderla la campaña próxima.</p>
+      <span class="out">SALE → <b>informe presentable + certificado de buena ejecución</b>, pedido en la reunión de cierre</span>
+    </article>
+
+    <article class="station" tabindex="0" data-n="6" style="--st:var(--s6)">
+      <div class="top"><span class="n">6</span><h3>Prescripción</h3><span class="eu">Gomendioa</span></div>
+      <p>Caso publicado, y después circulación institucional: que la experiencia la cuente el técnico en su grupo de trabajo, no INGURA. Un proveedor que se elogia a sí mismo vale cero; un técnico que elogia a su proveedor ante quince colegas vale una campaña.</p>
+      <span class="out">SALE → <b>autoridad que vuelve a la estación 1</b> como señal del radar</span>
+    </article>
+  </div>
+</section>
+
+<!-- ============ ACTIVOS ============ -->
+<section class="wrap">
+  <span class="eyebrow">Los cuatro activos</span>
+  <h2>Lo que cada vuelta deposita</h2>
+  <p class="dek" style="margin-top:.9rem">El loop no gira en el vacío: cada vuelta deja algo que la siguiente puede gastar. Estos cuatro son la definición operativa de «empresa de referencia».</p>
+
+  <div class="scroll">
+    <table>
+      <caption>Si al cerrar una campaña no ha crecido ninguno de los cuatro, el loop ha girado en falso: ha sido facturación, no construcción.</caption>
+      <thead>
+        <tr><th class="mono">#</th><th>Activo</th><th>Qué es en la práctica</th><th>Efecto en la vuelta siguiente</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono">A1</td><td><strong>Datos</strong></td>
+          <td>Base propia de impacto por municipio y por taller: participantes, perfil, idioma de atención, cambio declarado, coste por persona alcanzada.</td>
+          <td>Permite <strong>prometer cifras</strong> en la propuesta en vez de adjetivos. Sube la tasa de adjudicación.</td>
+        </tr>
+        <tr>
+          <td class="mono">A2</td><td><strong>Casos</strong></td>
+          <td>Referencias documentadas: contexto, intervención, resultado, cita del técnico, fotografía con consentimiento.</td>
+          <td>Es la prueba que el técnico enseña a su concejalía. Acorta el ciclo de decisión.</td>
+        </tr>
+        <tr>
+          <td class="mono">A3</td><td><strong>Prescriptores</strong></td>
+          <td>Personas técnicas que recomiendan a INGURA sin que se les pida.</td>
+          <td>Abre municipios donde no hay puerta. Coste de captación próximo a cero.</td>
+        </tr>
+        <tr>
+          <td class="mono">A4</td><td><strong>Encaje</strong></td>
+          <td>Memoria técnica base, certificados de buena ejecución, solvencia acreditada, mapeo con ODS y convocatorias.</td>
+          <td>Reduce de días a horas preparar una licitación. Permite competir donde otros no llegan.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ VELOCIDADES ============ -->
+<section class="wrap">
+  <span class="eyebrow">Tres velocidades</span>
+  <h2>El loop gira a tres ritmos a la vez</h2>
+  <p class="dek" style="margin-top:.9rem">Confundirlos es el error clásico: gestionar la campaña como si fuera la estrategia, o revisar la posición institucional con la frecuencia de una obra en curso.</p>
+
+  <div class="speeds">
+    <div class="speed">
+      <div class="bar" style="background:var(--s3)"></div>
+      <span class="len">6 – 14 SEMANAS</span>
+      <h3>Loop rápido</h3>
+      <p class="q">¿Ha funcionado esta campaña?</p>
+      <dl>
+        <dt>Unidad</dt><dd>Una campaña</dd>
+        <dt>Salida</dt><dd>Informe final y certificado de buena ejecución</dd>
+        <dt>Si falla</dt><dd>Cliente insatisfecho</dd>
+      </dl>
+    </div>
+    <div class="speed">
+      <div class="bar" style="background:var(--s4)"></div>
+      <span class="len">TRIMESTRAL</span>
+      <h3>Loop medio</h3>
+      <p class="q">¿Está bien dimensionada la oferta?</p>
+      <dl>
+        <dt>Unidad</dt><dd>Un trimestre</dd>
+        <dt>Salida</dt><dd>Ajuste de catálogo, precios y capacidad</dd>
+        <dt>Si falla</dt><dd>Márgenes erosionados</dd>
+      </dl>
+    </div>
+    <div class="speed">
+      <div class="bar" style="background:var(--s6)"></div>
+      <span class="len">CURSO INSTITUCIONAL · SEP – JUL</span>
+      <h3>Loop largo</h3>
+      <p class="q">¿Es INGURA más referencia que hace un año?</p>
+      <dl>
+        <dt>Unidad</dt><dd>Un curso completo</dd>
+        <dt>Salida</dt><dd>Memoria de impacto pública</dd>
+        <dt>Si falla</dt><dd>Irrelevancia lenta</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AÑO ============ -->
+<section class="wrap">
+  <span class="eyebrow">El año institucional</span>
+  <h2>El loop no elige cuándo gira</h2>
+  <p class="dek" style="margin-top:.9rem">El sector no compra cuando INGURA quiere vender: compra cuando su calendario se lo permite. La estación dominante de cada mes viene dada.</p>
+
+  <div class="year">
+    <div class="mo"><span class="m">SEP</span><span class="st" style="color:var(--s3)">3</span><div class="swatch" style="background:var(--s3)"></div></div>
+    <div class="mo"><span class="m">OCT</span><span class="st" style="color:var(--s3)">3</span><div class="swatch" style="background:var(--s3)"></div></div>
+    <div class="mo peak"><span class="m">NOV</span><span class="st" style="color:var(--s3)">3</span><div class="swatch" style="background:var(--s3)"></div></div>
+    <div class="mo"><span class="m">DIC</span><span class="st" style="color:var(--s5)">4·5</span><div class="swatch" style="background:linear-gradient(90deg,var(--s4) 50%,var(--s5) 50%)"></div></div>
+    <div class="mo win"><span class="m">ENE</span><span class="st" style="color:var(--s2)">1·2</span><div class="swatch" style="background:linear-gradient(90deg,var(--s1) 50%,var(--s2) 50%)"></div></div>
+    <div class="mo win"><span class="m">FEB</span><span class="st" style="color:var(--s2)">1·2</span><div class="swatch" style="background:linear-gradient(90deg,var(--s1) 50%,var(--s2) 50%)"></div></div>
+    <div class="mo"><span class="m">MAR</span><span class="st" style="color:var(--s2)">2·3</span><div class="swatch" style="background:linear-gradient(90deg,var(--s2) 50%,var(--s3) 50%)"></div></div>
+    <div class="mo"><span class="m">ABR</span><span class="st" style="color:var(--s3)">3</span><div class="swatch" style="background:var(--s3)"></div></div>
+    <div class="mo"><span class="m">MAY</span><span class="st" style="color:var(--s3)">3</span><div class="swatch" style="background:var(--s3)"></div></div>
+    <div class="mo"><span class="m">JUN</span><span class="st" style="color:var(--s4)">3·4</span><div class="swatch" style="background:linear-gradient(90deg,var(--s3) 50%,var(--s4) 50%)"></div></div>
+    <div class="mo"><span class="m">JUL</span><span class="st" style="color:var(--s6)">5·6</span><div class="swatch" style="background:linear-gradient(90deg,var(--s5) 50%,var(--s6) 50%)"></div></div>
+    <div class="mo"><span class="m">AGO</span><span class="st" style="color:var(--s6)">6</span><div class="swatch" style="background:var(--s6)"></div></div>
+  </div>
+  <p class="year-key">
+    <span><i style="background:var(--menta); border:1px solid var(--verde)"></i>Ventana de presupuesto: aquí se decide el año</span>
+    <span><i style="background:var(--surface-2); border:1px solid var(--line-strong)"></i>Noviembre: Asteklima y Semana de Prevención de Residuos</span>
+  </p>
+
+  <p class="jan"><b>La regla de enero</b>Si en enero y febrero INGURA está ejecutando en lugar de proponer, el año siguiente será peor que el actual. La capacidad de esos dos meses debe estar protegida para la estación 2.</p>
+</section>
+
+<!-- ============ SALUD ============ -->
+<section class="wrap">
+  <span class="eyebrow">Cómo se sabe que gira</span>
+  <h2>Tres indicadores, medidos año contra año</h2>
+  <p class="dek" style="margin-top:.9rem">Si los tres suben, INGURA se está convirtiendo en referencia. Si sube la facturación y estos tres no se mueven, INGURA está trabajando mucho y construyendo poco.</p>
+
+  <div class="health">
+    <div class="h">
+      <span class="metric">≥ 60 %</span>
+      <span class="label">Tasa de repetición institucional</span>
+      <span class="t">Instituciones que contratan un segundo año o más. Mide si las estaciones 4 y 5 están haciendo su trabajo.</span>
+    </div>
+    <div class="h">
+      <span class="metric">≥ 50 %</span>
+      <span class="label">Demanda no fría</span>
+      <span class="t">Oportunidades llegadas por prescripción, convocatoria o entrada espontánea, y no por prospección fría. Mide la estación 6.</span>
+    </div>
+    <div class="h">
+      <span class="metric">≥ 4</span>
+      <span class="label">Casos publicables al año</span>
+      <span class="t">Campañas con evidencia de nivel 3 o superior y permiso de publicación. Es el activo A2 creciendo.</span>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <table>
+      <caption>Cuando el negocio no va bien, el tablero dice en qué estación se ha roto el loop.</caption>
+      <thead><tr><th>Síntoma</th><th class="mono">Estación</th><th>Qué revisar</th></tr></thead>
+      <tbody>
+        <tr><td>No entran oportunidades</td><td><span class="tag">1 Escucha</span></td><td>¿Está el radar activo? ¿La cartera actualizada? ¿Se prospectó en el mes equivocado?</td></tr>
+        <tr><td>Entran pero no se convierten</td><td><span class="tag">2 Propuesta</span></td><td>¿Falta la capa justificativa? ¿Se propone al cliente equivocado? ¿El precio está mal explicado?</td></tr>
+        <tr><td>Se gana pero el cliente no queda satisfecho</td><td><span class="tag">3 Ejecución</span></td><td>¿Falta kit cerrado? ¿Exceso de improvisación? ¿Capacidad sobrepasada?</td></tr>
+        <tr><td>Cliente satisfecho pero no repite</td><td><span class="tag">4 · 5</span></td><td><strong>La causa más frecuente.</strong> No se le dio nada con lo que justificarse, ni motivo para volver.</td></tr>
+        <tr><td>Repite pero no llegan clientes nuevos</td><td><span class="tag">6 Prescripción</span></td><td>No se publican casos ni se pide recomendación. El loop gira, pero no se amplía.</td></tr>
+        <tr><td>Crece la facturación y no los activos</td><td><span class="tag">todo</span></td><td>Se está vendiendo, no construyendo. Revisar los cuatro activos.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ REGLAS ============ -->
+<section class="wrap">
+  <span class="eyebrow">Irrenunciable</span>
+  <h2>Si todo lo demás se abandona</h2>
+  <p class="dek" style="margin-top:.9rem">Cuatro gestos sostienen el loop por sí solos. Ninguno cuesta dinero y los cuatro se olvidan con facilidad.</p>
+
+  <ol class="rules">
+    <li><div><b>La hoja de sesión se rellena durante la sesión.</b> <span>Reconstruida a posteriori no es evidencia, es memoria.</span></div></li>
+    <li><div><b>El certificado de buena ejecución se pide en la reunión de cierre.</b> <span>Mientras la satisfacción está caliente. Pedirlo seis meses después es perderlo.</span></div></li>
+    <li><div><b>Enero y febrero se protegen para proponer.</b> <span>No se llenan de ejecución. Es el trabajo comercial que se cobra el resto del año.</span></div></li>
+    <li><div><b>Ninguna campaña se cierra sin informe presentable entregado.</b> <span>Sin él la campaña ha sido facturación, no construcción.</span></div></li>
+  </ol>
+</section>
+
+<footer class="wrap">
+  <span>INGURA · Palatueta bidea 25C, 48600 Sopela (Bizkaia)</span>
+  <span>Documento interno de operaciones</span>
+  <span>Detalle completo en <code>loop/LOOP-MAESTRO.md</code></span>
+</footer>
+
+<script>
+// Resaltar el nodo del anillo al recorrer las estaciones.
+const nodes = new Map([...document.querySelectorAll('.ring .node')].map(n => [n.dataset.n, n]));
+document.querySelectorAll('.station').forEach(card => {
+  const node = nodes.get(card.dataset.n);
+  if (!node) return;
+  const on  = () => node.classList.add('on');
+  const off = () => node.classList.remove('on');
+  card.addEventListener('mouseenter', on);
+  card.addEventListener('mouseleave', off);
+  card.addEventListener('focus', on);
+  card.addEventListener('blur', off);
+});
+</script>
