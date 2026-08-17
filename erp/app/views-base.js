@@ -107,6 +107,29 @@
 
       c.appendChild(h('div.grid.g2', [colAvisos, colDeuda]));
 
+      /* --- 3b · resumen del circuito comercial ---------------------------- */
+      var fin = M.finanzas();
+      c.appendChild(h('div.card', [
+        h('div.card-head', [
+          h('div', [
+            h('h2', 'Dinero'),
+            h('div.hint', 'Ejercicio ' + fin.anio + '. El detalle está en Facturas, Tesorería y Balance.')
+          ]),
+          h('span.sp', h('button.btn.sm', { onclick: function () { NS.ir('balance'); } }, 'Ver balance'))
+        ]),
+        h('div.grid.g4', [
+          NS.tile({ lbl: 'Facturado', num: fmt.eur(Math.round(fin.ingresos)).replace(' €', ''), unidad: '€',
+                    foot: 'base imponible del ejercicio' }),
+          NS.tile({ lbl: 'Pendiente de cobro', num: fmt.eur(Math.round(fin.pendiente)).replace(' €', ''), unidad: '€',
+                    flag: fin.vencidas.length > 0,
+                    foot: fin.vencidas.length ? fin.vencidas.length + ' facturas fuera de plazo legal' : 'todo en plazo' }),
+          NS.tile({ lbl: 'Sin registrar', num: fin.atascadas.length, flag: fin.atascadas.length > 0,
+                    foot: 'el reloj de pago ni siquiera ha arrancado' }),
+          NS.tile({ lbl: 'Resultado', num: fmt.eur(Math.round(fin.resultado)).replace(' €', ''), unidad: '€',
+                    flag: fin.resultado < 0, foot: 'ingresos − gastos, antes de impuestos' })
+        ])
+      ]));
+
       /* --- 4 · los cuatro activos ----------------------------------------- */
       c.appendChild(h('div.card', [
         h('h2', 'Los cuatro activos'),
@@ -493,8 +516,18 @@
       ]));
 
       c.appendChild(h('div.card', [
-        h('h2', 'Ejercicio'),
-        campo('Año en curso', input('text', String(st.ejercicio), function (v) { st.ejercicio = Number(v) || st.ejercicio; NS.store.save(); }))
+        h('h2', 'Ejercicio y parámetros financieros'),
+        campo('Año en curso', input('text', String(st.ejercicio), function (v) {
+          st.ejercicio = Number(v) || st.ejercicio; NS.store.save(); NS.repintar();
+        })),
+        campo('Tesorería inicial del ejercicio (€)', input('number', String(st.tesoreriaInicial), function (v) {
+          st.tesoreriaInicial = Number(v) || 0; NS.store.save();
+        })),
+        campo('Tipo de interés del BCE (%)', input('number', String(st.tipoBCE), function (v) {
+          st.tipoBCE = Number(v) || 0; NS.store.save();
+        })),
+        h('div.hint', 'El interés de demora es el tipo del BCE más ' + NS.seed.legal.interesDemoraPuntos +
+                      ' puntos (Ley 3/2004). El BCE publica su tipo cada semestre: actualízalo aquí.')
       ]));
 
       c.appendChild(h('div.card', [

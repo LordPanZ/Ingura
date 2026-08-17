@@ -38,10 +38,36 @@ window.INGURA = window.INGURA || {};
       campanas:      s.demo.campanas.slice(),
       casos:         s.demo.casos.slice(),
       prescriptores: s.demo.prescriptores.slice(),
+      // circuito comercial y financiero
+      ofertas:       s.demo.ofertas.slice(),
+      pedidos:       s.demo.pedidos.slice(),
+      facturas:      s.demo.facturas.slice(),
+      gastos:        s.demo.gastos.slice(),
       cumplimiento:  s.cumplimiento.map(function (c) { return Object.assign({}, c); }),
       checklists: {},
-      presupuestos: {}
+      presupuestos: {},
+      tipoBCE: s.legal.tipoBCE,
+      tesoreriaInicial: 0
     };
+  }
+
+  /** Colecciones que deben existir siempre, aunque el estado guardado sea
+      anterior a que se añadiera el circuito comercial. */
+  var COLECCIONES = ['instituciones', 'oportunidades', 'propuestas', 'campanas', 'casos',
+                     'prescriptores', 'ofertas', 'pedidos', 'facturas', 'gastos', 'cumplimiento'];
+
+  function normalizar(st) {
+    var base = null;
+    COLECCIONES.forEach(function (k) {
+      if (Array.isArray(st[k])) return;
+      base = base || estadoInicial();
+      st[k] = base[k];
+    });
+    if (!st.checklists) st.checklists = {};
+    if (!st.presupuestos) st.presupuestos = {};
+    if (st.tipoBCE === undefined) st.tipoBCE = NS.seed.legal.tipoBCE;
+    if (st.tesoreriaInicial === undefined) st.tesoreriaInicial = 0;
+    return st;
   }
 
   var state = null;
@@ -51,7 +77,7 @@ window.INGURA = window.INGURA || {};
       if (state) return state;
       try {
         var raw = localStorage.getItem(KEY);
-        state = raw ? JSON.parse(raw) : estadoInicial();
+        state = normalizar(raw ? JSON.parse(raw) : estadoInicial());
       } catch (e) { state = estadoInicial(); }
       return state;
     },
@@ -69,12 +95,17 @@ window.INGURA = window.INGURA || {};
       st.campanas      = st.campanas.filter(noDemo);
       st.casos         = st.casos.filter(noDemo);
       st.prescriptores = st.prescriptores.filter(noDemo);
+      st.ofertas       = st.ofertas.filter(noDemo);
+      st.pedidos       = st.pedidos.filter(noDemo);
+      st.facturas      = st.facturas.filter(noDemo);
+      st.gastos        = st.gastos.filter(noDemo);
       st.demo = false;
       NS.store.save();
     },
     hayDemo: function () {
       var st = NS.store.get();
-      return [].concat(st.oportunidades, st.propuestas, st.campanas, st.casos, st.prescriptores)
+      return [].concat(st.oportunidades, st.propuestas, st.campanas, st.casos, st.prescriptores,
+                       st.ofertas, st.pedidos, st.facturas, st.gastos)
                .some(function (x) { return x && x.demo; });
     }
   };
@@ -89,9 +120,12 @@ window.INGURA = window.INGURA || {};
     eu: {
       panel: 'Panela', cartera: 'Zorroa', radar: 'Radarra', propuestas: 'Proposamenak',
       campanas: 'Kanpainak', evidencia: 'Frogak', devolucion: 'Itzulketa', casos: 'Kasuak',
-      catalogo: 'Katalogoa', economico: 'Ekonomia', cumplimiento: 'Betetzea',
+      catalogo: 'Katalogoa', economico: 'Marjinak', cumplimiento: 'Betetzea',
       calendario: 'Egutegia', ajustes: 'Ezarpenak',
-      g_general: 'Orokorra', g_loop: 'Loop nagusia', g_base: 'Oinarria', g_control: 'Kontrola',
+      ofertas: 'Eskaintzak', pedidos: 'Enkarguak', facturas: 'Fakturak',
+      tesoreria: 'Diruzaintza', gastos: 'Gastuak', balance: 'Balantzea',
+      g_general: 'Orokorra', g_loop: 'Loop nagusia', g_comercial: 'Merkataritza',
+      g_finanzas: 'Finantzak', g_base: 'Oinarria', g_control: 'Kontrola',
       buscar: 'Bilatu', todos: 'Denak', nuevo: 'Berria', guardar: 'Gorde', cerrar: 'Itxi',
       institucion: 'Erakundea', estado: 'Egoera', prioridad: 'Lehentasuna', escalon: 'Maila',
       importe: 'Zenbatekoa', fecha: 'Data', total: 'Guztira', ninguno: 'Bat ere ez',
@@ -100,9 +134,12 @@ window.INGURA = window.INGURA || {};
     es: {
       panel: 'Panel', cartera: 'Cartera', radar: 'Radar', propuestas: 'Propuestas',
       campanas: 'Campañas', evidencia: 'Evidencia', devolucion: 'Devolución', casos: 'Casos',
-      catalogo: 'Catálogo', economico: 'Económico', cumplimiento: 'Cumplimiento',
+      catalogo: 'Catálogo', economico: 'Márgenes', cumplimiento: 'Cumplimiento',
       calendario: 'Calendario', ajustes: 'Ajustes',
-      g_general: 'General', g_loop: 'El loop maestro', g_base: 'Base', g_control: 'Control',
+      ofertas: 'Ofertas', pedidos: 'Pedidos', facturas: 'Facturas',
+      tesoreria: 'Tesorería', gastos: 'Gastos', balance: 'Balance',
+      g_general: 'General', g_loop: 'El loop maestro', g_comercial: 'Comercial',
+      g_finanzas: 'Finanzas', g_base: 'Base', g_control: 'Control',
       buscar: 'Buscar', todos: 'Todos', nuevo: 'Nuevo', guardar: 'Guardar', cerrar: 'Cerrar',
       institucion: 'Institución', estado: 'Estado', prioridad: 'Prioridad', escalon: 'Escalón',
       importe: 'Importe', fecha: 'Fecha', total: 'Total', ninguno: 'Ninguno',
@@ -390,6 +427,166 @@ window.INGURA = window.INGURA || {};
   };
 
   /* ======================================================================
+     4b · CIRCUITO COMERCIAL Y FINANCIERO
+     ==================================================================== */
+
+  /** Base, IVA y total de un documento con líneas o con base directa. */
+  M.importes = function (doc) {
+    if (doc.lineas && doc.lineas.length) {
+      var base = 0, iva = 0;
+      doc.lineas.forEach(function (l) {
+        var b = (Number(l.cant) || 0) * (Number(l.precio) || 0);
+        base += b; iva += b * (Number(l.iva) || 0) / 100;
+      });
+      return { base: base, iva: iva, total: base + iva };
+    }
+    var b2 = Number(doc.base) || 0;
+    var i2 = b2 * (Number(doc.iva) || 0) / 100;
+    return { base: b2, iva: i2, total: b2 + i2 };
+  };
+
+  /**
+   * Estado real de una factura ante una administración.
+   * El reloj legal (Ley 9/2017 art. 198.4: 30 días para conformar + 30 para
+   * pagar) sólo arranca con el REGISTRO. Una factura emitida pero no
+   * registrada no está «pendiente de cobro»: está parada, y es culpa nuestra.
+   */
+  M.factura = function (f) {
+    var L = NS.seed.legal, imp = M.importes(f);
+    var venc = null, arrancado = !!f.fechaRegistro;
+
+    if (f.fechaConformidad) venc = sumarDias(f.fechaConformidad, L.plazoPago);
+    else if (f.fechaRegistro) venc = sumarDias(f.fechaRegistro, L.plazoConformidad + L.plazoPago);
+
+    var cobrada = f.estado === 'cobrada' && f.fechaCobro;
+    var retraso = 0, interes = 0;
+    if (venc && !cobrada) {
+      retraso = Math.max(0, NS.dias(venc));
+    } else if (venc && cobrada) {
+      retraso = Math.max(0, Math.round((new Date(f.fechaCobro + 'T00:00:00') - new Date(venc + 'T00:00:00')) / 86400000));
+    }
+    if (retraso > 0) {
+      var tipo = (Number(NS.store.get().tipoBCE) || 0) + L.interesDemoraPuntos;
+      interes = imp.total * (tipo / 100) * (retraso / 365);
+    }
+
+    var diasCobro = cobrada
+      ? Math.round((new Date(f.fechaCobro + 'T00:00:00') - new Date(f.fecha + 'T00:00:00')) / 86400000)
+      : null;
+
+    return {
+      base: imp.base, iva: imp.iva, total: imp.total,
+      vencimiento: venc, arrancado: arrancado, cobrada: !!cobrada,
+      retraso: retraso, interes: interes, diasCobro: diasCobro,
+      // el fallo característico: emitida hace tiempo y nunca registrada
+      atascada: !arrancado && f.estado !== 'cobrada' && NS.dias(f.fecha) > 15,
+      diasSinRegistrar: !arrancado ? NS.dias(f.fecha) : 0
+    };
+  };
+
+  function sumarDias(fecha, n) {
+    var d = new Date(fecha + 'T00:00:00');
+    d.setDate(d.getDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+  NS.sumarDias = sumarDias;
+
+  /** Trimestre natural (1-4) de una fecha ISO. */
+  function trimestre(f) { return Math.floor(new Date(f + 'T00:00:00').getMonth() / 3) + 1; }
+  NS.trimestre = trimestre;
+
+  /**
+   * Dos naturalezas distintas, y confundirlas es lo que hace mentir a un
+   * cuadro de mando:
+   *   · FLUJOS  (ingresos, gastos, IVA, estacionalidad) → del ejercicio.
+   *   · SALDOS  (pendiente, vencido, sin registrar)     → a fecha de hoy,
+   *     vengan del año que vengan. Una factura de hace dos años sin cobrar
+   *     sigue siendo dinero que falta.
+   */
+  M.finanzas = function (ejercicio) {
+    var st = NS.store.get();
+    var anio = String(ejercicio || st.ejercicio);
+    var delAnio = function (x) { return x.fecha && x.fecha.slice(0, 4) === anio; };
+    var vigente = function (f) { return f.estado !== 'rechazada'; };
+
+    var facturas = st.facturas.filter(delAnio);
+    var gastos   = st.gastos.filter(delAnio);
+
+    /* --- flujos del ejercicio --- */
+    var ingresos = 0, ivaRep = 0;
+    var porCliente = {}, porTrim = [0, 0, 0, 0], recurrente = 0;
+
+    facturas.filter(vigente).forEach(function (f) {
+      var d = M.factura(f);
+      ingresos += d.base; ivaRep += d.iva;
+      porCliente[f.institucion] = (porCliente[f.institucion] || 0) + d.base;
+      porTrim[trimestre(f.fecha) - 1] += d.base;
+      var ped = st.pedidos.find(function (p) { return p.id === f.pedido; });
+      if (ped && ped.recurrente) recurrente += d.base;
+    });
+
+    /* --- saldos a fecha, sobre TODAS las facturas --- */
+    var cobrado = 0, pendiente = 0, interesTotal = 0, diasCobro = [];
+    var atascadas = [], sinConformar = [], vencidas = [];
+    var aging = { d0: 0, d30: 0, d60: 0, d90: 0 };   // en plazo / 1-30 / 31-60 / +60
+
+    st.facturas.filter(vigente).forEach(function (f) {
+      var d = M.factura(f);
+      if (d.cobrada) {
+        cobrado += d.total;
+        if (d.diasCobro !== null) diasCobro.push(d.diasCobro);
+        return;
+      }
+      pendiente += d.total;
+      interesTotal += d.interes;
+      if (d.atascada) atascadas.push(f);
+      else if (d.arrancado && !f.fechaConformidad) sinConformar.push(f);
+      if (d.retraso > 0) {
+        vencidas.push(f);
+        if (d.retraso <= 30) aging.d30 += d.total;
+        else if (d.retraso <= 60) aging.d60 += d.total;
+        else aging.d90 += d.total;
+      } else aging.d0 += d.total;
+    });
+
+    /* --- gastos: flujo del ejercicio + saldo pendiente global --- */
+    var gastoTotal = 0, ivaSop = 0, porCategoria = {};
+    gastos.forEach(function (g) {
+      var d = M.importes(g);
+      gastoTotal += d.base; ivaSop += d.iva;
+      porCategoria[g.categoria] = (porCategoria[g.categoria] || 0) + d.base;
+    });
+    var gastoPendiente = st.gastos.filter(function (g) { return !g.pagado; })
+      .reduce(function (s, g) { return s + M.importes(g).total; }, 0);
+    var pagadoTotal = st.gastos.filter(function (g) { return g.pagado; })
+      .reduce(function (s, g) { return s + M.importes(g).total; }, 0);
+
+    var picos = porTrim.filter(function (v) { return v > 0; });
+    var mayor = Object.keys(porCliente).reduce(function (m, k) {
+      return porCliente[k] > (porCliente[m] || 0) ? k : m;
+    }, Object.keys(porCliente)[0]);
+
+    return {
+      anio: anio,
+      ingresos: ingresos, gastos: gastoTotal, resultado: ingresos - gastoTotal,
+      margen: ingresos ? ((ingresos - gastoTotal) / ingresos) * 100 : 0,
+      ivaRepercutido: ivaRep, ivaSoportado: ivaSop, ivaLiquidar: ivaRep - ivaSop,
+      cobrado: cobrado, pendiente: pendiente, gastoPendiente: gastoPendiente,
+      interesDemora: interesTotal,
+      atascadas: atascadas, sinConformar: sinConformar, vencidas: vencidas,
+      aging: aging,
+      porCliente: porCliente, porCategoria: porCategoria, porTrimestre: porTrim,
+      mayorCliente: mayor || '—',
+      concentracion: ingresos ? ((porCliente[mayor] || 0) / ingresos) * 100 : 0,
+      recurrente: ingresos ? (recurrente / ingresos) * 100 : 0,
+      diasMediosCobro: diasCobro.length
+        ? diasCobro.reduce(function (a, b) { return a + b; }, 0) / diasCobro.length : null,
+      estacionalidad: picos.length > 1 ? Math.max.apply(null, picos) / Math.min.apply(null, picos) : null,
+      tesoreria: (Number(st.tesoreriaInicial) || 0) + cobrado - pagadoTotal
+    };
+  };
+
+  /* ======================================================================
      5 · ROUTER
      ==================================================================== */
 
@@ -497,11 +694,13 @@ window.INGURA = window.INGURA || {};
   };
 
   var GRUPOS = [
-    { t: 'g_general', items: [['panel', ''], ['calendario', '']] },
-    { t: 'g_loop',    items: [['radar', '①'], ['propuestas', '②'], ['campanas', '③'],
-                              ['evidencia', '④'], ['devolucion', '⑤'], ['casos', '⑥']] },
-    { t: 'g_base',    items: [['cartera', ''], ['catalogo', '']] },
-    { t: 'g_control', items: [['economico', ''], ['cumplimiento', ''], ['ajustes', '']] }
+    { t: 'g_general',  items: [['panel', ''], ['calendario', '']] },
+    { t: 'g_loop',     items: [['radar', '①'], ['propuestas', '②'], ['campanas', '③'],
+                               ['evidencia', '④'], ['devolucion', '⑤'], ['casos', '⑥']] },
+    { t: 'g_comercial',items: [['ofertas', ''], ['pedidos', ''], ['facturas', ''], ['tesoreria', '']] },
+    { t: 'g_finanzas', items: [['gastos', ''], ['balance', ''], ['economico', '']] },
+    { t: 'g_base',     items: [['cartera', ''], ['catalogo', '']] },
+    { t: 'g_control',  items: [['cumplimiento', ''], ['ajustes', '']] }
   ];
 
   function construirNav() {

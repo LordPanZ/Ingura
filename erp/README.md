@@ -19,16 +19,25 @@ ERP y adaptándola a la realidad de INGURA: se ha descartado todo lo que una
 empresa de siete líneas de servicio al sector público no necesita, y se ha
 añadido lo que ningún ERP de catálogo trae.
 
+Lleva el circuito comercial completo —oferta, pedido, factura, cobro, gasto,
+resultado— y encima la capa que ningún ERP de catálogo trae.
+
 | Descartado de un ERP genérico | Por qué |
 |---|---|
 | Inventario y almacén | El equipamiento son cuatro elementos: módulo, extrusora, trituradora y compostadoras. Van en Cumplimiento, con su ficha de riesgo. |
 | Nóminas y RRHH | Plantilla mínima + red de colaboradores. Lo que importa de una persona aquí es su certificación de menores y su perfil lingüístico: eso está en Cumplimiento. |
-| Fabricación y compras | No hay producción seriada. Los consumibles son una línea del presupuestador. |
-| Contabilidad general | La lleva la asesoría. El ERP se queda con lo que decide precios: márgenes, tesorería y concentración. |
+| Fabricación y escandallos | No hay producción seriada. Los consumibles son una línea de gasto imputada a campaña. |
+| Contabilidad por partida doble | El ERP da cifras de gestión —resultado, IVA, posición— para decidir precios y tesorería sin esperar al cierre. Las cuentas anuales las sigue formulando la asesoría. |
 | Multi-empresa y multi-divisa | Una empresa, un territorio, un idioma prioritario. |
 
 | Añadido, propio de INGURA | Dónde |
 |---|---|
+| Aviso al pasar de 15.000 €: deja de caber en contrato menor y exige licitación | Ofertas · Pedidos |
+| Códigos DIR3 (oficina contable, órgano gestor, unidad tramitadora) como campo del pedido, no de la factura | Pedidos |
+| El camino real de una factura pública: emitida → registrada → conformada → cobrada | Facturas |
+| Vencimiento legal contado desde el REGISTRO (30 + 30 días), con alerta de factura emitida y nunca registrada | Facturas · Tesorería |
+| Interés de demora devengado (tipo BCE + 8 puntos, Ley 3/2004) | Tesorería |
+| Margen real por campaña: facturado menos gasto imputado | Balance |
 | Las seis estaciones como columna vertebral de la navegación | Menú lateral |
 | Deuda de loop calculada sola | Panel · Devolución |
 | Recordatorios automáticos desde la fecha de cierre (+7, +14, +90, +300 días) | Panel · Calendario |
@@ -58,15 +67,49 @@ EL LOOP MAESTRO
   ⑤ Devolución   informes, reuniones de cierre y certificados de buena ejecución
   ⑥ Casos        biblioteca publicable y prescriptores
 
+COMERCIAL
+  Ofertas        presupuesto económico con líneas, IVA y validez
+  Pedidos        encargo o contrato · tipo · expediente · DIR3 · hitos de facturación
+  Facturas       camino emitida → registrada → conformada → cobrada · vencimiento legal
+  Tesorería      antigüedad de la deuda · intereses de demora · estacionalidad real
+
+FINANZAS
+  Gastos         proveedores · categoría · imputación a campaña
+  Balance        cuenta de resultados · IVA · situación · margen real por campaña
+  Márgenes       presupuestador de los 7 componentes · palancas · salud económica
+
 BASE
   Cartera        56 instituciones · estado · escalón · prescriptor · diagnóstico municipal
   Catálogo       7 líneas · 7 talleres · reglas de combinación · escalera comercial
 
 CONTROL
-  Económico      salud económica · presupuestador · palancas de margen · tesorería
   Cumplimiento   semáforo de vigencias · riesgos por taller · RGPD · euskera
-  Ajustes        exportar / importar JSON · vaciar demo · restaurar semilla
+  Ajustes        exportar / importar JSON · tesorería inicial · tipo BCE · vaciar demo
 ```
+
+## La cadena documental
+
+```
+Propuesta técnica → OFERTA → PEDIDO → FACTURA(s) por hitos → COBRO
+   estación ②       con IVA   contrato    30 % / 40 % / 30 %    con su
+                              expediente                        vencimiento
+                              DIR3                              legal
+```
+
+Cada documento nace del anterior: ninguno se teclea dos veces. Una oferta
+aceptada genera el pedido con sus hitos; cada hito genera su factura con la
+parte proporcional ya calculada.
+
+**El eslabón que falla en este sector no es el pago: es el registro.** El plazo
+legal de 30 + 30 días (Ley 9/2017, art. 198.4) no cuenta desde que emites, sino
+desde que registras en el punto electrónico correcto con los DIR3 correctos. Por
+eso el ERP calcula el vencimiento desde la fecha de registro, marca en rojo las
+facturas emitidas y nunca registradas, y sólo devenga intereses de demora cuando
+el reloj ha arrancado de verdad.
+
+> ⚠️ El bloque `legal` de `data/seed-comercial.js` reúne umbrales y plazos de uso
+> corriente para poder cambiarlos en un solo sitio. No sustituye al asesoramiento
+> fiscal ni jurídico, y el tipo del BCE se actualiza en Ajustes cada semestre.
 
 ---
 
@@ -92,14 +135,21 @@ CONTROL
 
 ```
 erp/
-  index.html            esqueleto y carga de scripts
-  assets/erp.css        paleta y tipografía heredadas de la landing
-  data/seed.js          catálogos fijos + cartera + bloque demo
-  app/core.js           estado, persistencia, i18n, helpers, router, métricas
-  app/views-base.js     Panel · Calendario · Cartera · Catálogo · Ajustes
-  app/views-loop.js     las seis estaciones
-  app/views-control.js  Económico · Cumplimiento
+  index.html              esqueleto y carga de scripts
+  assets/erp.css          paleta y tipografía heredadas de la landing
+  data/seed.js            catálogos fijos + cartera + bloque demo
+  data/seed-comercial.js  marco legal y fiscal + demo del circuito comercial
+  app/core.js             estado, persistencia, i18n, helpers, router, métricas
+  app/views-base.js       Panel · Calendario · Cartera · Catálogo · Ajustes
+  app/views-loop.js       las seis estaciones
+  app/views-comercial.js  Ofertas · Pedidos · Facturas · Tesorería · Gastos · Balance
+  app/views-control.js    Márgenes · Cumplimiento
 ```
+
+**Flujos y saldos no se mezclan.** Ingresos, gastos, IVA y estacionalidad son
+flujos del ejercicio. Pendiente de cobro, vencido, sin registrar y antigüedad de
+la deuda son saldos a fecha de hoy e incluyen documentos de cualquier año: una
+factura de hace dos años sin cobrar sigue siendo dinero que falta.
 
 Sin dependencias, sin `npm install`, sin paso de compilación. Los scripts se
 cargan en orden y se cuelgan del espacio de nombres `window.INGURA`.

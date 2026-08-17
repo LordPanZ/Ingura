@@ -77,18 +77,22 @@ plantillas/
   email-prospeccion.md                  estación ①→②
 
 erp/           El sistema en pantalla — aplicación web sin servidor
-  index.html                          ★ cuadro de mando operativo del loop
+  index.html                          ★ loop, circuito comercial y finanzas
   README.md                             qué módulos tiene y qué datos usa
 
 web/           Landing bilingüe + fotografía de campaña
 fuentes/       Catálogo comercial original
 ```
 
-El **ERP** es la capa ejecutable de este repositorio: las seis estaciones son la
-navegación, la deuda de loop se calcula sola, los recordatorios de `cadencias.md`
-se disparan desde la fecha de cierre de cada campaña y el semáforo de vigencias
-aplica la regla de los 60 días. Se abre con doble clic, guarda en el navegador y
-no necesita instalación. Ver [`erp/README.md`](erp/README.md).
+El **ERP** es la capa ejecutable de este repositorio. Lleva el circuito comercial
+completo —oferta, pedido, factura, cobro, gasto, resultado, IVA— con lo que la
+contratación pública exige de verdad: umbral del contrato menor, códigos DIR3,
+registro electrónico y el plazo legal de 30 + 30 días contado desde el registro.
+Y encima, la capa que ningún ERP trae: las seis estaciones como navegación, la
+deuda de loop calculada sola, los recordatorios de `cadencias.md` disparados
+desde la fecha de cierre y el semáforo de vigencias con la regla de los 60 días.
+Se abre con doble clic, guarda en el navegador y no necesita instalación.
+Ver [`erp/README.md`](erp/README.md).
 
 ---
 

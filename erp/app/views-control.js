@@ -12,25 +12,32 @@
      ==================================================================== */
   NS.vistas.economico = {
     eyebrow: 'Modelo económico · docs/09',
-    titulo: 'Económico',
+    titulo: 'Márgenes y salud económica',
     render: function (c) {
-      var st = NS.store.get(), e = M.economia();
+      var st = NS.store.get(), e = M.economia(), fin = M.finanzas();
 
-      /* --- salud económica ------------------------------------------------ */
+      /* --- salud económica --------------------------------------------------
+         Los indicadores de cobro, recurrencia y estacionalidad ya no dependen
+         de instrumentación externa: salen de las facturas y los pedidos. */
       var valores = {
-        concentracion: e.concentracion, recurrente: null, adjudicacion: e.adjudicacion,
-        cobro: null, estacional: null, nivel3: e.nivel3
+        concentracion: fin.ingresos ? fin.concentracion : null,
+        recurrente:    fin.ingresos ? fin.recurrente : null,
+        adjudicacion:  e.adjudicacion,
+        cobro:         fin.diasMediosCobro,
+        estacional:    fin.estacionalidad,
+        nivel3:        e.nivel3
       };
 
       c.appendChild(h('div.grid.g4', [
-        NS.tile({ lbl: 'Facturación registrada', num: fmt.eur(e.facturacion).replace(' €', ''), unidad: '€',
-                  foot: 'suma de campañas' }),
+        NS.tile({ lbl: 'Facturado ' + fin.anio, num: fmt.eur(Math.round(fin.ingresos)).replace(' €', ''), unidad: '€',
+                  foot: 'base imponible · ver Balance' }),
         NS.tile({ lbl: 'Ticket medio', num: fmt.eur(Math.round(e.ticket)).replace(' €', ''), unidad: '€',
                   foot: 'debe ser creciente' }),
-        NS.tile({ lbl: 'Concentración del mayor cliente', num: Math.round(e.concentracion), unidad: '%',
-                  meter: NS.meter(e.concentracion, 25, 100, 'menor', '', 'umbral < 25 %'),
-                  flag: e.concentracion > 25,
-                  foot: e.mayorCliente }),
+        NS.tile({ lbl: 'Concentración del mayor cliente', num: fin.ingresos ? Math.round(fin.concentracion) : '—',
+                  unidad: fin.ingresos ? '%' : '',
+                  meter: fin.ingresos ? NS.meter(fin.concentracion, 25, 100, 'menor', '', 'umbral < 25 %') : null,
+                  flag: fin.concentracion > 25,
+                  foot: fin.mayorCliente }),
         NS.tile({ lbl: 'Pipeline enviado', num: fmt.eur(e.pipeline).replace(' €', ''), unidad: '€',
                   foot: 'propuestas sin resolver' })
       ]));
