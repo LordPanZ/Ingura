@@ -77,22 +77,19 @@ plantillas/
   email-prospeccion.md                  estación ①→②
 
 erp/           El sistema en pantalla — aplicación web sin servidor
-  index.html                          ★ loop, circuito comercial y finanzas
-  README.md                             qué módulos tiene y qué datos usa
+  index.html                          ★ copia del ERP de Arima, rebautizada
+  README.md                             las 9 pestañas y qué falta adaptar
 
 web/           Landing bilingüe + fotografía de campaña
 fuentes/       Catálogo comercial original
 ```
 
-El **ERP** es la capa ejecutable de este repositorio. Lleva el circuito comercial
-completo —oferta, pedido, factura, cobro, gasto, resultado, IVA— con lo que la
-contratación pública exige de verdad: umbral del contrato menor, códigos DIR3,
-registro electrónico y el plazo legal de 30 + 30 días contado desde el registro.
-Y encima, la capa que ningún ERP trae: las seis estaciones como navegación, la
-deuda de loop calculada sola, los recordatorios de `cadencias.md` disparados
-desde la fecha de cierre y el semáforo de vigencias con la regla de los 60 días.
-Se abre con doble clic, guarda en el navegador y no necesita instalación.
-Ver [`erp/README.md`](erp/README.md).
+El **ERP** es una copia literal del sistema de gestión de Arima, rebautizada a
+INGURA: nueve pestañas —Oferta, Pedido, Producción, Facturación, Resumen, Datos,
+Pago Monitores, Calendario y Backup— con el flujo oferta → pedido → factura
+hilado por el número `EVT-####`. Multiusuario en tiempo real sobre Firestore, y
+modo demo local mientras no haya credenciales. Ver [`erp/README.md`](erp/README.md),
+que detalla qué se cambió del original y qué sigue siendo de Arima.
 
 ---
 

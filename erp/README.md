@@ -1,187 +1,105 @@
 # ERP de INGURA
 
-> El repositorio define el loop maestro. Este ERP lo hace girar: convierte los
-> documentos en pantallas donde se registra, se mide y se reclama.
+Copia literal del ERP de **Arima** (`Arima · Sistema de Gestión Integral`),
+rebautizada a INGURA. Un único fichero, `index.html`, sin build ni servidor.
 
-Aplicación web estática, sin build y sin servidor. Se abre haciendo doble clic en
-`index.html` o se despliega en Netlify arrastrando la carpeta.
+Origen: `arima gestión 1` (152 KB, 7 de junio de 2026), tomado del Drive de
+`arimacooltour@gmail.com`. El sitio de Netlify no era accesible desde este
+entorno, así que la fuente es el fichero original.
 
 ---
 
-## Qué es y qué no es
+## Las nueve pestañas
 
-**Es** el cuadro de mando operativo del loop: dice en qué estación está cada
-campaña, qué activo ha crecido este mes, qué vigencia caduca en 40 días y qué
-campaña cerrada sigue sin certificado de buena ejecución.
+| | Pestaña | Qué hace |
+|---|---|---|
+| 📋 | **Oferta** | Alta y edición de ofertas con nº correlativo `EVT-####`. Campos: fecha, pueblo, actividad, división, contacto y vía, fecha de entrega, presupuesto sin IVA, estado, días propuestos, horarios, nº de participantes (limitado o libre), edad, nº de turnos y duración. Buscador sobre todos los campos. |
+| 📦 | **Pedido** | Se crea **automáticamente** al confirmar una oferta. Los campos heredados quedan bloqueados. Añade monitores, nº de monitores, tipo de pago (A/B), sueldo por monitor, coche y sueldo de coche. |
+| 🛠️ | **Producción** | Se sube una lista de materiales en `.docx` y se convierte en checklist de compras pendientes. |
+| 💶 | **Facturación** | Pedidos convertidos en factura: tipo de cliente, referencia, IVA, base, cuota, total, fecha de envío, fecha de cobro y días transcurridos. |
+| 📊 | **Resumen** | Tabla analítica unificada con filtros por rango de fechas y de nº EVT, y exportación a Excel. |
+| 📈 | **Datos** | KPIs (pendiente de cobrar, facturación total, factura mayor y menor), facturación por meses, top 5 y bottom 5 de clientes, facturación por división y comparativa año contra año. |
+| 👥 | **Pago Monitores** | Deuda por monitor, importe saldado y pendiente, detalle de trabajos, gráfico mensual A vs B y envío del resumen por WhatsApp. |
+| 📅 | **Calendario** | Rejilla mensual con los pedidos confirmados, panel lateral con facturación del mes, pueblos más visitados, monitores más activos y reparto por división. Modal de detalle editable y sincronización con Google Calendar. |
+| 🔒 | **Backup** | Copia diaria automática en JSON, descarga manual y envío por email vía EmailJS. |
 
-**No es** un ERP genérico. Se ha construido copiando la estructura habitual de un
-ERP y adaptándola a la realidad de INGURA: se ha descartado todo lo que una
-empresa de siete líneas de servicio al sector público no necesita, y se ha
-añadido lo que ningún ERP de catálogo trae.
+**Flujo:** Oferta → (confirmar) → Pedido → Factura, con el nº `EVT-####` como
+hilo conductor.
 
-Lleva el circuito comercial completo —oferta, pedido, factura, cobro, gasto,
-resultado— y encima la capa que ningún ERP de catálogo trae.
+---
 
-| Descartado de un ERP genérico | Por qué |
+## Qué cambié respecto al original
+
+Sólo identidad y credenciales. Ni una línea de lógica, ni un campo, ni una
+pestaña.
+
+**Identidad**
+
+| Cambio | Dónde |
 |---|---|
-| Inventario y almacén | El equipamiento son cuatro elementos: módulo, extrusora, trituradora y compostadoras. Van en Cumplimiento, con su ficha de riesgo. |
-| Nóminas y RRHH | Plantilla mínima + red de colaboradores. Lo que importa de una persona aquí es su certificación de menores y su perfil lingüístico: eso está en Cumplimiento. |
-| Fabricación y escandallos | No hay producción seriada. Los consumibles son una línea de gasto imputada a campaña. |
-| Contabilidad por partida doble | El ERP da cifras de gestión —resultado, IVA, posición— para decidir precios y tesorería sin esperar al cierre. Las cuentas anuales las sigue formulando la asesoría. |
-| Multi-empresa y multi-divisa | Una empresa, un territorio, un idioma prioritario. |
+| `Arima · Sistema de Gestión` → `INGURA · Sistema de Gestión` | título y cabecera |
+| Letra del logotipo `A` → `I` | cabecera |
+| `ARI · Arima (Talleres)` → `ARI · Ingura (Talleres)` | etiqueta de la división |
+| `Resumen Arima` / `Arima_Resumen_…xlsx` → `Resumen Ingura` / `Ingura_Resumen_…xlsx` | exportación a Excel |
+| `_Generado por Arima_` → `_Generado por INGURA_` | pie del Word generado |
+| `backup_arima_…json`, `Backup Arima …` | nombre y asunto del backup |
+| `arima_*` → `ingura_*` | claves de localStorage |
 
-| Añadido, propio de INGURA | Dónde |
-|---|---|
-| Aviso al pasar de 15.000 €: deja de caber en contrato menor y exige licitación | Ofertas · Pedidos |
-| Códigos DIR3 (oficina contable, órgano gestor, unidad tramitadora) como campo del pedido, no de la factura | Pedidos |
-| El camino real de una factura pública: emitida → registrada → conformada → cobrada | Facturas |
-| Vencimiento legal contado desde el REGISTRO (30 + 30 días), con alerta de factura emitida y nunca registrada | Facturas · Tesorería |
-| Interés de demora devengado (tipo BCE + 8 puntos, Ley 3/2004) | Tesorería |
-| Margen real por campaña: facturado menos gasto imputado | Balance |
-| Las seis estaciones como columna vertebral de la navegación | Menú lateral |
-| Deuda de loop calculada sola | Panel · Devolución |
-| Recordatorios automáticos desde la fecha de cierre (+7, +14, +90, +300 días) | Panel · Calendario |
-| Evidencia de cuatro niveles, con el nivel 4 como campo propio | Evidencia |
-| Los cuatro activos (datos, casos, prescriptores, encaje) como contadores que nunca deben bajar | Panel |
-| Ensamblador modular de propuestas con las reglas de combinación del catálogo | Propuestas |
-| Presupuestador de los siete componentes de coste, con tarifa de distancia y suelo de margen | Económico |
-| Semáforo de vigencias con la regla de los 60 días | Cumplimiento |
-| Calendario institucional sep–jul con la ventana crítica de enero protegida | Calendario |
-| Diagnóstico de fallo: del síntoma a la estación que lo causa | Panel |
-| Conmutación euskera / castellano | Cabecera |
+**Credenciales — vaciadas a propósito**
+
+El fichero original lleva credenciales activas de Arima. Copiarlas habría hecho
+que el ERP de INGURA escribiera **en la base de datos de Arima**, y habría metido
+sus claves en este repositorio. Están en blanco, listas para las de INGURA:
+
+- `firebaseConfig` — proyecto Firestore (era `arima-programa-gestion`)
+- `EMAILJS_CONFIG.destinatario` — correo del backup (era `arimacooltour@gmail.com`)
+- `GOOGLE_CALENDAR_CONFIG` — `apiKey`, `clientId` y `calendarId`
+
+Con `firebaseConfig` vacío la aplicación arranca sola en **modo demo local**:
+guarda en el navegador y avisa con un banner ámbar. Todo funciona menos la
+sincronización en tiempo real entre varios usuarios.
 
 ---
 
-## Módulos
+## Lo que sigue siendo de Arima
 
-```
-GENERAL
-  Panel          ¿está girando el loop? · 3 indicadores maestros · avisos · deuda · diagnóstico
-  Calendario     loop largo sep–jul · cadencias · recordatorios automáticos
+No lo he tocado porque pediste copia literal, pero es lo primero a decidir:
 
-EL LOOP MAESTRO
-  ① Radar        oportunidades, señales vigiladas y su fuente
-  ② Propuestas   pipeline · ensamblador modular · las tres capas · ratio de adjudicación
-  ③ Campañas     metodología de 6 fases · checklist de 25 puntos por campaña
-  ④ Evidencia    los cuatro niveles · alcance, encuestas e idioma de atención
-  ⑤ Devolución   informes, reuniones de cierre y certificados de buena ejecución
-  ⑥ Casos        biblioteca publicable y prescriptores
-
-COMERCIAL
-  Ofertas        presupuesto económico con líneas, IVA y validez
-  Pedidos        encargo o contrato · tipo · expediente · DIR3 · hitos de facturación
-  Facturas       camino emitida → registrada → conformada → cobrada · vencimiento legal
-  Tesorería      antigüedad de la deuda · intereses de demora · estacionalidad real
-
-FINANZAS
-  Gastos         proveedores · categoría · imputación a campaña
-  Balance        cuenta de resultados · IVA · situación · margen real por campaña
-  Márgenes       presupuestador de los 7 componentes · palancas · salud económica
-
-BASE
-  Cartera        56 instituciones · estado · escalón · prescriptor · diagnóstico municipal
-  Catálogo       7 líneas · 7 talleres · reglas de combinación · escalera comercial
-
-CONTROL
-  Cumplimiento   semáforo de vigencias · riesgos por taller · RGPD · euskera
-  Ajustes        exportar / importar JSON · tesorería inicial · tipo BCE · vaciar demo
-```
-
-## La cadena documental
-
-```
-Propuesta técnica → OFERTA → PEDIDO → FACTURA(s) por hitos → COBRO
-   estación ②       con IVA   contrato    30 % / 40 % / 30 %    con su
-                              expediente                        vencimiento
-                              DIR3                              legal
-```
-
-Cada documento nace del anterior: ninguno se teclea dos veces. Una oferta
-aceptada genera el pedido con sus hitos; cada hito genera su factura con la
-parte proporcional ya calculada.
-
-**El eslabón que falla en este sector no es el pago: es el registro.** El plazo
-legal de 30 + 30 días (Ley 9/2017, art. 198.4) no cuenta desde que emites, sino
-desde que registras en el punto electrónico correcto con los DIR3 correctos. Por
-eso el ERP calcula el vencimiento desde la fecha de registro, marca en rojo las
-facturas emitidas y nunca registradas, y sólo devenga intereses de demora cuando
-el reloj ha arrancado de verdad.
-
-> ⚠️ El bloque `legal` de `data/seed-comercial.js` reúne umbrales y plazos de uso
-> corriente para poder cambiarlos en un solo sitio. No sustituye al asesoramiento
-> fiscal ni jurídico, y el tipo del BCE se actualiza en Ajustes cada semestre.
+1. **El subtítulo** dice «Talleres · Escape Rooms · Diskofestas».
+2. **Las tres divisiones** siguen siendo las de Arima:
+   `ARI` (talleres), `KOP` · Ateki (escape rooms) y `DIS` · Diskofesta.eus.
+   Están cableadas en los badges, en los colores del calendario y en dos
+   gráficas de la pestaña Datos.
+3. **El campo «Pueblo»** hace de cliente. En INGURA el cliente suele ser un
+   ayuntamiento o una mancomunidad, que no siempre coincide con un pueblo.
+4. **«Pago Monitores»** asume la figura del monitor con tipo de pago A o B.
 
 ---
 
-## Datos
+## Puesta en marcha
 
-- **Todo se guarda en el navegador** (`localStorage`, clave `ingura.erp.v1`). No
-  sale nada a ningún servidor. Cambiar de ordenador o de navegador significa
-  empezar de cero: para mover el estado, **Ajustes → Exportar JSON**.
-- **La cartera institucional no es demo.** Los 56 nombres son reales y vienen de
-  `data/municipios-objetivo.csv`. Contacto, población y datos de recogida están
-  **vacíos a propósito**: se rellenan desde fuente oficial (perfil de contratante,
-  Open Data Euskadi, Udalmap, memorias de mancomunidad). No inventar datos.
-- **Oportunidades, propuestas, campañas, casos y prescriptores vienen con datos de
-  demostración**, marcados con la etiqueta `demo` y con un aviso permanente en
-  cabecera. Se borran de una vez desde **Ajustes → Vaciar datos de demostración**.
-- Los catálogos fijos (líneas, talleres, calendario, vigencias, umbrales) están en
-  `data/seed.js` y son trazables documento a documento: `docs/05`, `docs/07`,
-  `docs/08`, `docs/09`, `loop/LOOP-MAESTRO.md` y `loop/cadencias.md`.
+1. Abre `index.html` en el navegador. Funciona ya, en modo demo local.
+2. Para trabajar entre varias personas: crea un proyecto en
+   [Firebase](https://console.firebase.google.com), activa Firestore y pega la
+   configuración en `firebaseConfig`, al principio del `<script>`.
+3. Para el backup por correo: claves de [EmailJS](https://dashboard.emailjs.com)
+   en `EMAILJS_CONFIG`.
+4. Para el calendario: proyecto en Google Cloud con la Calendar API activada,
+   API key y client ID OAuth en `GOOGLE_CALENDAR_CONFIG`. Google OAuth **no**
+   admite `file://`: hay que servirlo desde un dominio o `http://localhost`.
 
----
-
-## Estructura de ficheros
-
-```
-erp/
-  index.html              esqueleto y carga de scripts
-  assets/erp.css          paleta y tipografía heredadas de la landing
-  data/seed.js            catálogos fijos + cartera + bloque demo
-  data/seed-comercial.js  marco legal y fiscal + demo del circuito comercial
-  app/core.js             estado, persistencia, i18n, helpers, router, métricas
-  app/views-base.js       Panel · Calendario · Cartera · Catálogo · Ajustes
-  app/views-loop.js       las seis estaciones
-  app/views-comercial.js  Ofertas · Pedidos · Facturas · Tesorería · Gastos · Balance
-  app/views-control.js    Márgenes · Cumplimiento
-```
-
-**Flujos y saldos no se mezclan.** Ingresos, gastos, IVA y estacionalidad son
-flujos del ejercicio. Pendiente de cobro, vencido, sin registrar y antigüedad de
-la deuda son saldos a fecha de hoy e incluyen documentos de cualquier año: una
-factura de hace dos años sin cobrar sigue siendo dinero que falta.
-
-Sin dependencias, sin `npm install`, sin paso de compilación. Los scripts se
-cargan en orden y se cuelgan del espacio de nombres `window.INGURA`.
+**Necesita conexión a internet.** Carga Tailwind, Firebase, SheetJS, Mammoth,
+docx, FileSaver, EmailJS, Chart.js y las librerías de Google desde sus CDN. Sin
+red se ve sin estilos.
 
 ---
 
-## Diseño
+## Historial
 
-Paleta y tipografía idénticas a `web/index.html`: papel crema con grano, Fraunces
-para titulares, Karla para texto, y los tres colores de marca (tierra, verde,
-naranja). Tema único claro, deliberado: la identidad de INGURA es papel, y un modo
-oscuro rompería la continuidad con la web pública.
-
-La paleta de estado (verde / ámbar / rojo) está validada sobre la superficie
-`#FBF9F4`: banda de luminosidad, croma, separación bajo daltonismo y separación en
-visión normal pasan las comprobaciones. El ámbar queda por debajo de 3:1 de
-contraste, así que **el punto de color nunca aparece solo**: siempre lleva
-etiqueta de texto al lado. Ese es el motivo de que el semáforo diga
-«vence en 42 d» y no sólo pinte un círculo.
-
----
-
-## Despliegue
+La versión anterior del ERP —construida sobre el loop maestro, con cartera
+institucional, evidencia de impacto y cumplimiento— está en el historial de git
+y se recupera con:
 
 ```
-# local
-abrir erp/index.html en el navegador
-
-# Netlify (arrastrar y soltar)
-subir la carpeta erp/ completa a app.netlify.com/drop
+git checkout e1b3bf2 -- erp/
 ```
-
-La página lleva `noindex, nofollow`: es una herramienta interna, no una página
-pública. Si se despliega en Netlify, conviene además protegerla con contraseña de
-sitio.

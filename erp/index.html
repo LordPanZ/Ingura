@@ -1,64 +1,3405 @@
 <!DOCTYPE html>
-<html lang="es" data-lang="es">
+<html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>INGURA · ERP del loop maestro</title>
-<meta name="description" content="Sistema operativo interno de INGURA: cartera institucional, las seis estaciones del loop maestro, evidencia de impacto, cumplimiento y modelo económico.">
-<meta name="robots" content="noindex, nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,0..100;1,9..144,400..900,0..100&family=Karla:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/erp.css">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233A3123'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='700' fill='%23FBF3EA' text-anchor='middle'%3EI%3C/text%3E%3C/svg%3E">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>INGURA · Sistema de Gestión Integral</title>
+
+<!-- ============================================================
+     CDN: Tailwind CSS (utilidades)
+============================================================ -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- ============================================================
+     CDN: Firebase (compat v9 - funciona en HTML plano)
+     Documentación: https://firebase.google.com/docs/web/setup
+============================================================ -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- ============================================================
+     CDN: SheetJS (exportar XLSX)
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<!-- ============================================================
+     CDN: Mammoth.js (leer .docx en el navegador)
+============================================================ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+<!-- ============================================================
+     CDN: docx (generar archivos Word .docx)
+============================================================ -->
+<script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
+
+<!-- ============================================================
+     CDN: FileSaver (descargas locales)
+============================================================ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+<!-- ============================================================
+     CDN: EmailJS (envío de correos desde el navegador)
+     Documentación: https://www.emailjs.com/docs/sdk/installation/
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- ============================================================
+     CDN: Chart.js (gráficas de la pestaña Datos)
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- ============================================================
+     Google Calendar API (cliente oficial)
+     Shim previo: si las librerías terminan de cargar antes
+     que el script principal, guardamos la señal en una cola
+     para que el main script las dispare cuando esté listo.
+============================================================ -->
+<script>
+  window.__gcalQueue = { gapi: false, gis: false };
+  window.gapiLoaded  = function() { window.__gcalQueue.gapi = true; };
+  window.gisLoaded   = function() { window.__gcalQueue.gis  = true; };
+</script>
+<script async src="https://apis.google.com/js/api.js" onload="gapiLoaded()" onerror="console.error('No se pudo cargar apis.google.com/js/api.js')"></script>
+<script async src="https://accounts.google.com/gsi/client" onload="gisLoaded()" onerror="console.error('No se pudo cargar accounts.google.com/gsi/client')"></script>
+
+<style>
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  .tab-active { background-color: #1e293b; color: #fff; }
+  .badge-ARI { background:#fde68a; color:#92400e; }
+  .badge-KOP { background:#bfdbfe; color:#1e40af; }
+  .badge-DIS { background:#fbcfe8; color:#9d174d; }
+  .badge-espera     { background:#fef3c7; color:#92400e; }
+  .badge-confirmada { background:#bbf7d0; color:#166534; }
+  .badge-cerrada    { background:#e5e7eb; color:#374151; }
+  .badge-sinenviar  {
+    background:#fee2e2; color:#991b1b; border:1.5px solid #ef4444; font-weight:700;
+    animation: pulseSinEnviar 1.6s ease-in-out infinite;
+  }
+  @keyframes pulseSinEnviar {
+    0%,100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+    50%     { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+  }
+  .table-fixed-head thead th { position: sticky; top: 0; background:#f1f5f9; z-index: 1; }
+  .checklist-done { text-decoration: line-through; color:#94a3b8; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display:none; }
+  input:disabled, select:disabled, textarea:disabled {
+    background:#f1f5f9; color:#475569;
+  }
+</style>
 </head>
-<body>
 
-<div class="app">
+<body class="bg-slate-100 min-h-screen text-slate-800">
 
-  <!-- ================================================== lateral -->
-  <aside class="side">
-    <div class="side-brand">
-      <a href="#/panel" class="logo">INGUR<span>A</span></a>
-      <div class="sub" data-l="eu">Loop nagusiaren ERPa</div>
-      <div class="sub" data-l="es">ERP del loop maestro</div>
-    </div>
-    <nav id="nav" aria-label="Módulos"></nav>
-    <div class="side-foot">
-      <div data-l="eu">Datuak nabigatzailean gordetzen dira. Ez da ezer kanpora bidaltzen.</div>
-      <div data-l="es">Los datos se guardan en el navegador. No sale nada a ningún servidor.</div>
-    </div>
-  </aside>
-
-  <!-- ================================================== principal -->
-  <main class="main">
-    <header class="top">
-      <div id="cabecera"></div>
-      <div class="top-actions">
-        <div class="seg" role="group" aria-label="Idioma">
-          <button data-lang="eu" onclick="INGURA.cambiarIdioma('eu')">EU</button>
-          <button data-lang="es" class="on" onclick="INGURA.cambiarIdioma('es')">ES</button>
-        </div>
+<!-- ============================================================
+     CABECERA Y NAVEGACIÓN
+============================================================ -->
+<header class="bg-slate-900 text-white shadow-lg">
+  <div class="max-w-screen-2xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 via-rose-400 to-fuchsia-500 grid place-items-center font-black text-slate-900">I</div>
+      <div>
+        <h1 class="text-xl font-bold leading-tight">INGURA · Sistema de Gestión</h1>
+        <p class="text-xs text-slate-400">Talleres · Escape Rooms · Diskofestas · Multiusuario en tiempo real</p>
       </div>
-    </header>
-    <div class="content" id="contenido"></div>
-  </main>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      <span id="connStatus" class="px-3 py-1 rounded-full bg-slate-700 text-slate-300">⏳ Conectando…</span>
+      <span id="userId" class="text-xs text-slate-400"></span>
+    </div>
+  </div>
+  <nav class="max-w-screen-2xl mx-auto px-4 flex gap-1 overflow-x-auto">
+    <button data-tab="oferta"      class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">📋 Oferta</button>
+    <button data-tab="pedido"      class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">📦 Pedido</button>
+    <button data-tab="produccion"  class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">🛠️ Producción</button>
+    <button data-tab="facturacion" class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">💶 Facturación</button>
+    <button data-tab="resumen"     class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">📊 Resumen</button>
+    <button data-tab="datos"       class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">📈 Datos</button>
+    <button data-tab="pagoMonitores" class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">👥 Pago Monitores</button>
+    <button data-tab="calendario" class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">📅 Calendario</button>
+    <button data-tab="backup"      class="tab-btn px-5 py-3 text-sm font-semibold rounded-t-lg hover:bg-slate-800 transition">🔒 Backup</button>
+  </nav>
+</header>
 
+<main class="max-w-screen-2xl mx-auto p-6">
+
+<!-- ============================================================
+     BANNER DE CONFIGURACIÓN
+============================================================ -->
+<div id="configBanner" class="hidden mb-6 p-4 rounded-lg bg-amber-100 border border-amber-300 text-amber-900 text-sm">
+  ⚠️ <strong>Falta configurar Firebase.</strong> Edita el bloque <code>firebaseConfig</code> al final del archivo HTML pegando las credenciales de tu proyecto Firestore. Mientras tanto, el sistema funciona en modo demo local (sin sincronización).
 </div>
 
-<script src="data/seed.js"></script>
-<script src="data/seed-comercial.js"></script>
-<script src="app/core.js"></script>
-<script src="app/views-base.js"></script>
-<script src="app/views-loop.js"></script>
-<script src="app/views-comercial.js"></script>
-<script src="app/views-control.js"></script>
-<script>
-  document.querySelectorAll('.seg button').forEach(function (b) {
-    b.classList.toggle('on', b.dataset.lang === INGURA.store.get().lang);
-  });
-  INGURA.arrancar();
-</script>
+<!-- ============================================================
+     TAB: OFERTA
+============================================================ -->
+<section id="tab-oferta" class="tab-panel">
+  <div class="flex items-center justify-between mb-3">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Ofertas</h2>
+      <p class="text-sm text-slate-500">Gestión de presupuestos y propuestas a clientes</p>
+    </div>
+    <button id="btnNuevaOferta" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-md transition">+ Añadir nueva oferta</button>
+  </div>
+  <div class="mb-5 flex items-center gap-2">
+    <input id="ofertasSearch" type="search"
+           placeholder="🔍 Buscar por cualquier campo (pueblo, división, actividad, contacto, ref, estado...)"
+           class="w-full md:w-[28rem] px-4 py-2 border rounded-lg text-sm shadow-sm"/>
+    <span id="ofertasSearchCount" class="text-xs text-slate-500"></span>
+  </div>
 
+  <!-- Formulario nueva/editar oferta (oculto por defecto) -->
+  <div id="formOferta" class="hidden bg-white rounded-xl shadow-md p-6 mb-6 border-t-4 border-emerald-500">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold" id="formOfertaTitle">Nueva oferta</h3>
+      <label class="text-xs text-slate-500 flex items-center gap-2">
+        Nº oferta
+        <input id="formOfertaRef" type="text"
+               class="text-sm font-mono bg-slate-100 px-3 py-1 rounded-full text-slate-800 border border-slate-300 w-32 focus:outline-none focus:ring-2 focus:ring-emerald-400"/>
+      </label>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <label class="text-sm">Fecha
+        <input type="date" id="of_fecha" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
+      </label>
+      <label class="text-sm">Pueblo
+        <input type="text" id="of_pueblo" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: Donostia"/>
+      </label>
+      <label class="text-sm">Actividad
+        <input type="text" id="of_actividad" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: Taller pintura"/>
+      </label>
+      <label class="text-sm">División
+        <select id="of_division" class="w-full mt-1 px-3 py-2 border rounded-lg">
+          <option value="ARI">ARI · Ingura (Talleres)</option>
+          <option value="KOP">KOP · Ateki (Escape Rooms)</option>
+          <option value="DIS">DIS · Diskofesta.eus</option>
+        </select>
+      </label>
+      <label class="text-sm">Persona de contacto
+        <input type="text" id="of_contacto" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
+      </label>
+      <label class="text-sm">Vía de contacto
+        <select id="of_via" class="w-full mt-1 px-3 py-2 border rounded-lg">
+          <option>Email</option><option>Teléfono</option><option>WhatsApp</option>
+        </select>
+      </label>
+      <label class="text-sm">Email / Teléfono del contacto
+        <input type="text" id="of_contactoDato" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: mireia@cliente.com / 666 777 888"/>
+      </label>
+      <label class="text-sm">Fecha entrega oferta
+        <input type="date" id="of_entrega" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
+      </label>
+      <label class="text-sm">Presupuesto (€) <span class="text-xs text-slate-400 font-normal">(Sin IVA)</span>
+        <input type="number" step="0.01" id="of_presupuesto" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
+      </label>
+      <label class="text-sm">Estado
+        <select id="of_estado" class="w-full mt-1 px-3 py-2 border rounded-lg">
+          <option>Sin Enviar</option><option>En espera</option><option>Confirmada</option><option>Cerrada</option>
+        </select>
+      </label>
+      <label class="text-sm md:col-span-2">Días propuestos
+        <input type="text" id="of_dias" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: 12-13 julio 2026"/>
+      </label>
+      <label class="text-sm">Horarios de trabajo
+        <input type="text" id="of_horarios" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: 17:00 a 21:00"/>
+      </label>
+      <label class="text-sm">Nº participantes
+        <div class="flex gap-2 mt-1">
+          <select id="of_participantesModo" class="px-3 py-2 border rounded-lg w-32"
+                  onchange="document.getElementById('of_participantes').style.display = this.value==='Libre'?'none':'block';
+                            if(this.value==='Libre') document.getElementById('of_participantes').value='';">
+            <option value="Limitado">Limitado</option>
+            <option value="Libre">Libre</option>
+          </select>
+          <input type="number" min="0" id="of_participantes" class="flex-1 px-3 py-2 border rounded-lg" placeholder="Ej: 25"/>
+        </div>
+      </label>
+      <label class="text-sm">Edad
+        <input type="text" id="of_edad" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: 8-12 años"/>
+      </label>
+      <label class="text-sm">Nº turnos
+        <input type="number" min="0" id="of_turnos" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: 3"/>
+      </label>
+      <label class="text-sm">Duración del taller
+        <input type="text" id="of_duracion" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: 1h 30min"/>
+      </label>
+    </div>
+    <div class="mt-5 flex gap-3 justify-end">
+      <button id="btnCancelarOferta" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-semibold">Cancelar</button>
+      <button id="btnGuardarOferta" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold">Guardar oferta</button>
+    </div>
+  </div>
+
+  <!-- Tabla de ofertas -->
+  <div class="bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="overflow-x-auto max-h-[65vh]">
+      <table class="w-full text-sm table-fixed-head">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-3 text-left">Ref</th>
+            <th class="px-3 py-3 text-left">Fecha</th>
+            <th class="px-3 py-3 text-left">Pueblo</th>
+            <th class="px-3 py-3 text-left">Actividad</th>
+            <th class="px-3 py-3 text-left">Div.</th>
+            <th class="px-3 py-3 text-left">Contacto</th>
+            <th class="px-3 py-3 text-left">Entrega</th>
+            <th class="px-3 py-3 text-right">Presup.</th>
+            <th class="px-3 py-3 text-left">Estado</th>
+            <th class="px-3 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tblOfertas" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: PEDIDO
+============================================================ -->
+<section id="tab-pedido" class="tab-panel hidden">
+  <div class="mb-5">
+    <h2 class="text-2xl font-bold text-slate-900">Pedidos confirmados</h2>
+    <p class="text-sm text-slate-500">Se generan automáticamente al confirmar una oferta. Los campos heredados no se pueden modificar.</p>
+  </div>
+  <div id="tblPedidos" class="space-y-4"></div>
+  <div id="pedidoEmpty" class="hidden text-center py-12 bg-white rounded-xl shadow text-slate-500">
+    No hay pedidos todavía. Confirma una oferta para crear un pedido automáticamente.
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: PRODUCCIÓN
+============================================================ -->
+<section id="tab-produccion" class="tab-panel hidden">
+  <div class="mb-5 flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Producción</h2>
+      <p class="text-sm text-slate-500">Sube listas de materiales en formato Word y gestiona compras pendientes</p>
+    </div>
+    <label class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition cursor-pointer">
+      📎 Subir lista (.docx)
+      <input type="file" id="docxInput" accept=".docx" class="hidden"/>
+    </label>
+  </div>
+
+  <div id="listasContainer" class="space-y-5"></div>
+  <div id="produccionEmpty" class="text-center py-12 bg-white rounded-xl shadow text-slate-500">
+    Sube un archivo .docx para crear una checklist de materiales.
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: FACTURACIÓN
+============================================================ -->
+<section id="tab-facturacion" class="tab-panel hidden">
+  <div class="mb-5">
+    <h2 class="text-2xl font-bold text-slate-900">Facturación</h2>
+    <p class="text-sm text-slate-500">Pedidos confirmados convertidos en facturas con desglose de IVA</p>
+  </div>
+  <div class="bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-3 text-left">EVT</th>
+            <th class="px-3 py-3 text-left">Pueblo / Actividad</th>
+            <th class="px-3 py-3 text-left">Div.</th>
+            <th class="px-3 py-3 text-left">Tipo Cliente</th>
+            <th class="px-3 py-3 text-left">Referencia</th>
+            <th class="px-3 py-3 text-left">IVA</th>
+            <th class="px-3 py-3 text-right">Base</th>
+            <th class="px-3 py-3 text-right">Cuota</th>
+            <th class="px-3 py-3 text-right">Total</th>
+            <th class="px-3 py-3 text-left">F. Envío</th>
+            <th class="px-3 py-3 text-left">F. Cobro</th>
+            <th class="px-3 py-3 text-right">Días</th>
+            <th class="px-3 py-3 text-center">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tblFacturas" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: RESUMEN
+============================================================ -->
+<section id="tab-resumen" class="tab-panel hidden">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Resumen general</h2>
+      <p class="text-sm text-slate-500">Vista analítica unificada · filtra y exporta a Excel</p>
+    </div>
+    <input id="resumenSearch" type="search" placeholder="🔍 Buscar en toda la tabla…" class="px-4 py-2 border rounded-lg w-80 text-sm"/>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl shadow mb-4 grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+    <label class="text-sm">Desde fecha
+      <input type="date" id="exp_fechaDesde" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
+    </label>
+    <label class="text-sm">Hasta fecha
+      <input type="date" id="exp_fechaHasta" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
+    </label>
+    <label class="text-sm">Desde EVT nº
+      <input type="number" id="exp_evtDesde" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="1"/>
+    </label>
+    <label class="text-sm">Hasta EVT nº
+      <input type="number" id="exp_evtHasta" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="100"/>
+    </label>
+    <button id="btnExportar" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">⬇ Exportar Excel</button>
+  </div>
+
+  <div class="bg-white rounded-xl shadow-md overflow-hidden">
+    <div class="overflow-auto max-h-[65vh]">
+      <table class="w-full text-xs table-fixed-head">
+        <thead class="bg-slate-100 text-slate-600 uppercase">
+          <tr id="resumenHead"></tr>
+        </thead>
+        <tbody id="resumenBody" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: DATOS (ANALÍTICAS)
+============================================================ -->
+<section id="tab-datos" class="tab-panel hidden">
+  <div class="mb-5">
+    <h2 class="text-2xl font-bold text-slate-900">Datos analíticos</h2>
+    <p class="text-sm text-slate-500">Indicadores clave de facturación, cobros y rendimiento por división</p>
+  </div>
+
+  <!-- KPIs principales -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-gradient-to-br from-amber-50 to-amber-100 border-l-4 border-amber-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-amber-700 uppercase tracking-wide">💰 Pendiente de cobrar</p>
+      <p id="kpiPendiente" class="text-3xl font-extrabold text-amber-900 mt-2">0,00 €</p>
+      <p id="kpiPendienteDetalle" class="text-xs text-amber-700 mt-1">—</p>
+    </div>
+    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 border-l-4 border-emerald-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">📊 Facturación total</p>
+      <p id="kpiTotal" class="text-3xl font-extrabold text-emerald-900 mt-2">0,00 €</p>
+      <p id="kpiTotalDetalle" class="text-xs text-emerald-700 mt-1">—</p>
+    </div>
+    <div class="bg-gradient-to-br from-blue-50 to-blue-100 border-l-4 border-blue-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-blue-700 uppercase tracking-wide">⬆ Factura mayor importe</p>
+      <p id="kpiMayor" class="text-2xl font-extrabold text-blue-900 mt-2">—</p>
+      <p id="kpiMayorPueblo" class="text-xs text-blue-700 mt-1">—</p>
+    </div>
+    <div class="bg-gradient-to-br from-rose-50 to-rose-100 border-l-4 border-rose-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-rose-700 uppercase tracking-wide">⬇ Factura menor importe</p>
+      <p id="kpiMenor" class="text-2xl font-extrabold text-rose-900 mt-2">—</p>
+      <p id="kpiMenorPueblo" class="text-xs text-rose-700 mt-1">—</p>
+    </div>
+  </div>
+
+  <!-- Facturación por meses -->
+  <div class="bg-white rounded-xl shadow-md p-5 mb-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-bold text-slate-800">📅 Facturación por meses</h3>
+      <select id="datosAnioMes" class="px-3 py-1.5 border rounded-lg text-sm"></select>
+    </div>
+    <div style="height: 280px;"><canvas id="chartMeses"></canvas></div>
+  </div>
+
+  <!-- Top clientes -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-6">
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h3 class="text-lg font-bold text-slate-800 mb-3">🏆 Top 5 clientes (mayor facturación)</h3>
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-2 text-left">#</th>
+            <th class="px-3 py-2 text-left">Pueblo</th>
+            <th class="px-3 py-2 text-right">Importe</th>
+            <th class="px-3 py-2 text-center">Nº fact.</th>
+          </tr>
+        </thead>
+        <tbody id="tblTopClientes" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h3 class="text-lg font-bold text-slate-800 mb-3">📉 Top 5 clientes (menor facturación)</h3>
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-2 text-left">#</th>
+            <th class="px-3 py-2 text-left">Pueblo</th>
+            <th class="px-3 py-2 text-right">Importe</th>
+            <th class="px-3 py-2 text-center">Nº fact.</th>
+          </tr>
+        </thead>
+        <tbody id="tblBottomClientes" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Gráficas división y año vs año -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h3 class="text-lg font-bold text-slate-800 mb-3">🎯 Facturación por división</h3>
+      <div style="height: 320px;"><canvas id="chartDivisiones"></canvas></div>
+      <div id="divisionesLeyenda" class="mt-3 text-sm space-y-1"></div>
+    </div>
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h3 class="text-lg font-bold text-slate-800 mb-3">📈 Comparativa año por año</h3>
+      <div style="height: 320px;"><canvas id="chartAnios"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: PAGO MONITORES
+============================================================ -->
+<section id="tab-pagoMonitores" class="tab-panel hidden">
+  <div class="mb-5 flex items-end justify-between gap-3 flex-wrap">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">Pago a monitores</h2>
+      <p class="text-sm text-slate-500">Cantidades adeudadas por fecha y concepto · gestión de pagos saldados</p>
+    </div>
+    <input id="pagoMonSearch" type="search" placeholder="🔍 Buscar monitor…" class="px-4 py-2 border rounded-lg w-72 text-sm"/>
+  </div>
+
+  <!-- KPIs globales monitores -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-gradient-to-br from-slate-50 to-slate-100 border-l-4 border-slate-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-slate-700 uppercase tracking-wide">👥 Monitores activos</p>
+      <p id="pmKpiCount" class="text-3xl font-extrabold text-slate-900 mt-2">0</p>
+    </div>
+    <div class="bg-gradient-to-br from-rose-50 to-rose-100 border-l-4 border-rose-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-rose-700 uppercase tracking-wide">💸 Total pendiente de pagar</p>
+      <p id="pmKpiPendiente" class="text-3xl font-extrabold text-rose-900 mt-2">0,00 €</p>
+    </div>
+    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 border-l-4 border-emerald-500 rounded-xl shadow p-5">
+      <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wide">✅ Total ya saldado</p>
+      <p id="pmKpiSaldado" class="text-3xl font-extrabold text-emerald-900 mt-2">0,00 €</p>
+    </div>
+  </div>
+
+  <!-- ───── Gráfico comparativo mensual A vs B ───── -->
+  <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+    <div class="flex items-end justify-between flex-wrap gap-3 mb-4">
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">📊 Gasto en monitores por mes</h3>
+        <p class="text-xs text-slate-500">Comparativa A (sueldos normales) vs B (sin retenciones) · Año natural</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-slate-600 font-semibold">Año:</label>
+        <select id="pmChartAnio" class="px-3 py-1.5 border rounded-lg text-sm bg-white"></select>
+      </div>
+    </div>
+    <!-- Leyenda con totales del año -->
+    <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <p class="text-xs text-blue-700 font-semibold uppercase">Tipo A (Año)</p>
+        <p id="pmChartTotalA" class="text-xl font-extrabold text-blue-900 mt-1">0,00 €</p>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+        <p class="text-xs text-amber-700 font-semibold uppercase">Tipo B (Año)</p>
+        <p id="pmChartTotalB" class="text-xl font-extrabold text-amber-900 mt-1">0,00 €</p>
+      </div>
+      <div class="bg-slate-100 border border-slate-300 rounded-lg p-3">
+        <p class="text-xs text-slate-700 font-semibold uppercase">Total Año</p>
+        <p id="pmChartTotal" class="text-xl font-extrabold text-slate-900 mt-1">0,00 €</p>
+      </div>
+    </div>
+    <div style="height:300px;">
+      <canvas id="pmChartMensual"></canvas>
+    </div>
+  </div>
+
+  <!-- Lista de monitores -->
+  <div class="bg-white rounded-xl shadow-md overflow-hidden mb-6">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-3 text-left">Monitor</th>
+            <th class="px-3 py-3 text-center">Nº trabajos</th>
+            <th class="px-3 py-3 text-right">Total adeudado</th>
+            <th class="px-3 py-3 text-right">Saldado</th>
+            <th class="px-3 py-3 text-right">Pendiente</th>
+            <th class="px-3 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tblMonitores" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detalle monitor (oculto por defecto) -->
+  <div id="monitorDetalle" class="hidden bg-white rounded-xl shadow-md p-6 border-t-4 border-indigo-500">
+    <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+      <div>
+        <h3 id="monitorDetalleNombre" class="text-xl font-bold text-slate-900">—</h3>
+        <p id="monitorDetalleModo" class="text-xs text-slate-500">—</p>
+      </div>
+      <div class="flex gap-2">
+        <button id="btnMonWhatsApp" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold rounded-lg">📲 Compartir por WhatsApp</button>
+        <button id="btnMonCerrar" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-lg">✕ Cerrar</button>
+      </div>
+    </div>
+
+    <!-- Resumen económico -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+      <div class="bg-slate-50 rounded-lg p-4">
+        <p class="text-xs text-slate-500 uppercase font-semibold">Total Nómina</p>
+        <p id="monTotalAdeudado" class="text-2xl font-extrabold text-slate-900 mt-1">0,00 €</p>
+      </div>
+      <div class="bg-emerald-50 rounded-lg p-4">
+        <label class="text-xs text-emerald-700 uppercase font-semibold">Deuda saldada (€)</label>
+        <input id="monSaldadoInput" type="number" step="0.01" min="0" value="0"
+               class="w-full mt-1 px-3 py-2 border rounded-lg text-lg font-bold text-emerald-900 bg-white"/>
+        <p class="text-xs text-emerald-700 mt-1">Se resta del total a deber</p>
+      </div>
+      <div class="bg-rose-50 rounded-lg p-4">
+        <p class="text-xs text-rose-700 uppercase font-semibold">Pendiente</p>
+        <p id="monPendiente" class="text-2xl font-extrabold text-rose-900 mt-1">0,00 €</p>
+      </div>
+    </div>
+
+    <!-- Tabla de trabajos -->
+    <h4 class="font-bold text-sm text-slate-700 mb-2">📋 Trabajos con cantidades adeudadas</h4>
+    <div class="overflow-x-auto mb-6">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-2 text-left">Fecha</th>
+            <th class="px-3 py-2 text-left">Lugar (pueblo)</th>
+            <th class="px-3 py-2 text-left">Actividad</th>
+            <th class="px-3 py-2 text-left">Div.</th>
+            <th class="px-3 py-2 text-left">EVT</th>
+            <th class="px-3 py-2 text-right">Cantidad</th>
+          </tr>
+        </thead>
+        <tbody id="tblMonitorTrabajos" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+
+    <!-- Gráfica mensual del monitor -->
+    <div class="bg-slate-50 rounded-lg p-4">
+      <div class="flex items-center justify-between mb-3">
+        <h4 class="font-bold text-sm text-slate-700">📈 Cobros por meses</h4>
+        <select id="monAnioSelect" class="px-3 py-1.5 border rounded-lg text-sm"></select>
+      </div>
+      <div style="height: 260px;"><canvas id="chartMonitor"></canvas></div>
+      <p id="monTotalAnio" class="text-sm text-slate-600 mt-3 text-right font-semibold">—</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TAB: CALENDARIO
+============================================================ -->
+<section id="tab-calendario" class="tab-panel hidden">
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-slate-900">📅 Calendario de trabajos</h2>
+      <p class="text-sm text-slate-500">Solo pedidos <strong>confirmados</strong>. Haz clic en un evento para ver todos los detalles.</p>
+    </div>
+    <div class="flex flex-wrap items-center gap-2">
+      <button id="calPrevBtn" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-semibold">◀</button>
+      <button id="calTodayBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold">Hoy</button>
+      <button id="calNextBtn" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-semibold">▶</button>
+      <h3 id="calTitle" class="ml-4 text-xl font-bold text-slate-800 capitalize min-w-[200px]">—</h3>
+      <input id="calSearch" type="search" placeholder="🔍 Filtrar por pueblo, actividad, monitor…" class="ml-2 px-3 py-2 border rounded-lg text-sm w-72"/>
+    </div>
+  </div>
+
+  <!-- Leyenda divisiones -->
+  <div class="mb-4 flex flex-wrap gap-3 text-xs">
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#f59e0b"></span> ARI</span>
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#3b82f6"></span> KOP</span>
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#ec4899"></span> DIS</span>
+    <span class="flex items-center gap-1 ml-4"><span class="inline-block w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-emerald-300"></span> Hoy</span>
+  </div>
+
+  <div class="grid lg:grid-cols-[1fr_320px] gap-5">
+    <!-- ───────────── GRID DEL MES ───────────── -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <div class="grid grid-cols-7 bg-slate-100 text-center text-xs font-bold uppercase text-slate-600">
+        <div class="py-2">Lun</div><div class="py-2">Mar</div><div class="py-2">Mié</div>
+        <div class="py-2">Jue</div><div class="py-2">Vie</div><div class="py-2">Sáb</div><div class="py-2 text-rose-600">Dom</div>
+      </div>
+      <div id="calGrid" class="grid grid-cols-7 auto-rows-[minmax(110px,1fr)]"></div>
+    </div>
+
+    <!-- ───────────── PANEL LATERAL: RESUMEN ───────────── -->
+    <aside class="space-y-4">
+      <div class="bg-gradient-to-br from-emerald-500 to-emerald-700 text-white rounded-xl shadow-md p-5">
+        <p class="text-xs uppercase tracking-wide opacity-80">Facturación del mes</p>
+        <p id="calKpiTotal" class="text-3xl font-black mt-1">0,00 €</p>
+        <p id="calKpiCount" class="text-xs mt-2 opacity-90">0 eventos</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-5">
+        <h4 class="text-sm font-bold text-slate-700 mb-2">📍 Pueblos más visitados</h4>
+        <ul id="calKpiPueblos" class="text-sm text-slate-600 space-y-1"><li class="text-slate-400">—</li></ul>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-5">
+        <h4 class="text-sm font-bold text-slate-700 mb-2">👥 Monitores más activos</h4>
+        <ul id="calKpiMonitores" class="text-sm text-slate-600 space-y-1"><li class="text-slate-400">—</li></ul>
+      </div>
+      <div class="bg-white rounded-xl shadow-md p-5">
+        <h4 class="text-sm font-bold text-slate-700 mb-2">🎯 Por división</h4>
+        <ul id="calKpiDivision" class="text-sm text-slate-600 space-y-1"><li class="text-slate-400">—</li></ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ───────────── MODAL DETALLE EVENTO ───────────── -->
+  <div id="calModal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden">
+      <div id="calModalHeader" class="px-6 py-4 text-white">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <p id="calModalRef" class="text-xs font-mono opacity-80">EVT-000</p>
+            <h3 id="calModalTitulo" class="text-xl font-bold mt-1">—</h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="calModalEditBtn" onclick="toggleCalModalEdit()" class="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-xs font-semibold transition">✏️ Editar</button>
+            <button onclick="cerrarCalModal()" class="text-white/80 hover:text-white text-2xl leading-none">×</button>
+          </div>
+        </div>
+      </div>
+      <div id="calModalBody" class="p-6 space-y-3 text-sm max-h-[70vh] overflow-y-auto"></div>
+      <div class="px-6 py-3 bg-slate-50 flex justify-between items-center gap-2">
+        <span id="calModalSaveStatus" class="text-xs text-slate-500"></span>
+        <div class="flex gap-2">
+          <button onclick="eliminarEventoCalendario()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-semibold">🗑 Borrar evento</button>
+          <button onclick="cerrarCalModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg text-sm font-semibold">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p id="calEmpty" class="hidden text-center py-10 text-slate-400 text-sm">No hay pedidos confirmados en este mes.</p>
+</section>
+
+<!-- ============================================================
+     TAB: BACKUP
+============================================================ -->
+<section id="tab-backup" class="tab-panel hidden">
+  <div class="mb-5">
+    <h2 class="text-2xl font-bold text-slate-900">Copia de seguridad</h2>
+    <p class="text-sm text-slate-500">Backup diario automático enviado al correo configurado en <code>EMAILJS_CONFIG</code></p>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-5">
+    <div class="bg-white rounded-xl shadow-md p-6">
+      <h3 class="font-bold mb-2">Estado del backup de hoy</h3>
+      <p id="backupStatus" class="text-sm text-slate-600 mb-4">Comprobando…</p>
+      <div class="flex gap-3">
+        <button id="btnBackupManual" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-sm font-semibold">⬇ Descargar JSON ahora</button>
+        <button id="btnBackupEmail"  class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold">✉ Enviar por email</button>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-md p-6 text-sm">
+      <h3 class="font-bold mb-2">¿Cómo funciona?</h3>
+      <ol class="list-decimal list-inside space-y-1 text-slate-600">
+        <li>La primera sesión que abre el sistema cada día (control en Firestore) ejecuta el backup automáticamente.</li>
+        <li>Se descarga un archivo <code>backup_ingura_AAAA-MM-DD.json</code> con todas las colecciones.</li>
+        <li>Se envía el JSON por email vía EmailJS al correo configurado.</li>
+        <li>Configura tus credenciales de EmailJS al final del archivo (<code>EMAILJS_CONFIG</code>).</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="mt-5 bg-white rounded-xl shadow-md p-6">
+    <h3 class="font-bold mb-3">Historial de backups</h3>
+    <div id="backupHistory" class="text-sm text-slate-600">—</div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================================================================
+     SCRIPT PRINCIPAL
+============================================================================================================ -->
+<script>
+/* ================================================================
+   ⚙️ CONFIGURACIÓN — PEGA AQUÍ TUS CREDENCIALES
+================================================================ */
+
+// 🔑 1) FIREBASE: rellena con la configuración de tu proyecto Firestore.
+//    https://console.firebase.google.com → Configuración del proyecto → Tus apps → SDK Setup
+const firebaseConfig = {
+  apiKey:            "",   // ← pega aquí las credenciales del proyecto de INGURA
+  authDomain:        "",
+  projectId:         "",
+  storageBucket:     "",
+  messagingSenderId: "",
+  appId:             ""
+};
+
+// 🔑 2) EMAILJS: rellena con tus claves. https://dashboard.emailjs.com
+//    El template debe aceptar variables: to_email, subject, message, attachment (texto/JSON)
+const EMAILJS_CONFIG = {
+  publicKey:  "",          // ← Public Key de EmailJS
+  serviceId:  "",          // ← Service ID
+  templateId: "",          // ← Template ID
+  destinatario: ""          // ← correo de INGURA para el backup diario
+};
+
+// 🔑 3) GOOGLE CALENDAR: configuración OAuth 2.0
+//    Crea un proyecto en https://console.cloud.google.com → Habilita "Google Calendar API"
+//    → Credenciales → API Key (restringida a Calendar API) + ID de cliente OAuth (tipo Web).
+//    Añade tu dominio (o "http://localhost") a los orígenes JavaScript autorizados.
+const GOOGLE_CALENDAR_CONFIG = {
+  apiKey:   "",   // ← credenciales OAuth del proyecto de INGURA
+  clientId: "",
+  calendarId: "",
+  scopes:   "https://www.googleapis.com/auth/calendar.events"
+};
+const GOOGLE_DISCOVERY_DOC = "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest";
+
+/* ================================================================
+   🚀 INICIALIZACIÓN
+================================================================ */
+const HAS_FIREBASE = !!firebaseConfig.apiKey;
+const HAS_EMAILJS  = !!EMAILJS_CONFIG.publicKey;
+
+let db = null;
+let useLocalMode = !HAS_FIREBASE;
+
+// ── Google Calendar: estado de inicialización y autenticación ──
+let tokenClient = null;
+let gapiInited  = false;
+let gisInited   = false;
+let calendarAuthed = false;
+const HAS_GCAL = !!(GOOGLE_CALENDAR_CONFIG.apiKey && GOOGLE_CALENDAR_CONFIG.clientId);
+
+// Colecciones / claves
+const COL = {
+  ofertas:  'ofertas',
+  pedidos:  'pedidos',
+  facturas: 'facturas',
+  listas:   'listas',
+  contadores: 'contadores',  // documento único con secuencias
+  backups:  'backups',       // marca diaria de backups
+  monitorPagos: 'monitorPagos' // pagos saldados a monitores
+};
+
+// Cache local (se rellena con onSnapshot o con LocalStorage en modo demo)
+const state = {
+  ofertas: [],
+  pedidos: [],
+  facturas: [],
+  listas: [],
+  backups: [],
+  monitorPagos: []
+};
+
+/* ----------------------------------------------------------------
+   Init Firebase o caer a modo local
+---------------------------------------------------------------- */
+function initBackend() {
+  if (HAS_FIREBASE) {
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      document.getElementById('connStatus').textContent = '🟢 Conectado · Tiempo real';
+      document.getElementById('connStatus').className = 'px-3 py-1 rounded-full bg-emerald-600 text-white';
+      attachListeners();
+    } catch(e) {
+      console.error('Firebase init error:', e);
+      useLocalMode = true;
+      enableLocalMode();
+    }
+  } else {
+    enableLocalMode();
+  }
+  if (HAS_EMAILJS) {
+    try { emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey }); } catch(e){ console.warn(e); }
+  }
+}
+
+function enableLocalMode() {
+  document.getElementById('configBanner').classList.remove('hidden');
+  document.getElementById('connStatus').textContent = '🟡 Modo demo local';
+  document.getElementById('connStatus').className = 'px-3 py-1 rounded-full bg-amber-500 text-white';
+  // Cargar de LocalStorage
+  Object.keys(COL).forEach(k => {
+    if (k === 'contadores') return;
+    const raw = localStorage.getItem('ingura_'+k);
+    state[k] = raw ? JSON.parse(raw) : [];
+  });
+  renderAll();
+}
+
+function saveLocal(coll) {
+  if (useLocalMode) localStorage.setItem('ingura_'+coll, JSON.stringify(state[coll]));
+}
+
+/* ----------------------------------------------------------------
+   Listeners Firestore en tiempo real (onSnapshot)
+---------------------------------------------------------------- */
+function attachListeners() {
+  ['ofertas','pedidos','facturas','listas','backups','monitorPagos'].forEach(coll => {
+    db.collection(COL[coll]).onSnapshot(snap => {
+      state[coll] = snap.docs.map(d => ({ _id: d.id, ...d.data() }));
+      renderAll();
+    }, err => console.error('Snapshot error '+coll+':', err));
+  });
+}
+
+/* ----------------------------------------------------------------
+   CRUD genérico (Firestore o local)
+---------------------------------------------------------------- */
+async function dbAdd(coll, data) {
+  if (useLocalMode) {
+    data._id = 'loc_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+    state[coll].push(data);
+    saveLocal(coll); renderAll();
+    return data._id;
+  }
+  const ref = await db.collection(COL[coll]).add(data);
+  return ref.id;
+}
+async function dbUpdate(coll, id, data) {
+  if (useLocalMode) {
+    const idx = state[coll].findIndex(x => x._id===id);
+    if (idx>-1) state[coll][idx] = { ...state[coll][idx], ...data };
+    saveLocal(coll); renderAll();
+    return;
+  }
+  await db.collection(COL[coll]).doc(id).update(data);
+}
+async function dbDelete(coll, id) {
+  if (useLocalMode) {
+    state[coll] = state[coll].filter(x => x._id!==id);
+    saveLocal(coll); renderAll();
+    return;
+  }
+  await db.collection(COL[coll]).doc(id).delete();
+}
+
+/* ----------------------------------------------------------------
+   Secuencias atómicas EVT-N y referencias de factura
+---------------------------------------------------------------- */
+async function nextOfferNumber() {
+  // Calculamos el siguiente número usando el mayor existente
+  let max = 0;
+  state.ofertas.forEach(o => {
+    const n = parseInt(String(o.ref||'').replace('EVT-',''), 10);
+    if (!isNaN(n) && n>max) max = n;
+  });
+  return max + 1;
+}
+async function nextInvoiceNumber(prefix, division, year) {
+  // prefix: 'F' o 'DBF'  → contador global por (prefix-division-year)
+  const key = `${prefix}-${year}-${division}`;
+  let max = 0;
+  state.facturas.forEach(f => {
+    if (f.refKey === key) {
+      const n = parseInt(f.refSeq, 10);
+      if (!isNaN(n) && n>max) max = n;
+    }
+  });
+  return { key, seq: max+1 };
+}
+
+/* ================================================================
+   📅 GOOGLE CALENDAR — inicialización, login y helpers
+================================================================ */
+
+// ── Refresca el estado visual del botón del header ──
+function updateCalendarButton() {
+  const btn = document.getElementById('btnCalendarLogin');
+  if (!btn) return;
+  if (!HAS_GCAL) {
+    btn.textContent = '📅 Calendar no configurado';
+    btn.className = 'px-3 py-1.5 rounded-full bg-slate-500 text-white text-xs font-semibold shadow cursor-not-allowed';
+    btn.disabled = true;
+    btn.title = 'Rellena GOOGLE_CALENDAR_CONFIG con apiKey y clientId.';
+    return;
+  }
+  btn.disabled = false;
+  if (calendarAuthed) {
+    btn.textContent = '📅 Google Calendar conectado';
+    btn.className = 'px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow transition';
+    btn.title = 'Sesión activa. Pulsa para refrescar el token.';
+  } else {
+    btn.textContent = '📅 Conectar Google Calendar';
+    btn.className = 'px-3 py-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold shadow transition';
+    btn.title = 'Conecta tu Google Calendar para sincronizar las ofertas.';
+  }
+}
+
+// ── Carga de la librería gapi (api.js) ──
+window.gapiLoaded = function() {
+  if (!HAS_GCAL) { updateCalendarButton(); return; }
+  if (typeof gapi === 'undefined' || !gapi.load) {
+    // El shim disparó la cola antes de que la librería esté lista; reintenta brevemente.
+    return setTimeout(window.gapiLoaded, 100);
+  }
+  gapi.load('client', initGapiClient);
+};
+
+async function initGapiClient() {
+  try {
+    await gapi.client.init({
+      apiKey: GOOGLE_CALENDAR_CONFIG.apiKey,
+      discoveryDocs: [GOOGLE_DISCOVERY_DOC]
+    });
+    gapiInited = true;
+    updateCalendarButton();
+  } catch (e) {
+    console.error('initGapiClient error:', e);
+  }
+}
+
+// ── Carga de Google Identity Services (gsi/client) ──
+window.gisLoaded = function() {
+  if (!HAS_GCAL) { updateCalendarButton(); return; }
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+    return setTimeout(window.gisLoaded, 100);
+  }
+  try {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CALENDAR_CONFIG.clientId,
+      scope:     GOOGLE_CALENDAR_CONFIG.scopes,
+      callback:  '' // se asigna dinámicamente en tryAuthorizeCalendar
+    });
+    gisInited = true;
+    updateCalendarButton();
+  } catch (e) {
+    console.error('gisLoaded error:', e);
+  }
+};
+
+// ── Reproducir la cola: si las librerías cargaron antes que este script,
+//    dispara ahora las inicializaciones reales. ──
+(function replayGoogleQueue(){
+  if (window.__gcalQueue && window.__gcalQueue.gapi) window.gapiLoaded();
+  if (window.__gcalQueue && window.__gcalQueue.gis ) window.gisLoaded();
+})();
+
+// ── Espera con polling a que ambas librerías terminen de inicializar ──
+function waitForGoogleReady(timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    if (gapiInited && gisInited) return resolve();
+    const start = Date.now();
+    const tick = setInterval(() => {
+      if (gapiInited && gisInited) {
+        clearInterval(tick);
+        resolve();
+      } else if (Date.now() - start > timeoutMs) {
+        clearInterval(tick);
+        reject(new Error('timeout'));
+      }
+    }, 150);
+  });
+}
+
+// ── Lanza el flujo OAuth ──
+window.tryAuthorizeCalendar = async function() {
+  if (!HAS_GCAL) {
+    alert('Falta configurar GOOGLE_CALENDAR_CONFIG (apiKey y clientId).');
+    return;
+  }
+  const btn = document.getElementById('btnCalendarLogin');
+  const txtOriginal = btn ? btn.textContent : null;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Cargando librerías…'; }
+
+  try {
+    await waitForGoogleReady(10000);
+  } catch (e) {
+    const origin = location.origin;
+    const isFile = location.protocol === 'file:';
+    const msgFile = isFile
+      ? '\n\nDetectado origen "file://". Google OAuth NO permite autenticar desde file:// — el navegador envía origen "null" y el servidor de Google lo rechaza. Sirve el HTML desde un servidor local, por ejemplo:\n\n  python -m http.server 8000\n\ny abre http://localhost:8000/ingura_erp.html'
+      : `\n\nOrigen actual: ${origin}. Revisa que esté añadido a los "Orígenes JavaScript autorizados" del cliente OAuth en Google Cloud Console.`;
+    alert('No se han podido cargar las librerías de Google tras 10 segundos.' + msgFile);
+    if (btn) { btn.disabled = false; btn.textContent = txtOriginal || '📅 Conectar Google Calendar'; }
+    updateCalendarButton();
+    return;
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = txtOriginal || '📅 Conectar Google Calendar'; }
+
+  tokenClient.callback = (resp) => {
+    if (resp.error) {
+      console.error('Auth error:', resp);
+      calendarAuthed = false;
+      updateCalendarButton();
+      const isFile = location.protocol === 'file:';
+      if (isFile) {
+        alert('Google rechazó la autorización porque el archivo se está abriendo como file://.\n\nSirve el HTML desde un servidor local (p. ej. `python -m http.server 8000`) y vuelve a intentarlo.');
+      } else {
+        alert('Error de autorización: ' + (resp.error_description || resp.error));
+      }
+      return;
+    }
+    calendarAuthed = true;
+    updateCalendarButton();
+  };
+  // Si no hay token previo, pedimos consentimiento explícito
+  try {
+    if (gapi.client.getToken() === null) {
+      tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+      tokenClient.requestAccessToken({ prompt: '' });
+    }
+  } catch (e) {
+    console.error('requestAccessToken error:', e);
+    alert('No se pudo iniciar la autorización: ' + e.message);
+  }
+};
+
+// ── ¿Estamos en condiciones de llamar a la API? ──
+function isCalendarReady() {
+  return HAS_GCAL && gapiInited && gisInited && calendarAuthed && gapi.client.getToken();
+}
+
+// ── Parser fecha (YYYY-MM-DD) + horarios ("17:00 a 21:00", "17-21h", etc.) → {start, end, allDay} ──
+function parseHorarioRange(horarios) {
+  if (!horarios) return null;
+  // Busca dos horas: HH(:MM)? y HH(:MM)?
+  const re = /(\d{1,2})(?::(\d{2}))?\s*(?:a|-|—|–|hasta|to)\s*(\d{1,2})(?::(\d{2}))?/i;
+  const m = String(horarios).match(re);
+  if (!m) return null;
+  const h1 = parseInt(m[1], 10), m1 = m[2] ? parseInt(m[2], 10) : 0;
+  const h2 = parseInt(m[3], 10), m2 = m[4] ? parseInt(m[4], 10) : 0;
+  if (isNaN(h1) || isNaN(h2) || h1 > 23 || h2 > 23) return null;
+  const pad = n => String(n).padStart(2, '0');
+  return { startTime: `${pad(h1)}:${pad(m1)}:00`, endTime: `${pad(h2)}:${pad(m2)}:00` };
+}
+
+function buildCalendarEventDates(fecha, horarios) {
+  // fecha esperado: "YYYY-MM-DD"
+  if (!fecha) return null;
+  const rango = parseHorarioRange(horarios);
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Madrid';
+  if (rango) {
+    return {
+      start: { dateTime: `${fecha}T${rango.startTime}`, timeZone: tz },
+      end:   { dateTime: `${fecha}T${rango.endTime}`,   timeZone: tz }
+    };
+  }
+  // Evento de día completo: end.date = día siguiente (formato exclusivo de Google)
+  const d = new Date(fecha + 'T00:00:00');
+  const nxt = new Date(d.getTime() + 24*60*60*1000);
+  const iso = nxt.toISOString().slice(0,10);
+  return {
+    start: { date: fecha },
+    end:   { date: iso }
+  };
+}
+
+// ── Construye el cuerpo del evento según el estado de la oferta ──
+function buildCalendarEventBody(oferta) {
+  const fechaDates = buildCalendarEventDates(oferta.fecha, oferta.horarios);
+  if (!fechaDates) return null;
+  const estado = oferta.estado || 'Sin Enviar';
+  const prefix = estado === 'Confirmada' ? '[CONFIRMADA]' : '[PROPUESTA]';
+  const descLines = [
+    `Estado: ${estado}`,
+    oferta.division ? `División: ${oferta.division}` : null,
+    oferta.contacto ? `Contacto: ${oferta.contacto} (${oferta.via || ''})` : null,
+    oferta.participantes ? `Participantes: ${oferta.participantes}` : null,
+    oferta.edad ? `Edad: ${oferta.edad}` : null,
+    oferta.presupuesto ? `Presupuesto: ${fmtEur(oferta.presupuesto)}` : null,
+    oferta.dias ? `Días: ${oferta.dias}` : null
+  ].filter(Boolean);
+  const body = {
+    summary: `${prefix} ${oferta.ref || ''} · ${oferta.pueblo || ''} · ${oferta.actividad || ''}`.trim(),
+    description: descLines.join('\n'),
+    ...fechaDates
+  };
+  // Color: gris grafito (8) para propuesta, color por defecto para confirmada
+  if (estado === 'Confirmada') {
+    body.colorId = null;
+  } else {
+    body.colorId = '8';
+  }
+  return body;
+}
+
+/**
+ * Sincroniza la oferta con Google Calendar según el estado.
+ * Devuelve { calendarEventId } o {} sin tocar la oferta si no hay sesión / no aplica.
+ * No lanza errores hacia arriba: cualquier fallo se loguea y se ignora.
+ */
+async function syncOfertaConCalendar(oferta) {
+  if (!isCalendarReady()) return {};
+  const estado = oferta.estado || 'Sin Enviar';
+  const eventId = oferta.calendarEventId || null;
+
+  try {
+    // CASO C: Cerrada → borrar evento si existe
+    if (estado === 'Cerrada') {
+      if (eventId) {
+        try {
+          await gapi.client.calendar.events.delete({ calendarId: GOOGLE_CALENDAR_CONFIG.calendarId, eventId });
+        } catch(e) {
+          console.warn('Calendar delete falló (puede que ya no exista):', e?.result?.error?.message || e);
+        }
+        return { calendarEventId: null };
+      }
+      return {};
+    }
+
+    const body = buildCalendarEventBody(oferta);
+    if (!body) return {}; // sin fecha → no podemos crear evento
+
+    // CASO B: ya existe evento → patch (actualiza título/color/fechas)
+    if (eventId) {
+      try {
+        await gapi.client.calendar.events.patch({
+          calendarId: GOOGLE_CALENDAR_CONFIG.calendarId,
+          eventId,
+          resource: body
+        });
+        return { calendarEventId: eventId };
+      } catch(e) {
+        // Si el evento se borró fuera del sistema, lo recreamos
+        console.warn('Calendar patch falló, intento de re-crear:', e?.result?.error?.message || e);
+      }
+    }
+
+    // CASO A: insertar nuevo evento
+    const resp = await gapi.client.calendar.events.insert({
+      calendarId: GOOGLE_CALENDAR_CONFIG.calendarId,
+      resource: body
+    });
+    const newId = resp?.result?.id || null;
+    return { calendarEventId: newId };
+  } catch(e) {
+    console.error('syncOfertaConCalendar error:', e);
+    return {};
+  }
+}
+
+// ── Borrar el evento asociado (cuando se elimina la oferta) ──
+async function deleteCalendarEventOf(oferta) {
+  if (!isCalendarReady()) return;
+  const eventId = oferta?.calendarEventId;
+  if (!eventId) return;
+  try {
+    await gapi.client.calendar.events.delete({ calendarId: GOOGLE_CALENDAR_CONFIG.calendarId, eventId });
+  } catch(e) {
+    console.warn('Calendar delete (eliminarOferta):', e?.result?.error?.message || e);
+  }
+}
+
+/* ================================================================
+   🧭 NAVEGACIÓN POR PESTAÑAS
+================================================================ */
+const tabs = document.querySelectorAll('.tab-btn');
+const panels = document.querySelectorAll('.tab-panel');
+tabs.forEach(btn => btn.addEventListener('click', () => {
+  const t = btn.dataset.tab;
+  tabs.forEach(b => b.classList.remove('tab-active'));
+  btn.classList.add('tab-active');
+  panels.forEach(p => p.classList.add('hidden'));
+  document.getElementById('tab-'+t).classList.remove('hidden');
+}));
+// Activa por defecto la primera
+tabs[0].click();
+
+/* ================================================================
+   📋 MÓDULO OFERTA
+================================================================ */
+const fOferta = document.getElementById('formOferta');
+let editingOfertaId = null;
+
+function setFormOfertaModo(modo) {
+  // modo: 'nuevo' | 'editar' | 'ver'
+  const inputs = fOferta.querySelectorAll('input, select, textarea');
+  const readOnly = (modo === 'ver');
+  inputs.forEach(el => { el.disabled = readOnly; });
+  document.getElementById('btnGuardarOferta').classList.toggle('hidden', readOnly);
+}
+
+document.getElementById('btnNuevaOferta').addEventListener('click', async () => {
+  editingOfertaId = null;
+  document.getElementById('formOfertaTitle').textContent = 'Nueva oferta';
+  const n = await nextOfferNumber();
+  document.getElementById('formOfertaRef').value = 'EVT-' + n;
+  document.getElementById('of_fecha').value = new Date().toISOString().slice(0,10);
+  document.getElementById('of_pueblo').value = '';
+  document.getElementById('of_actividad').value = '';
+  document.getElementById('of_division').value = 'ARI';
+  document.getElementById('of_contacto').value = '';
+  document.getElementById('of_via').value = 'Email';
+  document.getElementById('of_contactoDato').value = '';
+  document.getElementById('of_entrega').value = '';
+  document.getElementById('of_presupuesto').value = '';
+  document.getElementById('of_estado').value = 'Sin Enviar';
+  document.getElementById('of_dias').value = '';
+  document.getElementById('of_horarios').value = '';
+  document.getElementById('of_participantesModo').value = 'Limitado';
+  document.getElementById('of_participantes').value = '';
+  document.getElementById('of_participantes').style.display = 'block';
+  document.getElementById('of_edad').value = '';
+  document.getElementById('of_turnos').value = '';
+  document.getElementById('of_duracion').value = '';
+  setFormOfertaModo('nuevo');
+  fOferta.classList.remove('hidden');
+  fOferta.scrollIntoView({ behavior:'smooth' });
+});
+
+document.getElementById('btnCancelarOferta').addEventListener('click', () => fOferta.classList.add('hidden'));
+
+document.getElementById('btnGuardarOferta').addEventListener('click', async () => {
+  const partModo = document.getElementById('of_participantesModo').value;
+  const partNum  = parseInt(document.getElementById('of_participantes').value) || 0;
+  const payload = {
+    ref:         document.getElementById('formOfertaRef').value.trim(),
+    fecha:       document.getElementById('of_fecha').value,
+    pueblo:      document.getElementById('of_pueblo').value.trim(),
+    actividad:   document.getElementById('of_actividad').value.trim(),
+    division:    document.getElementById('of_division').value,
+    contacto:    document.getElementById('of_contacto').value.trim(),
+    via:         document.getElementById('of_via').value,
+    contactoDato:document.getElementById('of_contactoDato').value.trim(),
+    entrega:     document.getElementById('of_entrega').value,
+    presupuesto: parseFloat(document.getElementById('of_presupuesto').value)||0,
+    estado:      document.getElementById('of_estado').value,
+    dias:        document.getElementById('of_dias').value.trim(),
+    horarios:    document.getElementById('of_horarios').value.trim(),
+    participantesModo: partModo,
+    participantes: partModo === 'Libre' ? 0 : partNum,
+    edad:        document.getElementById('of_edad').value.trim(),
+    turnos:      parseInt(document.getElementById('of_turnos').value)||0,
+    duracion:    document.getElementById('of_duracion').value.trim(),
+    createdAt:   new Date().toISOString()
+  };
+  if (!payload.pueblo || !payload.actividad) {
+    alert('Pueblo y Actividad son obligatorios.'); return;
+  }
+  if (editingOfertaId) {
+    const prev = state.ofertas.find(o=>o._id===editingOfertaId);
+    // Mantén el calendarEventId previo para que la sincronización sepa qué evento tocar
+    payload.calendarEventId = prev?.calendarEventId || null;
+    await dbUpdate('ofertas', editingOfertaId, payload);
+    // Si pasó a Confirmada, crear pedido
+    if (prev && prev.estado !== 'Confirmada' && payload.estado === 'Confirmada') {
+      await crearPedidoDesdeOferta({ ...payload, _id: editingOfertaId });
+    }
+    // Sincroniza con Google Calendar (no bloquea si no hay sesión)
+    const sync = await syncOfertaConCalendar({ ...payload, _id: editingOfertaId });
+    if (sync && Object.prototype.hasOwnProperty.call(sync, 'calendarEventId')
+        && sync.calendarEventId !== payload.calendarEventId) {
+      await dbUpdate('ofertas', editingOfertaId, { calendarEventId: sync.calendarEventId });
+    }
+  } else {
+    payload.calendarEventId = null;
+    const newId = await dbAdd('ofertas', payload);
+    if (payload.estado === 'Confirmada') {
+      await crearPedidoDesdeOferta({ ...payload, _id: newId });
+    }
+    const sync = await syncOfertaConCalendar({ ...payload, _id: newId });
+    if (sync && sync.calendarEventId) {
+      await dbUpdate('ofertas', newId, { calendarEventId: sync.calendarEventId });
+    }
+  }
+  fOferta.classList.add('hidden');
+});
+
+function badgeDiv(d) { return `<span class="badge-${d} text-xs font-bold px-2 py-0.5 rounded">${d}</span>`; }
+function badgeEstado(e) {
+  if (e === 'Sin Enviar') {
+    return `<span class="badge-sinenviar text-xs px-2 py-0.5 rounded">⚠ ${e}</span>`;
+  }
+  const cls = e==='Confirmada' ? 'badge-confirmada' : e==='Cerrada' ? 'badge-cerrada' : 'badge-espera';
+  return `<span class="${cls} text-xs font-semibold px-2 py-0.5 rounded">${e}</span>`;
+}
+function fmtEur(v) { return (Number(v)||0).toLocaleString('es-ES',{ minimumFractionDigits:2, maximumFractionDigits:2 })+' €'; }
+
+function renderOfertas() {
+  const tb = document.getElementById('tblOfertas');
+  const searchEl = document.getElementById('ofertasSearch');
+  const countEl  = document.getElementById('ofertasSearchCount');
+  const q = (searchEl?.value || '').toLowerCase().trim();
+
+  let rows = [...state.ofertas].sort((a,b) => {
+    const na = parseInt((a.ref||'').replace('EVT-',''),10)||0;
+    const nb = parseInt((b.ref||'').replace('EVT-',''),10)||0;
+    return nb-na;
+  });
+
+  // Filtrado por cualquier campo
+  if (q) {
+    rows = rows.filter(o => {
+      const haystack = [
+        o.ref, o.fecha, o.pueblo, o.actividad, o.division,
+        o.contacto, o.via, o.entrega, o.presupuesto, o.estado,
+        o.dias, o.horarios, o.participantes, o.edad
+      ].map(v => String(v ?? '').toLowerCase()).join(' | ');
+      return haystack.includes(q);
+    });
+  }
+  if (countEl) {
+    countEl.textContent = q ? `${rows.length} resultado(s)` : '';
+  }
+
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-slate-400">${q ? 'Ninguna oferta coincide con la búsqueda.' : 'Sin ofertas registradas.'}</td></tr>`;
+    return;
+  }
+  tb.innerHTML = rows.map(o => `
+    <tr class="hover:bg-slate-50">
+      <td class="px-3 py-2 font-mono font-semibold text-slate-700">${o.ref||''}</td>
+      <td class="px-3 py-2">${o.fecha||''}</td>
+      <td class="px-3 py-2">${o.pueblo||''}</td>
+      <td class="px-3 py-2">${o.actividad||''}</td>
+      <td class="px-3 py-2">${badgeDiv(o.division||'ARI')}</td>
+      <td class="px-3 py-2">${o.contacto||''} <span class="text-xs text-slate-400">· ${o.via||''}</span>${o.contactoDato ? `<div class="text-xs text-slate-500">${o.contactoDato}</div>` : ''}</td>
+      <td class="px-3 py-2">${o.entrega||''}</td>
+      <td class="px-3 py-2 text-right font-semibold">${fmtEur(o.presupuesto)}</td>
+      <td class="px-3 py-2">${badgeEstado(o.estado||'Sin Enviar')}</td>
+      <td class="px-3 py-2 text-center whitespace-nowrap">
+        <button class="text-slate-600 hover:underline text-xs font-semibold" onclick="verOferta('${o._id}')">Ver</button>
+        <button class="text-blue-600 hover:underline text-xs font-semibold ml-2" onclick="editarOferta('${o._id}')">Editar</button>
+        <button class="text-rose-600 hover:underline text-xs font-semibold ml-2" onclick="eliminarOferta('${o._id}')">Eliminar</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Listener del buscador de ofertas
+document.getElementById('ofertasSearch').addEventListener('input', renderOfertas);
+
+function _cargarOfertaEnForm(o) {
+  document.getElementById('formOfertaRef').value = o.ref || '';
+  document.getElementById('of_fecha').value = o.fecha||'';
+  document.getElementById('of_pueblo').value = o.pueblo||'';
+  document.getElementById('of_actividad').value = o.actividad||'';
+  document.getElementById('of_division').value = o.division||'ARI';
+  document.getElementById('of_contacto').value = o.contacto||'';
+  document.getElementById('of_via').value = o.via||'Email';
+  document.getElementById('of_contactoDato').value = o.contactoDato||'';
+  document.getElementById('of_entrega').value = o.entrega||'';
+  document.getElementById('of_presupuesto').value = o.presupuesto||'';
+  document.getElementById('of_estado').value = o.estado||'Sin Enviar';
+  document.getElementById('of_dias').value = o.dias||'';
+  document.getElementById('of_horarios').value = o.horarios||'';
+  // Participantes: Libre o Limitado
+  const modo = o.participantesModo || (o.participantes > 0 ? 'Limitado' : 'Limitado');
+  document.getElementById('of_participantesModo').value = modo;
+  document.getElementById('of_participantes').value = modo === 'Libre' ? '' : (o.participantes || '');
+  document.getElementById('of_participantes').style.display = modo === 'Libre' ? 'none' : 'block';
+  document.getElementById('of_edad').value = o.edad||'';
+  document.getElementById('of_turnos').value = o.turnos||'';
+  document.getElementById('of_duracion').value = o.duracion||'';
+}
+
+window.editarOferta = function(id) {
+  const o = state.ofertas.find(x=>x._id===id);
+  if (!o) return;
+  editingOfertaId = id;
+  document.getElementById('formOfertaTitle').textContent = 'Editar oferta';
+  _cargarOfertaEnForm(o);
+  setFormOfertaModo('editar');
+  fOferta.classList.remove('hidden');
+  fOferta.scrollIntoView({ behavior:'smooth' });
+};
+window.verOferta = function(id) {
+  const o = state.ofertas.find(x=>x._id===id);
+  if (!o) return;
+  editingOfertaId = null;
+  document.getElementById('formOfertaTitle').textContent = `Ver oferta · ${o.ref || ''} (solo lectura)`;
+  _cargarOfertaEnForm(o);
+  setFormOfertaModo('ver');
+  fOferta.classList.remove('hidden');
+  fOferta.scrollIntoView({ behavior:'smooth' });
+};
+window.eliminarOferta = async function(id) {
+  const o = state.ofertas.find(x=>x._id===id);
+  const etiqueta = o ? `${o.ref || ''} — ${o.pueblo || ''} · ${o.actividad || ''}` : 'esta oferta';
+  if (!confirm(`¿Estás seguro de que quieres eliminar la oferta?\n\n${etiqueta}\n\nEsta acción no se puede deshacer.`)) return;
+  // Borra primero el evento de Google Calendar si lo tiene
+  if (o) await deleteCalendarEventOf(o);
+  await dbDelete('ofertas', id);
+};
+
+/* ================================================================
+   📦 MÓDULO PEDIDO
+================================================================ */
+async function crearPedidoDesdeOferta(of) {
+  // Evitar duplicado si ya existe
+  if (state.pedidos.some(p => p.ofertaId === of._id)) return;
+  const ped = {
+    ofertaId:    of._id,
+    ref:         of.ref,
+    pueblo:      of.pueblo,
+    actividad:   of.actividad,
+    division:    of.division,
+    presupuesto: of.presupuesto,
+    dias:        of.dias,
+    horarios:    of.horarios,
+    participantes: of.participantes||0,
+    edad:        of.edad||'',
+    lugarTrabajo: '',
+    nMonitores:  0,
+    monitores:   [],
+    tiposPago:   [],
+    sueldoMon:   0,
+    tipoPago:    'A',
+    coche:       '',
+    sueldoCoche: 0,
+    createdAt:   new Date().toISOString()
+  };
+  await dbAdd('pedidos', ped);
+}
+
+let pedidoModo = {}; // { [id]: 'ver' | 'editar' | null }
+
+function renderPedidos() {
+  const wrap = document.getElementById('tblPedidos');
+  const empty = document.getElementById('pedidoEmpty');
+
+  // ── Capturar foco + selección (para restaurar tras el rebuild) ──
+  const focused = document.activeElement;
+  let focusInfo = null;
+  if (focused && focused.dataset && focused.dataset.pedidoId && focused.dataset.pedidoInput) {
+    focusInfo = {
+      pedidoId: focused.dataset.pedidoId,
+      key:      focused.dataset.pedidoInput,
+      selStart: focused.selectionStart,
+      selEnd:   focused.selectionEnd
+    };
+  }
+
+  if (!state.pedidos.length) {
+    wrap.innerHTML = ''; empty.classList.remove('hidden'); return;
+  }
+  empty.classList.add('hidden');
+  const rows = [...state.pedidos].sort((a,b) => {
+    const na = parseInt((a.ref||'').replace('EVT-',''),10)||0;
+    const nb = parseInt((b.ref||'').replace('EVT-',''),10)||0;
+    return nb - na;
+  });
+
+  wrap.innerHTML = `
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
+          <tr>
+            <th class="px-3 py-3 text-left">Ref</th>
+            <th class="px-3 py-3 text-left">Pueblo</th>
+            <th class="px-3 py-3 text-left">Actividad</th>
+            <th class="px-3 py-3 text-left">Div.</th>
+            <th class="px-3 py-3 text-right">Presupuesto</th>
+            <th class="px-3 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="pedidosTbody" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>`;
+
+  const tbody = document.getElementById('pedidosTbody');
+  rows.forEach(p => {
+    // Fila resumen
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-slate-50';
+    tr.id = `pedrow-${p._id}`;
+    tr.innerHTML = `
+      <td class="px-3 py-2 font-mono font-bold text-slate-800">${p.ref||''}</td>
+      <td class="px-3 py-2">${p.pueblo||''}</td>
+      <td class="px-3 py-2">${p.actividad||''}</td>
+      <td class="px-3 py-2">${badgeDiv(p.division||'ARI')}</td>
+      <td class="px-3 py-2 text-right font-semibold text-emerald-700">${fmtEur(p.presupuesto)}</td>
+      <td class="px-3 py-2 text-center whitespace-nowrap">
+        <button class="text-slate-600 hover:underline text-xs font-semibold" onclick="togglePedido('${p._id}','ver')">Ver</button>
+        <button class="text-blue-600 hover:underline text-xs font-semibold ml-2" onclick="togglePedido('${p._id}','editar')">Editar</button>
+      </td>`;
+    tbody.appendChild(tr);
+
+    // Fila detalle (oculta por defecto)
+    const trD = document.createElement('tr');
+    trD.id = `peddetail-${p._id}`;
+    trD.className = 'hidden bg-slate-50';
+    trD.innerHTML = `<td colspan="6" class="px-5 py-5 border-t border-slate-200"><div id="peddetail-inner-${p._id}"></div></td>`;
+    tbody.appendChild(trD);
+  });
+
+  // ── Restaurar detalles que estuvieran abiertos antes del rebuild ──
+  Object.keys(pedidoModo).forEach(id => {
+    const modo = pedidoModo[id];
+    if (!modo) return;
+    const trD = document.getElementById(`peddetail-${id}`);
+    if (!trD) return;
+    trD.classList.remove('hidden');
+    const p = state.pedidos.find(x => x._id === id);
+    if (p) _renderPedidoDetail(p, modo);
+  });
+
+  // ── Devolver foco al input que estaba editando el usuario ──
+  if (focusInfo) {
+    const el = document.querySelector(
+      `[data-pedido-id="${focusInfo.pedidoId}"][data-pedido-input="${focusInfo.key}"]`
+    );
+    if (el) {
+      el.focus();
+      try {
+        if (focusInfo.selStart != null && typeof el.setSelectionRange === 'function') {
+          el.setSelectionRange(focusInfo.selStart, focusInfo.selEnd);
+        }
+      } catch(e) { /* number inputs no soportan setSelectionRange */ }
+    }
+  }
+}
+
+window.togglePedido = function(id, modo) {
+  const trD = document.getElementById(`peddetail-${id}`);
+  if (!trD) return;
+  // Cerrar si ya está abierto en el mismo modo
+  if (!trD.classList.contains('hidden') && pedidoModo[id] === modo) {
+    trD.classList.add('hidden');
+    pedidoModo[id] = null;
+    return;
+  }
+  pedidoModo[id] = modo;
+  trD.classList.remove('hidden');
+  const p = state.pedidos.find(x => x._id === id);
+  _renderPedidoDetail(p, modo);
+};
+
+function _renderPedidoDetail(p, modo) {
+  if (!p) return;
+  modo = modo || pedidoModo[p._id] || 'ver';
+  const container = document.getElementById(`peddetail-inner-${p._id}`);
+  if (!container) return;
+  const dis = modo === 'ver' ? 'disabled' : '';
+  const otroModo = modo === 'ver' ? 'editar' : 'ver';
+  const btnLabel = modo === 'ver' ? '✏️ Editar' : '👁 Solo ver';
+  const btnCls = modo === 'ver'
+    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+    : 'bg-slate-200 text-slate-700 hover:bg-slate-300';
+
+  const da = (key) => `data-pedido-id="${p._id}" data-pedido-input="${key}"`;
+
+  container.innerHTML = `
+    <div class="flex items-center gap-3 mb-4">
+      <span class="text-xs font-semibold text-slate-500 uppercase">${modo === 'ver' ? '👁 Vista' : '✏️ Edición'}</span>
+      <button onclick="togglePedido('${p._id}','${otroModo}')" class="text-xs px-3 py-1 rounded-lg font-semibold ${btnCls}">${btnLabel}</button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm mb-4">
+      <div><label class="text-slate-500">Días</label>
+        <input ${dis} ${da('dias')} value="${p.dias||''}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','dias',this.value)"`:''}/>
+      </div>
+      <div><label class="text-slate-500">Horarios</label>
+        <input ${dis} ${da('horarios')} value="${p.horarios||''}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','horarios',this.value)"`:''}/>
+      </div>
+      <div><label class="text-slate-500">Presupuesto</label>
+        <input disabled value="${fmtEur(p.presupuesto)}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-slate-100"/>
+      </div>
+      <div class="md:col-span-3"><label class="text-slate-500">Lugar exacto de trabajo</label>
+        <input ${dis} ${da('lugarTrabajo')} value="${p.lugarTrabajo||''}" placeholder="Ej: Polideportivo Municipal, Sala B"
+          class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','lugarTrabajo',this.value)"`:''}/>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+      <label>Nº monitores
+        <input type="number" min="0" ${dis} ${da('nMonitores')} value="${p.nMonitores||0}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','nMonitores',this.value,true)"`:''}/>
+      </label>
+      <label>Sueldo/monitor (€)
+        <input type="number" step="0.01" ${dis} ${da('sueldoMon')} value="${p.sueldoMon||0}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','sueldoMon',this.value)"`:''}/>
+      </label>
+      <label>Coche (quién)
+        <input type="text" ${dis} ${da('coche')} value="${p.coche||''}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','coche',this.value)"`:''}/>
+      </label>
+      <label>Sueldo coche (€)
+        <input type="number" step="0.01" ${dis} ${da('sueldoCoche')} value="${p.sueldoCoche||0}" class="w-full mt-1 px-3 py-2 border rounded-lg bg-white"
+          ${modo==='editar'?`oninput="actualizarPedidoCampo('${p._id}','sueldoCoche',this.value)"`:''}/>
+      </label>
+      <div class="md:col-span-4">
+        <span class="text-slate-500 text-sm">Monitores asignados <span class="text-xs text-slate-400">(nombre + tipo de pago A/B)</span></span>
+        <div id="mons-${p._id}" class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+      </div>
+    </div>`;
+
+  // Inputs de monitores (nombre + tipoPago por monitor)
+  const cont = document.getElementById('mons-'+p._id);
+  if (cont) {
+    const n = parseInt(p.nMonitores)||0;
+    const tipos = p.tiposPago || [];
+    const fallback = p.tipoPago || 'A';
+    let html = '';
+    for (let i=0; i<n; i++) {
+      const val = (p.monitores && p.monitores[i]) ? p.monitores[i] : '';
+      const tp  = tipos[i] || fallback;
+      if (modo === 'editar') {
+        html += `
+        <div class="flex gap-2">
+          <input type="text" placeholder="Monitor ${i+1}" value="${val}"
+            data-pedido-id="${p._id}" data-pedido-input="monitor-${i}"
+            class="flex-1 px-3 py-2 border rounded-lg text-sm"
+            oninput="actualizarMonitor('${p._id}',${i},this.value)"/>
+          <select class="px-2 py-2 border rounded-lg text-sm bg-white"
+            data-pedido-id="${p._id}" data-pedido-input="tipoPago-${i}"
+            onchange="actualizarTipoPagoMonitor('${p._id}',${i},this.value)" title="Tipo de pago">
+            <option value="A" ${tp==='A'?'selected':''}>A</option>
+            <option value="B" ${tp==='B'?'selected':''}>B</option>
+          </select>
+        </div>`;
+      } else {
+        html += `
+        <div class="flex gap-2">
+          <input type="text" disabled value="${val}" class="flex-1 px-3 py-2 border rounded-lg text-sm bg-white"/>
+          <select disabled class="px-2 py-2 border rounded-lg text-sm bg-white">
+            <option ${tp==='A'?'selected':''}>A</option>
+            <option ${tp==='B'?'selected':''}>B</option>
+          </select>
+        </div>`;
+      }
+    }
+    cont.innerHTML = html || '<span class="text-xs text-slate-400">Sin monitores asignados.</span>';
+  }
+}
+
+let pedidoDebounce = {};
+window.actualizarPedidoCampo = function(id, campo, value, isInt) {
+  const v = isInt ? (parseInt(value)||0) : (typeof value==='string' ? value : (parseFloat(value)||0));
+  const pedido = state.pedidos.find(p=>p._id===id);
+  if (!pedido) return;
+  pedido[campo] = v;
+  if (isInt && campo==='nMonitores') {
+    pedido.monitores = (pedido.monitores||[]).slice(0, v);
+    pedido.tiposPago = (pedido.tiposPago||[]).slice(0, v);
+  }
+  clearTimeout(pedidoDebounce[id]);
+  pedidoDebounce[id] = setTimeout(async ()=>{
+    await dbUpdate('pedidos', id, {
+      [campo]: v,
+      ...(campo==='nMonitores' ? { monitores: pedido.monitores, tiposPago: pedido.tiposPago } : {})
+    });
+    if (isInt && campo==='nMonitores') _renderPedidoDetail(pedido, pedidoModo[id]);
+  }, 500);
+};
+window.actualizarMonitor = function(id, idx, value) {
+  const pedido = state.pedidos.find(p=>p._id===id);
+  if (!pedido) return;
+  pedido.monitores = pedido.monitores || [];
+  pedido.monitores[idx] = value;
+  clearTimeout(pedidoDebounce[id+'_m']);
+  pedidoDebounce[id+'_m'] = setTimeout(async ()=>{
+    await dbUpdate('pedidos', id, { monitores: pedido.monitores });
+  }, 500);
+};
+window.actualizarTipoPagoMonitor = function(id, idx, value) {
+  const pedido = state.pedidos.find(p=>p._id===id);
+  if (!pedido) return;
+  pedido.tiposPago = pedido.tiposPago || [];
+  // Asegurar longitud con fallback al antiguo tipoPago global
+  const n = parseInt(pedido.nMonitores)||0;
+  const fallback = pedido.tipoPago || 'A';
+  while (pedido.tiposPago.length < n) pedido.tiposPago.push(fallback);
+  pedido.tiposPago[idx] = value;
+  clearTimeout(pedidoDebounce[id+'_tp']);
+  pedidoDebounce[id+'_tp'] = setTimeout(async ()=>{
+    await dbUpdate('pedidos', id, { tiposPago: pedido.tiposPago });
+  }, 500);
+};
+
+/* ================================================================
+   🛠️ MÓDULO PRODUCCIÓN
+================================================================ */
+document.getElementById('docxInput').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const buf = await file.arrayBuffer();
+  const { value } = await mammoth.extractRawText({ arrayBuffer: buf });
+  const items = value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const lista = {
+    nombre: file.name.replace(/\.docx$/i,''),
+    items:  items.map(t => ({ texto:t, hecho:false })),
+    fecha:  new Date().toISOString()
+  };
+  await dbAdd('listas', lista);
+  e.target.value = '';
+});
+
+function renderListas() {
+  const cont = document.getElementById('listasContainer');
+  const empty = document.getElementById('produccionEmpty');
+  if (!state.listas.length) { cont.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  const rows = [...state.listas].sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  cont.innerHTML = rows.map(l => {
+    const pendientes = (l.items||[]).filter(it=>!it.hecho);
+    return `
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+      <details open>
+        <summary class="px-5 py-4 flex items-center justify-between bg-slate-50 border-b">
+          <div>
+            <h3 class="font-bold text-slate-800">${l.nombre}</h3>
+            <p class="text-xs text-slate-500">${(l.items||[]).length} items · ${pendientes.length} por comprar</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="event.preventDefault();descargarCompraDocx('${l._id}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg">⬇ Word compra</button>
+            <button onclick="event.preventDefault();enviarCompraWhatsApp('${l._id}')" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold rounded-lg">WhatsApp</button>
+            <button onclick="event.preventDefault();eliminarLista('${l._id}')" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold rounded-lg">Eliminar</button>
+          </div>
+        </summary>
+        <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-semibold text-sm mb-2 text-slate-700">Checklist</h4>
+            <ul class="space-y-1 text-sm">
+              ${(l.items||[]).map((it,i) => `
+                <li class="flex items-center gap-2 ${it.hecho?'checklist-done':''}">
+                  <input type="checkbox" ${it.hecho?'checked':''} onchange="toggleItem('${l._id}',${i},this.checked)"/>
+                  <span>${it.texto}</span>
+                </li>`).join('')}
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-sm mb-2 text-rose-700">🛒 Pendiente de comprar</h4>
+            ${pendientes.length ? `<ul class="text-sm list-disc list-inside">${pendientes.map(p=>`<li>${p.texto}</li>`).join('')}</ul>` : '<p class="text-xs text-slate-400">Nada pendiente. ¡Lista completa!</p>'}
+          </div>
+        </div>
+      </details>
+    </div>`;
+  }).join('');
+}
+
+window.toggleItem = async function(id, idx, checked) {
+  const l = state.listas.find(x=>x._id===id);
+  if (!l) return;
+  l.items[idx].hecho = checked;
+  await dbUpdate('listas', id, { items: l.items });
+};
+window.eliminarLista = async function(id) {
+  if (!confirm('¿Eliminar lista?')) return;
+  await dbDelete('listas', id);
+};
+window.descargarCompraDocx = async function(id) {
+  const l = state.listas.find(x=>x._id===id);
+  if (!l) return;
+  const pendientes = (l.items||[]).filter(it=>!it.hecho);
+  // Generación simple usando docx UMD
+  const { Document, Packer, Paragraph, HeadingLevel, TextRun } = docx;
+  const doc = new Document({
+    sections: [{
+      children: [
+        new Paragraph({ heading: HeadingLevel.HEADING_1, children: [ new TextRun(`Lista de compra · ${l.nombre}`) ] }),
+        new Paragraph({ children: [ new TextRun({ text: `Generada: ${new Date().toLocaleString('es-ES')}`, italics:true }) ] }),
+        new Paragraph(''),
+        ...pendientes.map(p => new Paragraph({ bullet: { level: 0 }, children: [ new TextRun(p.texto) ] }))
+      ]
+    }]
+  });
+  const blob = await Packer.toBlob(doc);
+  saveAs(blob, `Compra_${l.nombre}_${new Date().toISOString().slice(0,10)}.docx`);
+};
+window.enviarCompraWhatsApp = function(id) {
+  const l = state.listas.find(x=>x._id===id);
+  if (!l) return;
+  const pendientes = (l.items||[]).filter(it=>!it.hecho).map(it=>'• '+it.texto).join('\n');
+  const tel = prompt('Número de WhatsApp (con prefijo internacional, sin espacios)\nEj: 34666123456');
+  if (!tel) return;
+  const texto = encodeURIComponent(`🛒 Lista de compra - ${l.nombre}\n\n${pendientes}`);
+  window.open(`https://wa.me/${tel}?text=${texto}`, '_blank');
+};
+
+/* ================================================================
+   💶 MÓDULO FACTURACIÓN
+================================================================ */
+function renderFacturas() {
+  const tb = document.getElementById('tblFacturas');
+  // Por cada pedido (que viene de oferta Confirmada), buscar factura existente o crear placeholder visual
+  const rows = state.pedidos.map(p => {
+    const fac = state.facturas.find(f => f.pedidoId === p._id);
+    return { ped: p, fac };
+  });
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="13" class="text-center py-8 text-slate-400">Confirma ofertas para que aparezcan aquí.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = rows.map(({ped, fac}) => {
+    const tipo  = fac?.tipoCliente || '';
+    const iva   = fac?.iva ?? '';
+    const base  = fac?.base ?? ped.presupuesto ?? 0;
+    const cuota = fac && iva!=='' ? (base * (iva/100)) : 0;
+    const total = base + cuota;
+    return `
+    <tr class="hover:bg-slate-50">
+      <td class="px-3 py-2 font-mono">${ped.ref}</td>
+      <td class="px-3 py-2">${ped.pueblo} · ${ped.actividad}</td>
+      <td class="px-3 py-2">${badgeDiv(ped.division)}</td>
+      <td class="px-3 py-2">
+        <select class="px-2 py-1 border rounded text-xs" onchange="cambiarTipoCliente('${ped._id}',this.value)">
+          <option value="">— Selecciona —</option>
+          <option ${tipo==='ef4ktur-face'?'selected':''}>ef4ktur-face</option>
+          <option ${tipo==='Cliente no adherido'?'selected':''}>Cliente no adherido</option>
+        </select>
+      </td>
+      <td class="px-3 py-2">
+        <input type="text" value="${fac?.referencia||''}" placeholder="—"
+               class="w-40 px-2 py-1 border rounded text-xs font-mono"
+               oninput="cambiarReferencia('${ped._id}',this.value)"/>
+      </td>
+      <td class="px-3 py-2">
+        <select class="px-2 py-1 border rounded text-xs" onchange="cambiarIVA('${ped._id}',this.value)">
+          <option value="">—</option>
+          <option ${iva===0?'selected':''} value="0">0%</option>
+          <option ${iva===10?'selected':''} value="10">10%</option>
+          <option ${iva===21?'selected':''} value="21">21%</option>
+        </select>
+      </td>
+      <td class="px-3 py-2 text-right">
+        <input type="number" step="0.01" value="${base}" class="w-24 px-2 py-1 border rounded text-right text-xs"
+               oninput="cambiarBase('${ped._id}',this.value)"/>
+      </td>
+      <td class="px-3 py-2 text-right">${fmtEur(cuota)}</td>
+      <td class="px-3 py-2 text-right font-bold">${fmtEur(total)}</td>
+      <td class="px-3 py-2">
+        <input type="date" value="${fac?.fEnvio||''}" class="px-2 py-1 border rounded text-xs"
+               onchange="cambiarFechaFac('${ped._id}','fEnvio',this.value)"/>
+      </td>
+      <td class="px-3 py-2">
+        <input type="date" value="${fac?.fCobro||''}" class="px-2 py-1 border rounded text-xs"
+               onchange="cambiarFechaFac('${ped._id}','fCobro',this.value)"/>
+      </td>
+      <td class="px-3 py-2 text-right">${diasEntre(fac?.fEnvio, fac?.fCobro)}</td>
+      <td class="px-3 py-2 text-center">
+        ${fac ? `<button onclick="eliminarFactura('${fac._id}')" class="text-rose-600 text-xs hover:underline">Borrar</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function diasEntre(a,b) {
+  if (!a || !b) return '—';
+  const d1 = new Date(a), d2 = new Date(b);
+  const diff = Math.round((d2-d1)/(1000*60*60*24));
+  return isNaN(diff) ? '—' : diff;
+}
+
+async function ensureFactura(pedidoId) {
+  let fac = state.facturas.find(f => f.pedidoId === pedidoId);
+  if (fac) return fac;
+  const p = state.pedidos.find(x=>x._id===pedidoId);
+  const nuevo = {
+    pedidoId, ref: p.ref, division: p.division,
+    tipoCliente: '', iva: '', base: p.presupuesto||0,
+    fEnvio:'', fCobro:'',
+    referencia:'', refKey:'', refSeq:'',
+    createdAt: new Date().toISOString()
+  };
+  const id = await dbAdd('facturas', nuevo);
+  nuevo._id = id;
+  return nuevo;
+}
+
+window.cambiarTipoCliente = async function(pedidoId, tipo) {
+  const fac = await ensureFactura(pedidoId);
+  const ped = state.pedidos.find(p=>p._id===pedidoId);
+  let referencia = '', refKey='', refSeq='';
+  if (tipo) {
+    const prefix = tipo === 'ef4ktur-face' ? 'F' : 'DBF';
+    const year = new Date().getFullYear();
+    const { key, seq } = await nextInvoiceNumber(prefix, ped.division, year);
+    refKey = key;
+    refSeq = String(seq).padStart(3,'0');
+    referencia = `${prefix}-${year}-${ped.division}-${refSeq}`;
+  }
+  await dbUpdate('facturas', fac._id, { tipoCliente: tipo, referencia, refKey, refSeq });
+};
+window.cambiarIVA = async function(pedidoId, ivaStr) {
+  const fac = await ensureFactura(pedidoId);
+  const iva = ivaStr === '' ? '' : parseFloat(ivaStr);
+  await dbUpdate('facturas', fac._id, { iva });
+};
+window.cambiarBase = async function(pedidoId, baseStr) {
+  const fac = await ensureFactura(pedidoId);
+  await dbUpdate('facturas', fac._id, { base: parseFloat(baseStr)||0 });
+};
+window.cambiarFechaFac = async function(pedidoId, campo, val) {
+  const fac = await ensureFactura(pedidoId);
+  await dbUpdate('facturas', fac._id, { [campo]: val });
+};
+let cambioRefDebounce = {};
+window.cambiarReferencia = function(pedidoId, val) {
+  clearTimeout(cambioRefDebounce[pedidoId]);
+  cambioRefDebounce[pedidoId] = setTimeout(async () => {
+    const fac = await ensureFactura(pedidoId);
+    await dbUpdate('facturas', fac._id, { referencia: val.trim() });
+  }, 400);
+};
+window.eliminarFactura = async function(id) {
+  if (!confirm('¿Borrar registro de factura?')) return;
+  await dbDelete('facturas', id);
+};
+
+/* ================================================================
+   📊 MÓDULO RESUMEN
+================================================================ */
+const RESUMEN_COLS = [
+  { k:'ref',         t:'EVT' },
+  { k:'fecha',       t:'Fecha oferta' },
+  { k:'pueblo',      t:'Pueblo' },
+  { k:'actividad',   t:'Actividad' },
+  { k:'division',    t:'Div.' },
+  { k:'contacto',    t:'Contacto' },
+  { k:'via',         t:'Vía' },
+  { k:'entrega',     t:'F. entrega' },
+  { k:'presupuesto', t:'Presupuesto €' },
+  { k:'estado',      t:'Estado' },
+  { k:'dias',        t:'Días' },
+  { k:'horarios',    t:'Horarios' },
+  { k:'participantes', t:'Nº Participantes' },
+  { k:'edad',        t:'Edad' },
+  { k:'nMonitores',  t:'Nº Monitores' },
+  { k:'monitores',   t:'Monitores' },
+  { k:'sueldoMon',   t:'Sueldo monitor €' },
+  { k:'tipoPago',    t:'Tipo pago' },
+  { k:'coche',       t:'Coche' },
+  { k:'sueldoCoche', t:'Sueldo coche €' },
+  { k:'tipoCliente', t:'Tipo cliente' },
+  { k:'referencia',  t:'Ref. factura' },
+  { k:'iva',         t:'IVA %' },
+  { k:'base',        t:'Base €' },
+  { k:'cuota',       t:'Cuota IVA €' },
+  { k:'total',       t:'Total €' },
+  { k:'fEnvio',      t:'F. envío' },
+  { k:'fCobro',      t:'F. cobro' },
+  { k:'diasCobro',   t:'Días cobro' }
+];
+
+function tipoPagoResumen(ped) {
+  const tipos = (ped.tiposPago || []).filter(Boolean);
+  if (!tipos.length) return ped.tipoPago || '';
+  const uniq = [...new Set(tipos)];
+  if (uniq.length === 1) return uniq[0];
+  return 'A+B';
+}
+
+function buildResumenRows() {
+  return state.ofertas.map(o => {
+    const ped = state.pedidos.find(p => p.ofertaId === o._id) || {};
+    const fac = state.facturas.find(f => f.pedidoId === ped._id) || {};
+    const iva = fac.iva ?? '';
+    const base = fac.base ?? o.presupuesto ?? 0;
+    const cuota = iva !== '' ? base * (iva/100) : 0;
+    const total = base + cuota;
+    return {
+      ref: o.ref, fecha:o.fecha, pueblo:o.pueblo, actividad:o.actividad, division:o.division,
+      contacto:o.contacto, via:o.via, entrega:o.entrega, presupuesto:o.presupuesto, estado:o.estado,
+      dias:o.dias, horarios:o.horarios, participantes:o.participantes||'', edad:o.edad||'',
+      nMonitores: ped.nMonitores||'', monitores: (ped.monitores||[]).join(', '),
+      sueldoMon: ped.sueldoMon||'', tipoPago: tipoPagoResumen(ped), coche: ped.coche||'',
+      sueldoCoche: ped.sueldoCoche||'',
+      tipoCliente: fac.tipoCliente||'', referencia: fac.referencia||'', iva,
+      base, cuota: Number(cuota.toFixed(2)), total: Number(total.toFixed(2)),
+      fEnvio: fac.fEnvio||'', fCobro: fac.fCobro||'',
+      diasCobro: diasEntre(fac.fEnvio, fac.fCobro)
+    };
+  });
+}
+
+function renderResumen() {
+  const head = document.getElementById('resumenHead');
+  head.innerHTML = RESUMEN_COLS.map(c => `<th class="px-2 py-2 text-left whitespace-nowrap">${c.t}</th>`).join('');
+  const rows = buildResumenRows();
+  const q = (document.getElementById('resumenSearch').value||'').toLowerCase();
+  const filtered = !q ? rows : rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
+  const body = document.getElementById('resumenBody');
+  if (!filtered.length) {
+    body.innerHTML = `<tr><td colspan="${RESUMEN_COLS.length}" class="text-center py-6 text-slate-400">Sin resultados.</td></tr>`;
+    return;
+  }
+  body.innerHTML = filtered.map(r => `
+    <tr class="hover:bg-slate-50">
+      ${RESUMEN_COLS.map(c => `<td class="px-2 py-1.5 whitespace-nowrap">${r[c.k]??''}</td>`).join('')}
+    </tr>`).join('');
+}
+document.getElementById('resumenSearch').addEventListener('input', renderResumen);
+
+document.getElementById('btnExportar').addEventListener('click', () => {
+  const fDesde = document.getElementById('exp_fechaDesde').value;
+  const fHasta = document.getElementById('exp_fechaHasta').value;
+  const eDesde = parseInt(document.getElementById('exp_evtDesde').value);
+  const eHasta = parseInt(document.getElementById('exp_evtHasta').value);
+  if (!fDesde || !fHasta || isNaN(eDesde) || isNaN(eHasta)) {
+    alert('Debes rellenar los 4 filtros (rango de fechas y rango de EVT) antes de exportar.');
+    return;
+  }
+  const rows = buildResumenRows().filter(r => {
+    const n = parseInt((r.ref||'').replace('EVT-',''),10);
+    const okEvt = !isNaN(n) && n>=eDesde && n<=eHasta;
+    const okFec = r.fecha && r.fecha >= fDesde && r.fecha <= fHasta;
+    return okEvt && okFec;
+  });
+  if (!rows.length) { alert('No hay registros en el rango seleccionado.'); return; }
+  const ws = XLSX.utils.json_to_sheet(rows.map(r => {
+    const o = {}; RESUMEN_COLS.forEach(c => o[c.t]=r[c.k]); return o;
+  }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Resumen Ingura');
+  XLSX.writeFile(wb, `Ingura_Resumen_${fDesde}_${fHasta}.xlsx`);
+});
+
+/* ================================================================
+   📈 MÓDULO DATOS (ANALÍTICAS)
+================================================================ */
+const DIV_COLORS = {
+  ARI: { bg:'rgba(245, 158, 11, 0.7)',  border:'rgb(217, 119, 6)'  }, // ámbar
+  KOP: { bg:'rgba(59, 130, 246, 0.7)',  border:'rgb(37, 99, 235)'  }, // azul
+  DIS: { bg:'rgba(236, 72, 153, 0.7)',  border:'rgb(219, 39, 119)' }  // rosa
+};
+const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+let chartMeses = null, chartDivisiones = null, chartAnios = null;
+
+// Obtiene una lista de facturas "enriquecidas" con datos del pedido/oferta vinculados.
+// SOLO devuelve las facturas REGISTRADAS de verdad: aquellas que tienen un número
+// de factura (referencia) rellenado. Las filas placeholder sin nº NO se contabilizan
+// para que la pestaña Datos refleje únicamente facturas reales.
+function facturasEnriquecidas() {
+  return state.facturas
+    .filter(f => f.referencia && String(f.referencia).trim())
+    .map(f => {
+      const ped = state.pedidos.find(p => p._id === f.pedidoId) || {};
+      const oferta = state.ofertas.find(o => o._id === ped.ofertaId) || {};
+      const iva = f.iva ?? '';
+      const base = Number(f.base) || 0;
+      const cuota = iva !== '' && iva !== null ? base * (Number(iva)/100) : 0;
+      const total = base + cuota;
+      return {
+        _id: f._id,
+        ref: f.ref || ped.ref || '',
+        referencia: f.referencia || '',
+        pueblo: ped.pueblo || oferta.pueblo || '—',
+        actividad: ped.actividad || oferta.actividad || '',
+        division: f.division || ped.division || oferta.division || 'ARI',
+        base, cuota, total,
+        fEnvio: f.fEnvio || '',
+        fCobro: f.fCobro || ''
+      };
+    });
+}
+
+function renderDatos() {
+  const facs = facturasEnriquecidas();
+
+  // ---- KPI: Pendiente de cobrar (enviadas sin fecha de cobro) ----
+  const pendientes = facs.filter(f => f.fEnvio && !f.fCobro);
+  const totalPendiente = pendientes.reduce((s,f) => s + f.total, 0);
+  document.getElementById('kpiPendiente').textContent = fmtEur(totalPendiente);
+  document.getElementById('kpiPendienteDetalle').textContent =
+    `${pendientes.length} factura(s) enviada(s) sin cobrar`;
+
+  // ---- KPI: Facturación total (todas las facturas con base > 0) ----
+  const facturadas = facs.filter(f => f.base > 0);
+  const totalFacturado = facturadas.reduce((s,f) => s + f.total, 0);
+  document.getElementById('kpiTotal').textContent = fmtEur(totalFacturado);
+  document.getElementById('kpiTotalDetalle').textContent =
+    `${facturadas.length} factura(s) registrada(s)`;
+
+  // ---- KPI: Factura mayor / menor ----
+  if (facturadas.length) {
+    const mayor = facturadas.reduce((a,b) => b.total > a.total ? b : a);
+    const menor = facturadas.reduce((a,b) => b.total < a.total ? b : a);
+    document.getElementById('kpiMayor').textContent = fmtEur(mayor.total);
+    document.getElementById('kpiMayorPueblo').textContent =
+      `${mayor.pueblo} · ${mayor.ref || ''}`;
+    document.getElementById('kpiMenor').textContent = fmtEur(menor.total);
+    document.getElementById('kpiMenorPueblo').textContent =
+      `${menor.pueblo} · ${menor.ref || ''}`;
+  } else {
+    document.getElementById('kpiMayor').textContent = '—';
+    document.getElementById('kpiMayorPueblo').textContent = 'Sin facturas';
+    document.getElementById('kpiMenor').textContent = '—';
+    document.getElementById('kpiMenorPueblo').textContent = 'Sin facturas';
+  }
+
+  // ---- Top 5 / Bottom 5 clientes (agrupados por pueblo) ----
+  const porCliente = {};
+  facturadas.forEach(f => {
+    const k = f.pueblo || '—';
+    if (!porCliente[k]) porCliente[k] = { pueblo:k, total:0, n:0 };
+    porCliente[k].total += f.total;
+    porCliente[k].n    += 1;
+  });
+  const clientes = Object.values(porCliente).sort((a,b)=>b.total-a.total);
+  const top5 = clientes.slice(0,5);
+  const bottom5 = [...clientes].sort((a,b)=>a.total-b.total).slice(0,5);
+
+  const tblTop = document.getElementById('tblTopClientes');
+  const tblBot = document.getElementById('tblBottomClientes');
+  const renderClientesRow = (arr) => {
+    if (!arr.length) return `<tr><td colspan="4" class="text-center py-4 text-slate-400">Sin datos</td></tr>`;
+    return arr.map((c,i) => `
+      <tr class="hover:bg-slate-50">
+        <td class="px-3 py-2 font-bold text-slate-500">${i+1}</td>
+        <td class="px-3 py-2 font-semibold">${c.pueblo}</td>
+        <td class="px-3 py-2 text-right font-mono font-bold text-emerald-700">${fmtEur(c.total)}</td>
+        <td class="px-3 py-2 text-center text-slate-600">${c.n}</td>
+      </tr>`).join('');
+  };
+  tblTop.innerHTML = renderClientesRow(top5);
+  tblBot.innerHTML = renderClientesRow(bottom5);
+
+  // ---- Selector de año para facturación por meses ----
+  const aniosSet = new Set();
+  facturadas.forEach(f => {
+    const fecha = f.fEnvio || '';
+    if (fecha) aniosSet.add(fecha.slice(0,4));
+  });
+  const aniosArr = Array.from(aniosSet).sort().reverse();
+  const sel = document.getElementById('datosAnioMes');
+  const prevAnio = sel.value;
+  const anioActual = String(new Date().getFullYear());
+  if (!aniosArr.length) aniosArr.push(anioActual);
+  sel.innerHTML = aniosArr.map(a => `<option value="${a}">${a}</option>`).join('');
+  sel.value = aniosArr.includes(prevAnio) ? prevAnio : aniosArr[0];
+
+  // ---- Gráfica: facturación por meses del año seleccionado ----
+  const anioSel = sel.value;
+  const datosMes = new Array(12).fill(0);
+  facturadas.forEach(f => {
+    const fecha = f.fEnvio || '';
+    if (fecha.slice(0,4) === anioSel) {
+      const m = parseInt(fecha.slice(5,7),10) - 1;
+      if (m>=0 && m<12) datosMes[m] += f.total;
+    }
+  });
+  if (chartMeses) chartMeses.destroy();
+  const ctxMeses = document.getElementById('chartMeses');
+  if (ctxMeses) {
+    chartMeses = new Chart(ctxMeses, {
+      type: 'bar',
+      data: {
+        labels: MESES,
+        datasets: [{
+          label: `Facturación ${anioSel} (€)`,
+          data: datosMes,
+          backgroundColor: 'rgba(16, 185, 129, 0.7)',
+          borderColor: 'rgb(5, 150, 105)',
+          borderWidth: 2,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend: { display:false },
+          tooltip: { callbacks: { label: (c) => ` ${fmtEur(c.parsed.y)}` } }
+        },
+        scales: {
+          y: { beginAtZero:true, ticks: { callback: v => v.toLocaleString('es-ES')+' €' } }
+        }
+      }
+    });
+  }
+
+  // ---- Gráfica: facturación por divisiones (doughnut) ----
+  const porDiv = { ARI:0, KOP:0, DIS:0 };
+  facturadas.forEach(f => {
+    if (porDiv[f.division] !== undefined) porDiv[f.division] += f.total;
+  });
+  const totDiv = porDiv.ARI + porDiv.KOP + porDiv.DIS;
+  if (chartDivisiones) chartDivisiones.destroy();
+  const ctxDiv = document.getElementById('chartDivisiones');
+  if (ctxDiv) {
+    chartDivisiones = new Chart(ctxDiv, {
+      type: 'doughnut',
+      data: {
+        labels: ['ARI · Talleres', 'KOP · Escape Rooms', 'DIS · Diskofesta'],
+        datasets: [{
+          data: [porDiv.ARI, porDiv.KOP, porDiv.DIS],
+          backgroundColor: [DIV_COLORS.ARI.bg, DIV_COLORS.KOP.bg, DIV_COLORS.DIS.bg],
+          borderColor:    [DIV_COLORS.ARI.border, DIV_COLORS.KOP.border, DIV_COLORS.DIS.border],
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend: { position:'bottom' },
+          tooltip: {
+            callbacks: {
+              label: (c) => {
+                const v = c.parsed;
+                const pct = totDiv ? ((v/totDiv)*100).toFixed(1) : 0;
+                return ` ${c.label}: ${fmtEur(v)} (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+  // Leyenda detallada con importes y %
+  const ley = document.getElementById('divisionesLeyenda');
+  if (ley) {
+    ley.innerHTML = ['ARI','KOP','DIS'].map(d => {
+      const v = porDiv[d];
+      const pct = totDiv ? ((v/totDiv)*100).toFixed(1) : '0.0';
+      return `<div class="flex items-center justify-between border-b border-slate-100 pb-1">
+        <span class="font-semibold">${badgeDiv(d)}</span>
+        <span class="font-mono text-slate-800">${fmtEur(v)} <span class="text-slate-500">(${pct}%)</span></span>
+      </div>`;
+    }).join('');
+  }
+
+  // ---- Gráfica: comparativa año por año (apilada por división) ----
+  const porAnio = {};
+  facturadas.forEach(f => {
+    const a = (f.fEnvio || '').slice(0,4);
+    if (!a) return;
+    if (!porAnio[a]) porAnio[a] = { ARI:0, KOP:0, DIS:0 };
+    if (porAnio[a][f.division] !== undefined) porAnio[a][f.division] += f.total;
+  });
+  const aniosOrden = Object.keys(porAnio).sort();
+  if (chartAnios) chartAnios.destroy();
+  const ctxA = document.getElementById('chartAnios');
+  if (ctxA) {
+    chartAnios = new Chart(ctxA, {
+      type: 'bar',
+      data: {
+        labels: aniosOrden,
+        datasets: [
+          { label:'ARI', data: aniosOrden.map(a=>porAnio[a].ARI),
+            backgroundColor: DIV_COLORS.ARI.bg, borderColor: DIV_COLORS.ARI.border, borderWidth:2 },
+          { label:'KOP', data: aniosOrden.map(a=>porAnio[a].KOP),
+            backgroundColor: DIV_COLORS.KOP.bg, borderColor: DIV_COLORS.KOP.border, borderWidth:2 },
+          { label:'DIS', data: aniosOrden.map(a=>porAnio[a].DIS),
+            backgroundColor: DIV_COLORS.DIS.bg, borderColor: DIV_COLORS.DIS.border, borderWidth:2 }
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend: { position:'bottom' },
+          tooltip: { callbacks: { label: (c) => ` ${c.dataset.label}: ${fmtEur(c.parsed.y)}` } }
+        },
+        scales: {
+          x: { stacked:true },
+          y: { stacked:true, beginAtZero:true,
+               ticks: { callback: v => v.toLocaleString('es-ES')+' €' } }
+        }
+      }
+    });
+  }
+}
+
+// Cuando se cambia el año del gráfico mensual, re-renderizar
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'datosAnioMes') renderDatos();
+});
+
+/* ================================================================
+   👥 MÓDULO PAGO MONITORES
+================================================================ */
+let pagoMonActivo = null;        // nombre del monitor abierto en detalle
+let chartMonitor = null;
+let monSaldadoDebounce = null;
+
+// Devuelve la lista de trabajos de un monitor (uno por cada pedido en el que aparece)
+function trabajosDelMonitor(nombre) {
+  if (!nombre) return [];
+  const norm = nombre.trim().toLowerCase();
+  const out = [];
+  state.pedidos.forEach(p => {
+    const mons = (p.monitores || []).map(m => (m||'').trim().toLowerCase());
+    const tipos = p.tiposPago || [];
+    const fallback = p.tipoPago || 'A';
+    const sueldo = Number(p.sueldoMon) || 0;
+    const sueldoCoche = Number(p.sueldoCoche) || 0;
+    const conductorNorm = (p.coche || '').trim().toLowerCase();
+    const esConductor = !!conductorNorm && conductorNorm === norm;
+    const oferta = state.ofertas.find(o => o._id === p.ofertaId) || {};
+    mons.forEach((m, idx) => {
+      if (m !== norm) return;
+      // Sumamos sueldo coche solo a la primera aparición del monitor en este pedido
+      const yaSumado = out.some(t => t.pedidoId === p._id && t.esConductor);
+      const sumarCoche = esConductor && !yaSumado;
+      out.push({
+        pedidoId: p._id,
+        ref: p.ref || oferta.ref || '',
+        fecha: oferta.fecha || (p.createdAt||'').slice(0,10) || '',
+        pueblo: p.pueblo || oferta.pueblo || '—',
+        actividad: p.actividad || oferta.actividad || '',
+        division: p.division || oferta.division || 'ARI',
+        sueldoMon: sueldo,
+        sueldoCoche: sumarCoche ? sueldoCoche : 0,
+        cantidad: sueldo + (sumarCoche ? sueldoCoche : 0),
+        esConductor: sumarCoche,
+        tipoPago: tipos[idx] || fallback
+      });
+    });
+  });
+  // Ordenar por fecha desc
+  out.sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
+  return out;
+}
+
+// Recoge todos los monitores únicos con totales calculados
+function calcularMonitores() {
+  const map = {};
+  state.pedidos.forEach(p => {
+    const tipos = p.tiposPago || [];
+    const fallback = p.tipoPago || 'A';
+    const sueldo = Number(p.sueldoMon) || 0;
+    const sueldoCoche = Number(p.sueldoCoche) || 0;
+    const conductorNorm = (p.coche || '').trim().toLowerCase();
+    const cocheYaAplicado = {}; // key normalizada del monitor → bool (para no duplicar coche si aparece dos veces)
+    (p.monitores || []).forEach((nombre, idx) => {
+      const n = (nombre||'').trim();
+      if (!n) return;
+      const key = n.toLowerCase();
+      if (!map[key]) map[key] = { nombre: n, trabajos: 0, total: 0, totalA: 0, totalB: 0 };
+      const tp = tipos[idx] || fallback;
+      const esConductor = !!conductorNorm && conductorNorm === key && !cocheYaAplicado[key];
+      if (esConductor) cocheYaAplicado[key] = true;
+      const importe = sueldo + (esConductor ? sueldoCoche : 0);
+      map[key].trabajos += 1;
+      map[key].total += importe;
+      if (tp === 'B') map[key].totalB += importe;
+      else map[key].totalA += importe;
+    });
+  });
+  // Saldados (clave: nombre normalizado en minúsculas)
+  const monitores = Object.values(map).map(m => {
+    const pago = state.monitorPagos.find(x => (x.nombreKey||'').toLowerCase() === m.nombre.toLowerCase());
+    const saldado = pago ? Number(pago.saldado)||0 : 0;
+    const pendiente = m.total - saldado;
+    // Distribuir el saldado proporcionalmente entre A y B
+    const ratio = m.total > 0 ? saldado / m.total : 0;
+    const pendienteA = Math.max(0, m.totalA - m.totalA * ratio);
+    const pendienteB = Math.max(0, m.totalB - m.totalB * ratio);
+    return { ...m, saldado, pendiente, pendienteA, pendienteB, _pagoId: pago?._id || null };
+  });
+  monitores.sort((a,b) => b.pendiente - a.pendiente);
+  return monitores;
+}
+
+// Formatea el pendiente con el sufijo (A) o (B), o desglose si hay mezcla
+function fmtPendienteTipo(m) {
+  const hayA = m.totalA > 0;
+  const hayB = m.totalB > 0;
+  if (hayA && hayB) {
+    return `${fmtEur(m.pendienteA)} (A)<br><span class="text-xs font-normal">+ ${fmtEur(m.pendienteB)} (B)</span>`;
+  }
+  if (hayB) return `${fmtEur(m.pendiente)} (B)`;
+  if (hayA) return `${fmtEur(m.pendiente)} (A)`;
+  return fmtEur(m.pendiente);
+}
+
+function renderMonitoresLista() {
+  const monitores = calcularMonitores();
+  const q = (document.getElementById('pagoMonSearch')?.value || '').toLowerCase().trim();
+  const filtrados = q ? monitores.filter(m => m.nombre.toLowerCase().includes(q)) : monitores;
+
+  // KPIs
+  const totalPendiente = monitores.reduce((s,m)=>s+m.pendiente, 0);
+  const totalSaldado   = monitores.reduce((s,m)=>s+m.saldado, 0);
+  document.getElementById('pmKpiCount').textContent = monitores.length;
+  document.getElementById('pmKpiPendiente').textContent = fmtEur(totalPendiente);
+  document.getElementById('pmKpiSaldado').textContent = fmtEur(totalSaldado);
+
+  const tb = document.getElementById('tblMonitores');
+  if (!filtrados.length) {
+    tb.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">${q ? 'Ningún monitor coincide.' : 'No hay monitores asignados todavía. Añade monitores en los pedidos.'}</td></tr>`;
+    return;
+  }
+  tb.innerHTML = filtrados.map(m => `
+    <tr class="hover:bg-slate-50">
+      <td class="px-3 py-2 font-semibold text-slate-800">${m.nombre}</td>
+      <td class="px-3 py-2 text-center text-slate-600">${m.trabajos}</td>
+      <td class="px-3 py-2 text-right font-mono">${fmtEur(m.total)}</td>
+      <td class="px-3 py-2 text-right font-mono text-emerald-700">${fmtEur(m.saldado)}</td>
+      <td class="px-3 py-2 text-right font-mono font-bold ${m.pendiente>0?'text-rose-700':'text-slate-500'}">${fmtPendienteTipo(m)}</td>
+      <td class="px-3 py-2 text-center whitespace-nowrap">
+        <button class="text-slate-600 hover:underline text-xs font-semibold" onclick="abrirMonitor('${m.nombre.replace(/'/g,"\\'")}','ver')">Ver</button>
+        <button class="text-blue-600 hover:underline text-xs font-semibold ml-2" onclick="abrirMonitor('${m.nombre.replace(/'/g,"\\'")}','editar')">Editar</button>
+      </td>
+    </tr>`).join('');
+}
+
+window.abrirMonitor = function(nombre, modo) {
+  pagoMonActivo = { nombre, modo };
+  const detalle = document.getElementById('monitorDetalle');
+  detalle.classList.remove('hidden');
+  document.getElementById('monitorDetalleNombre').textContent = `👤 ${nombre}`;
+  document.getElementById('monitorDetalleModo').textContent =
+    modo === 'editar' ? '✏️ Modo edición — puedes registrar la deuda saldada' : '👁 Vista de solo lectura';
+
+  const editable = (modo === 'editar');
+  document.getElementById('monSaldadoInput').disabled = !editable;
+  renderMonitorDetalle(nombre);
+  detalle.scrollIntoView({ behavior:'smooth' });
+};
+
+function renderMonitorDetalle(nombre) {
+  const trabajos = trabajosDelMonitor(nombre);
+  const total  = trabajos.reduce((s,t)=>s+t.cantidad, 0);
+  const totalA = trabajos.filter(t=>t.tipoPago!=='B').reduce((s,t)=>s+t.cantidad, 0);
+  const totalB = trabajos.filter(t=>t.tipoPago==='B').reduce((s,t)=>s+t.cantidad, 0);
+  const pago = state.monitorPagos.find(x => (x.nombreKey||'').toLowerCase() === nombre.toLowerCase());
+  const saldado = pago ? Number(pago.saldado)||0 : 0;
+  const pendiente = total - saldado;
+  const ratio = total > 0 ? saldado / total : 0;
+  const pendienteA = Math.max(0, totalA - totalA*ratio);
+  const pendienteB = Math.max(0, totalB - totalB*ratio);
+
+  document.getElementById('monTotalAdeudado').textContent = fmtEur(total);
+  document.getElementById('monSaldadoInput').value = saldado;
+  const monPendienteEl = document.getElementById('monPendiente');
+  if (totalA > 0 && totalB > 0) {
+    monPendienteEl.innerHTML = `${fmtEur(pendienteA)} (A)<br><span class="text-base font-bold">+ ${fmtEur(pendienteB)} (B)</span>`;
+  } else if (totalB > 0) {
+    monPendienteEl.textContent = `${fmtEur(pendiente)} (B)`;
+  } else if (totalA > 0) {
+    monPendienteEl.textContent = `${fmtEur(pendiente)} (A)`;
+  } else {
+    monPendienteEl.textContent = fmtEur(pendiente);
+  }
+
+  // Tabla trabajos
+  const tb = document.getElementById('tblMonitorTrabajos');
+  if (!trabajos.length) {
+    tb.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Sin trabajos registrados.</td></tr>`;
+  } else {
+    tb.innerHTML = trabajos.map(t => {
+      const desglose = t.esConductor
+        ? `<div class="text-[10px] text-indigo-600 font-normal">${fmtEur(t.sueldoMon)} + ${fmtEur(t.sueldoCoche)} 🚗</div>`
+        : '';
+      return `
+      <tr class="hover:bg-slate-50">
+        <td class="px-3 py-2">${t.fecha || '—'}</td>
+        <td class="px-3 py-2 font-semibold">${t.pueblo}</td>
+        <td class="px-3 py-2">${t.actividad}</td>
+        <td class="px-3 py-2">${badgeDiv(t.division)}</td>
+        <td class="px-3 py-2 font-mono text-xs">${t.ref}</td>
+        <td class="px-3 py-2 text-right font-mono font-bold text-slate-800">
+          ${fmtEur(t.cantidad)} <span class="text-xs text-slate-500">(${t.tipoPago||'A'})</span>
+          ${desglose}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Selector de año + gráfica
+  const aniosSet = new Set();
+  trabajos.forEach(t => { if (t.fecha) aniosSet.add(t.fecha.slice(0,4)); });
+  const aniosArr = Array.from(aniosSet).sort().reverse();
+  const sel = document.getElementById('monAnioSelect');
+  const prev = sel.value;
+  const anioActual = String(new Date().getFullYear());
+  if (!aniosArr.length) aniosArr.push(anioActual);
+  sel.innerHTML = aniosArr.map(a => `<option value="${a}">${a}</option>`).join('');
+  sel.value = aniosArr.includes(prev) ? prev : aniosArr[0];
+
+  dibujarGraficaMonitor(trabajos, sel.value);
+}
+
+function dibujarGraficaMonitor(trabajos, anio) {
+  const datos = new Array(12).fill(0);
+  trabajos.forEach(t => {
+    if ((t.fecha||'').slice(0,4) === anio) {
+      const m = parseInt(t.fecha.slice(5,7),10) - 1;
+      if (m>=0 && m<12) datos[m] += t.cantidad;
+    }
+  });
+  const totalAnio = datos.reduce((a,b)=>a+b, 0);
+  document.getElementById('monTotalAnio').textContent = `Total cobrado en ${anio}: ${fmtEur(totalAnio)}`;
+
+  if (chartMonitor) chartMonitor.destroy();
+  const ctx = document.getElementById('chartMonitor');
+  if (!ctx) return;
+  chartMonitor = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: MESES,
+      datasets: [{
+        label: `Cobros ${anio} (€)`,
+        data: datos,
+        backgroundColor: 'rgba(99, 102, 241, 0.7)',
+        borderColor: 'rgb(79, 70, 229)',
+        borderWidth: 2, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: { display:false },
+        tooltip: { callbacks: { label: c => ` ${fmtEur(c.parsed.y)}` } }
+      },
+      scales: {
+        y: { beginAtZero:true, ticks: { callback: v => v.toLocaleString('es-ES')+' €' } }
+      }
+    }
+  });
+}
+
+// Guardar deuda saldada (con debounce)
+document.getElementById('monSaldadoInput').addEventListener('input', (e) => {
+  if (!pagoMonActivo) return;
+  const nombre = pagoMonActivo.nombre;
+  const valor = parseFloat(e.target.value) || 0;
+  clearTimeout(monSaldadoDebounce);
+  monSaldadoDebounce = setTimeout(async () => {
+    const existente = state.monitorPagos.find(x => (x.nombreKey||'').toLowerCase() === nombre.toLowerCase());
+    if (existente) {
+      await dbUpdate('monitorPagos', existente._id, { saldado: valor, updatedAt: new Date().toISOString() });
+    } else {
+      await dbAdd('monitorPagos', {
+        nombreKey: nombre,
+        saldado: valor,
+        updatedAt: new Date().toISOString()
+      });
+    }
+  }, 400);
+  // Actualización visual inmediata del "pendiente" con desglose (A)/(B)
+  const trabajos = trabajosDelMonitor(nombre);
+  const total  = trabajos.reduce((s,t)=>s+t.cantidad, 0);
+  const totalA = trabajos.filter(t=>t.tipoPago!=='B').reduce((s,t)=>s+t.cantidad, 0);
+  const totalB = trabajos.filter(t=>t.tipoPago==='B').reduce((s,t)=>s+t.cantidad, 0);
+  const pendiente = total - valor;
+  const ratio = total > 0 ? valor / total : 0;
+  const pendienteA = Math.max(0, totalA - totalA*ratio);
+  const pendienteB = Math.max(0, totalB - totalB*ratio);
+  const monPendienteEl = document.getElementById('monPendiente');
+  if (totalA > 0 && totalB > 0) {
+    monPendienteEl.innerHTML = `${fmtEur(pendienteA)} (A)<br><span class="text-base font-bold">+ ${fmtEur(pendienteB)} (B)</span>`;
+  } else if (totalB > 0) {
+    monPendienteEl.textContent = `${fmtEur(pendiente)} (B)`;
+  } else if (totalA > 0) {
+    monPendienteEl.textContent = `${fmtEur(pendiente)} (A)`;
+  } else {
+    monPendienteEl.textContent = fmtEur(pendiente);
+  }
+});
+
+// Selector de año del gráfico
+document.getElementById('monAnioSelect').addEventListener('change', () => {
+  if (!pagoMonActivo) return;
+  const trabajos = trabajosDelMonitor(pagoMonActivo.nombre);
+  dibujarGraficaMonitor(trabajos, document.getElementById('monAnioSelect').value);
+});
+
+// Cerrar detalle
+document.getElementById('btnMonCerrar').addEventListener('click', () => {
+  pagoMonActivo = null;
+  document.getElementById('monitorDetalle').classList.add('hidden');
+});
+
+// Compartir por WhatsApp
+document.getElementById('btnMonWhatsApp').addEventListener('click', () => {
+  if (!pagoMonActivo) return;
+  const nombre = pagoMonActivo.nombre;
+  const trabajos = trabajosDelMonitor(nombre);
+  const total = trabajos.reduce((s,t)=>s+t.cantidad, 0);
+  const pago = state.monitorPagos.find(x => (x.nombreKey||'').toLowerCase() === nombre.toLowerCase());
+  const saldado = pago ? Number(pago.saldado)||0 : 0;
+  const pendiente = total - saldado;
+
+  const lineas = trabajos.map(t =>
+    `• ${t.fecha || 's/f'} · ${t.pueblo} · ${t.actividad || ''} → ${fmtEur(t.cantidad)}`
+  ).join('\n');
+
+  const msg =
+    `💼 *Cuenta de cobros — ${nombre}*\n\n` +
+    `${lineas || '(sin trabajos registrados)'}\n\n` +
+    `———————————————\n` +
+    `📊 Total adeudado: ${fmtEur(total)}\n` +
+    `✅ Ya saldado: ${fmtEur(saldado)}\n` +
+    `💸 *Pendiente: ${fmtEur(pendiente)}*\n\n` +
+    `_Generado por INGURA · ${new Date().toLocaleDateString('es-ES')}_`;
+
+  const tel = prompt(`Número de WhatsApp de ${nombre} (con prefijo, sin espacios)\nEj: 34666123456\n\n(Deja vacío para abrir WhatsApp sin destinatario)`);
+  if (tel === null) return;
+  const enc = encodeURIComponent(msg);
+  const url = tel ? `https://wa.me/${tel}?text=${enc}` : `https://wa.me/?text=${enc}`;
+  window.open(url, '_blank');
+});
+
+// Buscador
+document.getElementById('pagoMonSearch').addEventListener('input', renderMonitoresLista);
+
+function renderPagoMonitores() {
+  renderMonitoresLista();
+  renderPagoMonitoresChartGlobal();
+  // Si hay un detalle abierto, refrescarlo (los datos pueden haber cambiado)
+  if (pagoMonActivo) renderMonitorDetalle(pagoMonActivo.nombre);
+}
+
+/* ───────── Gráfico comparativo mensual A vs B (todos los monitores) ───────── */
+let pmChartMensualObj = null;
+
+// Devuelve [{fecha:'YYYY-MM-DD', cantidad, tipoPago:'A'|'B'}] para todos los monitores
+function _todosLosPagosMensuales() {
+  const out = [];
+  state.pedidos.forEach(p => {
+    const oferta = state.ofertas.find(o => o._id === p.ofertaId) || {};
+    const tipos = p.tiposPago || [];
+    const fallback = p.tipoPago || 'A';
+    const sueldo = Number(p.sueldoMon) || 0;
+    const sueldoCoche = Number(p.sueldoCoche) || 0;
+    const conductorNorm = (p.coche || '').trim().toLowerCase();
+    const cocheYaAplicado = {};
+    const fecha = oferta.fecha || (p.createdAt||'').slice(0,10) || '';
+    (p.monitores || []).forEach((nombre, idx) => {
+      const n = (nombre||'').trim();
+      if (!n) return;
+      const key = n.toLowerCase();
+      const esConductor = !!conductorNorm && conductorNorm === key && !cocheYaAplicado[key];
+      if (esConductor) cocheYaAplicado[key] = true;
+      const importe = sueldo + (esConductor ? sueldoCoche : 0);
+      const tp = tipos[idx] || fallback;
+      if (importe > 0 && fecha) {
+        out.push({ fecha, cantidad: importe, tipoPago: tp });
+      }
+    });
+  });
+  return out;
+}
+
+function renderPagoMonitoresChartGlobal() {
+  const pagos = _todosLosPagosMensuales();
+  // Selector de año
+  const sel = document.getElementById('pmChartAnio');
+  if (!sel) return;
+  const aniosSet = new Set();
+  pagos.forEach(p => { if (p.fecha) aniosSet.add(p.fecha.slice(0,4)); });
+  const aniosArr = Array.from(aniosSet).sort().reverse();
+  const prev = sel.value;
+  const anioActual = String(new Date().getFullYear());
+  if (!aniosArr.length) aniosArr.push(anioActual);
+  sel.innerHTML = aniosArr.map(a => `<option value="${a}">${a}</option>`).join('');
+  sel.value = aniosArr.includes(prev) ? prev : aniosArr[0];
+  const anio = sel.value;
+
+  // Agrupar por mes
+  const datosA = new Array(12).fill(0);
+  const datosB = new Array(12).fill(0);
+  pagos.forEach(p => {
+    if (p.fecha.slice(0,4) !== anio) return;
+    const m = parseInt(p.fecha.slice(5,7),10) - 1;
+    if (m<0 || m>11) return;
+    if (p.tipoPago === 'B') datosB[m] += p.cantidad;
+    else datosA[m] += p.cantidad;
+  });
+
+  const totalA = datosA.reduce((s,n)=>s+n, 0);
+  const totalB = datosB.reduce((s,n)=>s+n, 0);
+  document.getElementById('pmChartTotalA').textContent = fmtEur(totalA);
+  document.getElementById('pmChartTotalB').textContent = fmtEur(totalB);
+  document.getElementById('pmChartTotal').textContent  = fmtEur(totalA + totalB);
+
+  const ctx = document.getElementById('pmChartMensual');
+  if (!ctx) return;
+  if (pmChartMensualObj) pmChartMensualObj.destroy();
+  pmChartMensualObj = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+      datasets: [
+        {
+          label: 'Tipo A (con retenciones)',
+          data: datosA,
+          backgroundColor: 'rgba(59, 130, 246, 0.75)',
+          borderColor: 'rgb(37, 99, 235)',
+          borderWidth: 2,
+          borderRadius: 6
+        },
+        {
+          label: 'Tipo B (sin retenciones)',
+          data: datosB,
+          backgroundColor: 'rgba(245, 158, 11, 0.75)',
+          borderColor: 'rgb(217, 119, 6)',
+          borderWidth: 2,
+          borderRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { font: { weight: 'bold' } } },
+        tooltip: {
+          callbacks: {
+            label: (c) => ` ${c.dataset.label}: ${fmtEur(c.parsed.y)}`,
+            footer: (items) => {
+              const total = items.reduce((s,i)=>s+i.parsed.y, 0);
+              return 'Total mes: ' + fmtEur(total);
+            }
+          }
+        }
+      },
+      scales: {
+        x: { stacked: false },
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('es-ES')+' €' }
+        }
+      }
+    }
+  });
+}
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'pmChartAnio') renderPagoMonitoresChartGlobal();
+});
+
+/* ================================================================
+   🔒 MÓDULO BACKUP
+================================================================ */
+function buildBackupJSON() {
+  return {
+    generadoEl: new Date().toISOString(),
+    ofertas:  state.ofertas,
+    pedidos:  state.pedidos,
+    facturas: state.facturas,
+    listas:   state.listas,
+    monitorPagos: state.monitorPagos
+  };
+}
+
+function descargarBackup() {
+  const json = JSON.stringify(buildBackupJSON(), null, 2);
+  const blob = new Blob([json], { type:'application/json' });
+  const fname = `backup_ingura_${new Date().toISOString().slice(0,10)}.json`;
+  saveAs(blob, fname);
+  return { json, fname };
+}
+
+/**
+ * Enviar backup por EmailJS.
+ *  PASOS DE CONFIGURACIÓN:
+ *   1) Regístrate en https://www.emailjs.com/
+ *   2) Crea un Service (Gmail recomendado) y anota su Service ID
+ *   3) Crea un Template con estas variables: {{to_email}}, {{subject}}, {{message}}, {{attachment}}
+ *      (o adáptalo a las variables que prefieras y modifica `templateParams` abajo)
+ *   4) Copia tu Public Key, Service ID y Template ID en EMAILJS_CONFIG arriba
+ *   5) ¡Listo! Esta función enviará el JSON como texto en el cuerpo del email.
+ */
+async function enviarBackupEmail() {
+  if (!HAS_EMAILJS) {
+    alert('⚠️ Configura EMAILJS_CONFIG en el código antes de enviar emails.');
+    return false;
+  }
+  const { json, fname } = descargarBackup();
+  // 1) Construimos los parámetros del template
+  const templateParams = {
+    to_email: EMAILJS_CONFIG.destinatario,
+    subject:  `Backup INGURA ${new Date().toISOString().slice(0,10)}`,
+    message:  `Adjunto el backup diario generado automáticamente (${fname}).`,
+    attachment: json.length > 45000 ? json.slice(0,45000)+'\n... [TRUNCADO]' : json
+  };
+  try {
+    // 2) Envío vía EmailJS
+    await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, templateParams);
+    console.log('Backup enviado por email a', EMAILJS_CONFIG.destinatario);
+    return true;
+  } catch(err) {
+    console.error('Error EmailJS:', err);
+    alert('No se pudo enviar el email. Revisa la consola.'); return false;
+  }
+}
+
+/**
+ * Control de backup diario:
+ * - Comprueba en Firestore (colección 'backups') si hoy ya existe documento.
+ * - Si NO existe, el primer usuario que abre la app lo crea (transaction) y ejecuta el backup.
+ * - Esto evita colisiones entre varios ordenadores.
+ */
+async function comprobarBackupDiario() {
+  const hoy = new Date().toISOString().slice(0,10);
+  if (useLocalMode) {
+    const last = localStorage.getItem('ingura_backup_last');
+    document.getElementById('backupStatus').textContent = last===hoy
+      ? '✅ Hecho hoy (modo local).'
+      : '⏳ Pendiente — se generará al pulsar "Descargar JSON".';
+    return;
+  }
+  try {
+    const ref = db.collection(COL.backups).doc(hoy);
+    const result = await db.runTransaction(async tx => {
+      const snap = await tx.get(ref);
+      if (snap.exists) return 'exists';
+      tx.set(ref, { fecha: hoy, generadoEn: new Date().toISOString(), usuario: navigator.userAgent.slice(0,80) });
+      return 'created';
+    });
+    if (result === 'created') {
+      document.getElementById('backupStatus').textContent = '🚀 Backup de hoy generándose…';
+      const { fname } = descargarBackup();
+      const sent = await enviarBackupEmail();
+      document.getElementById('backupStatus').textContent = sent
+        ? `✅ Backup ${fname} descargado y enviado por email.`
+        : `⬇ Backup ${fname} descargado (email no enviado).`;
+    } else {
+      document.getElementById('backupStatus').textContent = '✅ Ya se generó hoy desde otro equipo.';
+    }
+  } catch(e) {
+    console.error(e);
+    document.getElementById('backupStatus').textContent = '⚠️ Error comprobando backup: '+e.message;
+  }
+}
+
+function renderBackupHistory() {
+  const hist = document.getElementById('backupHistory');
+  if (!state.backups || !state.backups.length) {
+    hist.innerHTML = '<p class="text-slate-400 text-sm">Aún no hay registros.</p>';
+    return;
+  }
+  const rows = [...state.backups].sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  hist.innerHTML = '<ul class="space-y-1">'+rows.slice(0,15).map(b =>
+    `<li>📅 <strong>${b.fecha}</strong> — ${b.generadoEn||''}</li>`).join('')+'</ul>';
+}
+
+document.getElementById('btnBackupManual').addEventListener('click', () => {
+  descargarBackup();
+  if (useLocalMode) localStorage.setItem('ingura_backup_last', new Date().toISOString().slice(0,10));
+});
+document.getElementById('btnBackupEmail').addEventListener('click', enviarBackupEmail);
+
+/* ================================================================
+   📅 MÓDULO CALENDARIO (pedidos confirmados)
+================================================================ */
+const calState = {
+  year:  new Date().getFullYear(),
+  month: new Date().getMonth(),   // 0-11
+  search: ''
+};
+const DIV_COLOR = {
+  ARI: { bg:'#fde68a', text:'#92400e', dot:'#f59e0b' },
+  KOP: { bg:'#bfdbfe', text:'#1e40af', dot:'#3b82f6' },
+  DIS: { bg:'#fbcfe8', text:'#9d174d', dot:'#ec4899' }
+};
+
+// Parsea el campo libre "días propuestos" (ej. "12-13 julio 2026", "5, 7 y 9 mayo")
+// y devuelve un array de fechas ISO YYYY-MM-DD. fechaBase se usa como ancla
+// para mes/año cuando no aparecen explícitamente.
+function parsearDiasPropuestos(diasStr, fechaBase) {
+  if (!fechaBase) return [];
+  const baseYear  = Number(fechaBase.slice(0,4));
+  const baseMonth = Number(fechaBase.slice(5,7));
+  if (!diasStr || !String(diasStr).trim()) {
+    return [fechaBase];
+  }
+  const s = String(diasStr).toLowerCase();
+  // Detectar mes nombrado (uno solo, el primero)
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  let mes = baseMonth;
+  for (let i=0; i<12; i++) {
+    if (s.includes(meses[i])) { mes = i+1; break; }
+  }
+  // Detectar año (20xx) si aparece
+  const yearMatch = s.match(/\b(20\d{2})\b/);
+  const año = yearMatch ? Number(yearMatch[1]) : baseYear;
+  // Expandir rangos del tipo "N-M" o "N–M" (guión normal o largo)
+  const expanded = s.replace(/\b(\d{1,2})\s*[-–]\s*(\d{1,2})\b/g, (_, a, b) => {
+    const A = Number(a), B = Number(b);
+    if (A>=1 && B>A && B<=31 && (B-A)<10) {
+      const range = [];
+      for (let n=A; n<=B; n++) range.push(n);
+      return range.join(' ');
+    }
+    return a + ' ' + b;
+  });
+  // Eliminar el año (4 dígitos) antes de extraer días para no colarlo
+  const cleaned = expanded.replace(/\b20\d{2}\b/g, ' ');
+  const dias = [...new Set(
+    (cleaned.match(/\b\d{1,2}\b/g) || [])
+      .map(Number)
+      .filter(n => n>=1 && n<=31)
+  )].sort((a,b) => a-b);
+  if (!dias.length) return [fechaBase];
+  return dias.map(d => {
+    const mm = String(mes).padStart(2,'0');
+    const dd = String(d).padStart(2,'0');
+    return `${año}-${mm}-${dd}`;
+  });
+}
+
+// Construye un array unificado de eventos (pedido + fecha de oferta vinculada)
+function buildCalendarEvents() {
+  return state.pedidos.map(p => {
+    const of = state.ofertas.find(o => o._id === p.ofertaId) || {};
+    const fechaBase = of.fecha || '';
+    const diasStr   = p.dias || of.dias || '';
+    const dias      = parsearDiasPropuestos(diasStr, fechaBase);
+    const presupuesto = Number(p.presupuesto || of.presupuesto || 0);
+    const importePorDia = dias.length ? presupuesto / dias.length : presupuesto;
+    return {
+      _id:           p._id,
+      ref:           p.ref || of.ref || '',
+      fecha:         fechaBase,
+      dias:          dias,                  // array de YYYY-MM-DD
+      diasStr:       diasStr,               // texto original de la oferta
+      pueblo:        p.pueblo || of.pueblo || '',
+      lugarTrabajo:  p.lugarTrabajo || '',
+      actividad:     p.actividad || of.actividad || '',
+      horarios:      p.horarios || of.horarios || '',
+      monitores:     (p.monitores || []).filter(m => m && String(m).trim()),
+      presupuesto:   presupuesto,
+      importePorDia: importePorDia,
+      division:      p.division || of.division || 'ARI'
+    };
+  }).filter(e => e.dias && e.dias.length); // descarta pedidos sin fecha
+}
+
+function filtraEventosCalendario(evts) {
+  const q = (calState.search || '').toLowerCase().trim();
+  if (!q) return evts;
+  return evts.filter(e => {
+    const blob = [e.pueblo, e.actividad, e.ref, (e.monitores||[]).join(' ')].join(' ').toLowerCase();
+    return blob.includes(q);
+  });
+}
+
+function renderCalendario() {
+  const grid    = document.getElementById('calGrid');
+  const titleEl = document.getElementById('calTitle');
+  const empty   = document.getElementById('calEmpty');
+  if (!grid || !titleEl) return;
+
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  titleEl.textContent = meses[calState.month] + ' ' + calState.year;
+
+  // 1) Eventos del mes (un mismo evento puede aparecer en varios días)
+  const allEvts = filtraEventosCalendario(buildCalendarEvents());
+  // Expandimos cada evento a una entrada por día
+  const monthEntries = [];
+  allEvts.forEach(e => {
+    e.dias.forEach(diaISO => {
+      const [y,m,d] = diaISO.split('-');
+      if (Number(y) === calState.year && Number(m) === calState.month+1) {
+        monthEntries.push({ evt: e, day: Number(d) });
+      }
+    });
+  });
+  // Lista única de eventos del mes (para el panel KPIs)
+  const monthEvts = [...new Set(monthEntries.map(x => x.evt._id))]
+    .map(id => allEvts.find(e => e._id === id));
+
+  // Agrupar entradas por día del mes (1..31)
+  const byDay = {};
+  monthEntries.forEach(entry => {
+    (byDay[entry.day] = byDay[entry.day] || []).push(entry.evt);
+  });
+
+  // 2) Calcular cuadrícula: primer lunes a mostrar y nº de filas
+  const first = new Date(calState.year, calState.month, 1);
+  // getDay(): 0=Dom, 1=Lun ... → queremos lunes=0
+  const firstDow = (first.getDay() + 6) % 7;
+  const daysInMonth = new Date(calState.year, calState.month+1, 0).getDate();
+  const totalCells = Math.ceil((firstDow + daysInMonth) / 7) * 7;
+
+  // Para "día anterior" / "siguiente mes" mostrar grises
+  const prevMonth = new Date(calState.year, calState.month, 0); // último día mes anterior
+  const prevDays  = prevMonth.getDate();
+
+  const todayStr  = new Date().toISOString().slice(0,10);
+
+  let html = '';
+  for (let i = 0; i < totalCells; i++) {
+    let dayNum, isOther, dateStr;
+    if (i < firstDow) {
+      dayNum  = prevDays - firstDow + 1 + i;
+      isOther = true;
+      const d = new Date(calState.year, calState.month - 1, dayNum);
+      dateStr = d.toISOString().slice(0,10);
+    } else if (i < firstDow + daysInMonth) {
+      dayNum  = i - firstDow + 1;
+      isOther = false;
+      const d = new Date(calState.year, calState.month, dayNum);
+      dateStr = d.toISOString().slice(0,10);
+    } else {
+      dayNum  = i - firstDow - daysInMonth + 1;
+      isOther = true;
+      const d = new Date(calState.year, calState.month + 1, dayNum);
+      dateStr = d.toISOString().slice(0,10);
+    }
+
+    const isToday   = dateStr === todayStr;
+    const isWeekend = (i % 7) === 6; // domingo
+    const cellEvts  = (!isOther && byDay[dayNum]) ? byDay[dayNum] : [];
+
+    const cellBg  = isOther ? 'bg-slate-50 text-slate-400'
+                  : (isToday ? 'bg-emerald-50 ring-2 ring-emerald-400'
+                  : (isWeekend ? 'bg-rose-50/40' : 'bg-white'));
+
+    html += `<div class="border border-slate-200 ${cellBg} p-1.5 flex flex-col gap-1 overflow-hidden">
+      <div class="flex items-center justify-between text-xs">
+        <span class="${isToday ? 'font-black text-emerald-700' : 'font-semibold'}">${dayNum}</span>
+        ${cellEvts.length ? `<span class="text-[10px] bg-slate-800 text-white px-1.5 rounded-full">${cellEvts.length}</span>` : ''}
+      </div>
+      <div class="flex flex-col gap-0.5">`;
+
+    cellEvts.slice(0, 3).forEach(e => {
+      const c = DIV_COLOR[e.division] || DIV_COLOR.ARI;
+      const label = (e.pueblo || e.actividad || e.ref || '?').slice(0, 22);
+      html += `<button class="cal-evt-btn text-left text-[11px] leading-tight px-1.5 py-1 rounded truncate font-semibold hover:opacity-80 transition"
+        style="background:${c.bg};color:${c.text}" data-evt-id="${e._id}" title="${(e.pueblo||'') + ' · ' + (e.actividad||'')}">
+        ${label}
+      </button>`;
+    });
+    if (cellEvts.length > 3) {
+      html += `<button class="cal-evt-more text-[10px] text-slate-600 hover:underline" data-day="${dayNum}">+${cellEvts.length - 3} más</button>`;
+    }
+    html += `</div></div>`;
+  }
+  grid.innerHTML = html;
+  empty.classList.toggle('hidden', monthEvts.length > 0);
+
+  // 3) Listeners de cada evento
+  grid.querySelectorAll('.cal-evt-btn').forEach(btn => {
+    btn.addEventListener('click', () => abrirCalModal(btn.dataset.evtId));
+  });
+  grid.querySelectorAll('.cal-evt-more').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const day = Number(btn.dataset.day);
+      const list = byDay[day] || [];
+      // mostrar todos en cascada (abre el primero)
+      if (list.length) abrirCalModal(list[0]._id);
+    });
+  });
+
+  // 4) Panel resumen del mes
+  renderCalKpis(monthEvts);
+}
+
+function renderCalKpis(monthEvts) {
+  // Facturación = importePorDia × nº de días del evento que caen en este mes
+  const total = monthEvts.reduce((s,e) => {
+    const diasEnMes = e.dias.filter(d => {
+      const [y,m] = d.split('-');
+      return Number(y) === calState.year && Number(m) === calState.month+1;
+    }).length;
+    return s + (e.importePorDia * diasEnMes);
+  }, 0);
+  document.getElementById('calKpiTotal').textContent = fmtEur(total);
+  document.getElementById('calKpiCount').textContent = monthEvts.length + ' evento' + (monthEvts.length===1 ? '' : 's');
+
+  // Top pueblos
+  const pueblos = {};
+  monthEvts.forEach(e => { if (e.pueblo) pueblos[e.pueblo] = (pueblos[e.pueblo]||0) + 1; });
+  const topPueblos = Object.entries(pueblos).sort((a,b) => b[1]-a[1]).slice(0,5);
+  document.getElementById('calKpiPueblos').innerHTML = topPueblos.length
+    ? topPueblos.map(([p,n]) => `<li class="flex justify-between"><span>${p}</span><span class="font-bold text-slate-800">${n}</span></li>`).join('')
+    : '<li class="text-slate-400">Sin datos</li>';
+
+  // Top monitores
+  const monitores = {};
+  monthEvts.forEach(e => (e.monitores||[]).forEach(m => { if (m) monitores[m] = (monitores[m]||0) + 1; }));
+  const topMon = Object.entries(monitores).sort((a,b) => b[1]-a[1]).slice(0,5);
+  document.getElementById('calKpiMonitores').innerHTML = topMon.length
+    ? topMon.map(([m,n]) => `<li class="flex justify-between"><span>${m}</span><span class="font-bold text-slate-800">${n}</span></li>`).join('')
+    : '<li class="text-slate-400">Aún sin monitores asignados</li>';
+
+  // Por división (€ = parte que corresponde al mes mostrado)
+  const divs = { ARI:0, KOP:0, DIS:0 };
+  const divEur = { ARI:0, KOP:0, DIS:0 };
+  monthEvts.forEach(e => {
+    const diasEnMes = e.dias.filter(d => {
+      const [y,m] = d.split('-');
+      return Number(y) === calState.year && Number(m) === calState.month+1;
+    }).length;
+    divs[e.division]   = (divs[e.division]||0) + 1;
+    divEur[e.division] = (divEur[e.division]||0) + (e.importePorDia * diasEnMes);
+  });
+  document.getElementById('calKpiDivision').innerHTML = Object.entries(divs)
+    .filter(([d,n]) => n>0)
+    .map(([d,n]) => {
+      const c = DIV_COLOR[d];
+      return `<li class="flex items-center justify-between">
+        <span class="flex items-center gap-2"><span class="inline-block w-2.5 h-2.5 rounded-full" style="background:${c.dot}"></span>${d}</span>
+        <span class="font-semibold text-slate-800">${n} · ${fmtEur(divEur[d])}</span>
+      </li>`;
+    }).join('') || '<li class="text-slate-400">Sin datos</li>';
+}
+
+let calModalEvtId  = null;
+let calModalEdit   = false;
+let calModalDebounce = null;
+
+function abrirCalModal(evtId) {
+  calModalEvtId = evtId;
+  calModalEdit  = false;
+  pintarCalModal();
+  document.getElementById('calModal').classList.remove('hidden');
+}
+
+function toggleCalModalEdit() {
+  calModalEdit = !calModalEdit;
+  pintarCalModal();
+}
+
+// Helper: escapar atributos
+function _esc(s) { return String(s==null?'':s).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function pintarCalModal() {
+  if (!calModalEvtId) return;
+  const evts = buildCalendarEvents();
+  const e = evts.find(x => x._id === calModalEvtId);
+  if (!e) { cerrarCalModal(); return; }
+
+  const c = DIV_COLOR[e.division] || DIV_COLOR.ARI;
+  document.getElementById('calModalHeader').style.background = c.dot;
+  document.getElementById('calModalRef').textContent = (e.ref || '—') + '  ·  ' + e.division;
+  document.getElementById('calModalTitulo').textContent = e.actividad || 'Sin actividad';
+  document.getElementById('calModalEditBtn').textContent = calModalEdit ? '✓ Listo' : '✏️ Editar';
+  document.getElementById('calModalSaveStatus').textContent = calModalEdit ? '✏️ Modo edición — los cambios se guardan automáticamente.' : '';
+
+  const diasSem = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses   = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fechasObj = e.dias.map(iso => new Date(iso + 'T00:00:00'));
+  let fechaTxt;
+  if (fechasObj.length === 1) {
+    const f = fechasObj[0];
+    fechaTxt = `${diasSem[f.getDay()]}, ${f.getDate()} de ${meses[f.getMonth()]} ${f.getFullYear()}`;
+  } else {
+    const mismoMes = fechasObj.every(f => f.getMonth() === fechasObj[0].getMonth() && f.getFullYear() === fechasObj[0].getFullYear());
+    if (mismoMes) {
+      const numeros = fechasObj.map(f => f.getDate());
+      const ultimo = numeros.pop();
+      fechaTxt = `${numeros.join(', ')} y ${ultimo} de ${meses[fechasObj[0].getMonth()]} ${fechasObj[0].getFullYear()} · (${e.dias.length} días)`;
+    } else {
+      fechaTxt = fechasObj.map(f => `${f.getDate()}/${f.getMonth()+1}/${f.getFullYear()}`).join(' · ') + ` · (${e.dias.length} días)`;
+    }
+  }
+
+  // Render del cuerpo: lectura o edición
+  const body = document.getElementById('calModalBody');
+  const id   = e._id;
+
+  // En modo edición, cada input llama a actualizarPedidoCampo()
+  // (función global que ya existe en el módulo PEDIDO y guarda con debounce)
+  const inp = (campo, value, placeholder='') => {
+    const v = _esc(value);
+    return `<input type="text" value="${v}" placeholder="${placeholder}"
+      class="w-full mt-1 px-3 py-2 border rounded-lg bg-white text-sm font-semibold text-slate-800"
+      oninput="actualizarPedidoCampoYRefresh('${id}','${campo}',this.value)"/>`;
+  };
+  const inpNum = (campo, value) => {
+    return `<input type="number" step="0.01" value="${Number(value)||0}"
+      class="w-full mt-1 px-3 py-2 border rounded-lg bg-white text-sm font-semibold text-slate-800"
+      oninput="actualizarPedidoCampoYRefresh('${id}','${campo}',this.value,'num')"/>`;
+  };
+
+  let html = '';
+
+  // Días propuestos
+  html += `<div class="flex items-start gap-3">
+    <span class="text-lg">📅</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Días propuestos</p>
+      ${calModalEdit
+        ? inp('dias', e.diasStr, 'Ej: 12-13 julio 2026')
+        : `<p class="font-semibold text-slate-800">${_esc(fechaTxt)}</p>
+           ${e.diasStr ? `<p class="text-xs text-slate-500 mt-0.5 italic">Texto original: "${_esc(e.diasStr)}"</p>` : ''}`}
+    </div>
+  </div>`;
+
+  // Horario
+  html += `<div class="flex items-start gap-3">
+    <span class="text-lg">🕐</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Horario</p>
+      ${calModalEdit
+        ? inp('horarios', e.horarios, 'Ej: 17:00 a 21:00')
+        : `<p class="font-semibold text-slate-800">${_esc(e.horarios || 'Sin especificar')}</p>`}
+    </div>
+  </div>`;
+
+  // Pueblo
+  html += `<div class="flex items-start gap-3">
+    <span class="text-lg">📍</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Pueblo</p>
+      ${calModalEdit
+        ? inp('pueblo', e.pueblo, 'Ej: Donostia')
+        : `<p class="font-semibold text-slate-800">${_esc(e.pueblo || '—')}</p>`}
+    </div>
+  </div>`;
+
+  // Lugar exacto
+  html += `<div class="flex items-start gap-3">
+    <span class="text-lg">🏛️</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Lugar exacto del evento</p>
+      ${calModalEdit
+        ? inp('lugarTrabajo', e.lugarTrabajo, 'Ej: Polideportivo Municipal, Sala B')
+        : `<p class="font-semibold text-slate-800">${_esc(e.lugarTrabajo && e.lugarTrabajo.trim() ? e.lugarTrabajo : 'Sin especificar')}</p>`}
+    </div>
+  </div>`;
+
+  // Actividad
+  html += `<div class="flex items-start gap-3">
+    <span class="text-lg">🎨</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Actividad</p>
+      ${calModalEdit
+        ? inp('actividad', e.actividad, 'Ej: Taller pintura')
+        : `<p class="font-semibold text-slate-800">${_esc(e.actividad || '—')}</p>`}
+    </div>
+  </div>`;
+
+  // Monitores
+  html += `<div class="flex items-start gap-3">
+    <span class="text-lg">👥</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Monitores</p>`;
+  if (calModalEdit) {
+    // Una fila por monitor + botón añadir + botón eliminar
+    if (!e.monitores.length) {
+      html += `<p class="text-xs text-slate-400 italic mb-2">Sin monitores. Pulsa "Añadir monitor" para crear el primero.</p>`;
+    }
+    e.monitores.forEach((m, i) => {
+      html += `<div class="flex gap-2 mt-1">
+        <input type="text" value="${_esc(m)}" placeholder="Monitor ${i+1}"
+          class="flex-1 px-3 py-2 border rounded-lg text-sm"
+          oninput="actualizarMonitorYRefresh('${id}',${i},this.value)"/>
+        <button onclick="quitarMonitorYRefresh('${id}',${i})"
+          class="px-2 py-1 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-lg text-xs font-semibold">×</button>
+      </div>`;
+    });
+    html += `<button onclick="anadirMonitorYRefresh('${id}')"
+      class="mt-2 px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold">+ Añadir monitor</button>`;
+  } else {
+    if (e.monitores.length) {
+      html += `<div class="font-semibold text-slate-800">${e.monitores.map(m =>
+        `<span class="inline-block bg-slate-200 text-slate-800 px-2 py-0.5 rounded-full text-xs mr-1 mb-1">${_esc(m)}</span>`
+      ).join('')}</div>`;
+    } else {
+      html += `<span class="text-slate-400 italic">Sin asignar</span>`;
+    }
+  }
+  html += `</div></div>`;
+
+  // Importe + desglose
+  html += `<div class="flex items-start gap-3 pt-3 border-t">
+    <span class="text-lg">💶</span>
+    <div class="flex-1">
+      <p class="text-slate-500 text-xs">Importe vendido</p>
+      ${calModalEdit
+        ? inpNum('presupuesto', e.presupuesto)
+        : `<p class="text-xl font-black text-emerald-700">${fmtEur(e.presupuesto)}</p>`}`;
+  if (e.dias.length > 1) {
+    const filas = e.dias.map(iso => {
+      const f = new Date(iso + 'T00:00:00');
+      return `<div class="flex justify-between bg-slate-50 px-2 py-1 rounded">
+        <span>📅 ${diasSem[f.getDay()].slice(0,3)} ${f.getDate()}/${f.getMonth()+1}</span>
+        <span class="font-bold text-emerald-700">${fmtEur(e.importePorDia)}</span>
+      </div>`;
+    }).join('');
+    html += `<div class="mt-2 text-xs text-slate-600 space-y-0.5">
+      <p class="text-slate-500 mb-1">Desglose por día (${e.dias.length} días × ${fmtEur(e.importePorDia)}):</p>${filas}
+    </div>`;
+  } else {
+    html += `<div class="mt-2 text-xs text-slate-400 italic">Importe correspondiente a un solo día.</div>`;
+  }
+  html += `</div></div>`;
+
+  body.innerHTML = html;
+}
+
+// Wrappers que actualizan el pedido y refrescan el modal sin cerrarlo
+window.actualizarPedidoCampoYRefresh = function(id, campo, value) {
+  actualizarPedidoCampo(id, campo, value, false);
+  clearTimeout(calModalDebounce);
+  calModalDebounce = setTimeout(() => pintarCalModal(), 300);
+};
+window.actualizarMonitorYRefresh = function(id, idx, value) {
+  actualizarMonitor(id, idx, value);
+  clearTimeout(calModalDebounce);
+  calModalDebounce = setTimeout(() => pintarCalModal(), 300);
+};
+window.anadirMonitorYRefresh = async function(id) {
+  const ped = state.pedidos.find(p => p._id === id);
+  if (!ped) return;
+  ped.monitores = ped.monitores || [];
+  ped.monitores.push('');
+  ped.nMonitores = (ped.nMonitores||0) + 1;
+  await dbUpdate('pedidos', id, { monitores: ped.monitores, nMonitores: ped.nMonitores });
+  pintarCalModal();
+};
+window.quitarMonitorYRefresh = async function(id, idx) {
+  const ped = state.pedidos.find(p => p._id === id);
+  if (!ped) return;
+  ped.monitores = (ped.monitores||[]).filter((_,i) => i !== idx);
+  ped.tiposPago = (ped.tiposPago||[]).filter((_,i) => i !== idx);
+  ped.nMonitores = ped.monitores.length;
+  await dbUpdate('pedidos', id, { monitores: ped.monitores, tiposPago: ped.tiposPago, nMonitores: ped.nMonitores });
+  pintarCalModal();
+};
+
+// Borrar el evento del calendario: elimina el pedido (la oferta original se mantiene)
+window.eliminarEventoCalendario = async function() {
+  if (!calModalEvtId) return;
+  const ped = state.pedidos.find(p => p._id === calModalEvtId);
+  if (!ped) { cerrarCalModal(); return; }
+  const of = state.ofertas.find(o => o._id === ped.ofertaId);
+  const etiqueta = `${ped.ref || ''} — ${ped.pueblo || ''} · ${ped.actividad || ''}`.trim();
+  const msg =
+    `¿Quieres borrar este evento del calendario?\n\n` +
+    `${etiqueta}\n\n` +
+    `• Se eliminará el PEDIDO y desaparecerá del calendario.\n` +
+    `• La OFERTA original "${of ? (of.ref||'') : ''}" se mantiene intacta (puedes verla en la pestaña Oferta).\n\n` +
+    `Esta acción no se puede deshacer.`;
+  if (!confirm(msg)) return;
+  await dbDelete('pedidos', calModalEvtId);
+  cerrarCalModal();
+};
+function cerrarCalModal() {
+  document.getElementById('calModal').classList.add('hidden');
+}
+// Cerrar el modal pulsando fuera o ESC
+document.getElementById('calModal').addEventListener('click', e => {
+  if (e.target.id === 'calModal') cerrarCalModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') cerrarCalModal();
+});
+
+// Navegación
+document.getElementById('calPrevBtn').addEventListener('click', () => {
+  calState.month--;
+  if (calState.month < 0) { calState.month = 11; calState.year--; }
+  renderCalendario();
+});
+document.getElementById('calNextBtn').addEventListener('click', () => {
+  calState.month++;
+  if (calState.month > 11) { calState.month = 0; calState.year++; }
+  renderCalendario();
+});
+document.getElementById('calTodayBtn').addEventListener('click', () => {
+  const n = new Date();
+  calState.year = n.getFullYear();
+  calState.month = n.getMonth();
+  renderCalendario();
+});
+document.getElementById('calSearch').addEventListener('input', e => {
+  calState.search = e.target.value;
+  renderCalendario();
+});
+
+/* ================================================================
+   🎨 RENDER GLOBAL
+================================================================ */
+function renderAll() {
+  renderOfertas();
+  renderPedidos();
+  renderListas();
+  renderFacturas();
+  renderResumen();
+  renderDatos();
+  renderPagoMonitores();
+  renderCalendario();
+  renderBackupHistory();
+}
+
+/* ================================================================
+   🟢 ARRANQUE
+================================================================ */
+initBackend();
+// Backup diario tras la conexión
+setTimeout(comprobarBackupDiario, 2500);
+</script>
 </body>
 </html>
