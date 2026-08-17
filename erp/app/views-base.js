@@ -509,10 +509,30 @@
       ]));
 
       function exportar() {
-        var blob = new Blob([JSON.stringify(NS.store.get(), null, 2)], { type: 'application/json' });
+        var json = JSON.stringify(NS.store.get(), null, 2);
+        var nombre = 'ingura-erp-' + new Date().toISOString().slice(0, 10) + '.json';
+
+        // Publicado como artefacto, el visor no deja que la página descargue
+        // por su cuenta: la descarga la media la capacidad `downloads`.
+        var use = window.claude && window.claude.use;
+        if (use) {
+          window.claude.use('downloads').then(function (dl) {
+            if (!dl) return descargaLocal(json, nombre);
+            return dl.save({ filename: nombre, data: json })['catch'](function (err) {
+              if (err && err.code === 'declined') return;          // el visor dijo que no
+              alert('No se pudo guardar el fichero: ' + ((err && err.message) || 'error desconocido'));
+            });
+          })['catch'](function () { descargaLocal(json, nombre); });
+          return;
+        }
+        descargaLocal(json, nombre);
+      }
+
+      /** Fichero abierto en local o servido por Netlify: enlace blob normal. */
+      function descargaLocal(json, nombre) {
         var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'ingura-erp-' + new Date().toISOString().slice(0, 10) + '.json';
+        a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+        a.download = nombre;
         a.click();
         setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
       }
