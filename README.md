@@ -21,6 +21,7 @@ No es documentación descriptiva. Es un sistema operativo: cada documento existe
 |---|---|
 | **Entender el motor completo** | [`loop/LOOP-MAESTRO.md`](loop/LOOP-MAESTRO.md) ★ |
 | **Saber qué le falta a INGURA hoy** | [`docs/01-diagnostico-necesidades.md`](docs/01-diagnostico-necesidades.md) ★ |
+| **Hacer girar el loop en el día a día** | [`erp/index.html`](erp/index.html) ★ — el ERP |
 | **Saber qué hacer el lunes que viene** | [`docs/10-plan-90-dias.md`](docs/10-plan-90-dias.md) |
 | **Preparar una propuesta** | [`plantillas/propuesta-tecnica.md`](plantillas/propuesta-tecnica.md) |
 | **Medir una campaña** | [`docs/07-marco-de-impacto-y-kpis.md`](docs/07-marco-de-impacto-y-kpis.md) |
@@ -75,9 +76,19 @@ plantillas/
   caso-referencia.md                    estación ⑥
   email-prospeccion.md                  estación ①→②
 
+erp/           El sistema en pantalla — aplicación web sin servidor
+  index.html                          ★ cuadro de mando operativo del loop
+  README.md                             qué módulos tiene y qué datos usa
+
 web/           Landing bilingüe + fotografía de campaña
 fuentes/       Catálogo comercial original
 ```
+
+El **ERP** es la capa ejecutable de este repositorio: las seis estaciones son la
+navegación, la deuda de loop se calcula sola, los recordatorios de `cadencias.md`
+se disparan desde la fecha de cierre de cada campaña y el semáforo de vigencias
+aplica la regla de los 60 días. Se abre con doble clic, guarda en el navegador y
+no necesita instalación. Ver [`erp/README.md`](erp/README.md).
 
 ---
 

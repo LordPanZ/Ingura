@@ -1,0 +1,386 @@
+/* ============================================================================
+   INGURA ERP · hoja de estilo
+   Paleta y tipografía heredadas de web/index.html (la landing bilingüe).
+
+   Tema único claro, deliberado: la identidad de INGURA es papel crema con
+   grano. Un modo oscuro rompería la continuidad con la web pública.
+
+   Paleta de estado validada con el validador de dataviz sobre superficie
+   #FBF9F4 — lightness, croma, separación CVD y visión normal: PASS.
+   El ámbar queda por debajo de 3:1 de contraste, así que **el punto de color
+   nunca va solo**: siempre acompañado de etiqueta de texto.
+   ========================================================================== */
+
+:root{
+  /* --- marca (idéntica a la landing) --- */
+  --tierra:#5C4F3C;
+  --tierra-900:#3A3123;
+  --verde:#0B8A6B;
+  --verde-900:#065442;
+  --naranja:#E85D04;
+  --crema:#FBF9F4;
+  --arena:#FBF3EA;
+  --arena-media:#D8CBA0;
+  --menta:#C3EEE2;
+  --carbon:#3A3A3A;
+  --gris:#6E6E6E;
+
+  /* --- estado (validado) --- */
+  --st-ok:#0B8A6B;
+  --st-ambar:#EDA100;
+  --st-mal:#A62121;
+  --st-neutro:#8A8177;
+
+  /* --- rampa secuencial: un solo tono, claro→oscuro --- */
+  --seq-1:#C3EEE2;
+  --seq-2:#7FD3BB;
+  --seq-3:#3EB394;
+  --seq-4:#0B8A6B;
+  --seq-5:#065442;
+
+  --display:"Fraunces","Playfair Display",Georgia,serif;
+  --body:"Karla","Helvetica Neue",Helvetica,sans-serif;
+
+  --rule:1px solid color-mix(in srgb, var(--tierra) 20%, transparent);
+  --rule-soft:1px solid color-mix(in srgb, var(--tierra) 11%, transparent);
+  --nav-w:250px;
+  --radius:10px;
+  --shadow:0 1px 2px rgba(58,49,35,.05), 0 8px 24px -14px rgba(58,49,35,.28);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--crema); color:var(--carbon);
+  font-family:var(--body); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+/* grano de papel, como en la landing */
+body::before{
+  content:""; position:fixed; inset:0; z-index:9999; pointer-events:none;
+  opacity:.22; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+}
+h1,h2,h3,h4{
+  font-family:var(--display); font-weight:600;
+  font-variation-settings:"SOFT" 28,"opsz" 100;
+  line-height:1.08; letter-spacing:-.018em; color:var(--tierra-900);
+  margin:0; text-wrap:balance;
+}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* conmutación bilingüe pura en CSS, como la landing */
+html[data-lang="eu"] [data-l="es"]{display:none}
+html[data-lang="es"] [data-l="eu"]{display:none}
+
+/* ==========================================================================
+   ESQUELETO
+   ========================================================================== */
+.app{
+  display:grid; grid-template-columns:var(--nav-w) 1fr; min-height:100vh;
+  /* la columna izquierda queda pintada aunque el lateral sea sticky de 100vh */
+  background:linear-gradient(to right, var(--tierra-900) 0 var(--nav-w), transparent var(--nav-w));
+}
+
+/* ---------------------------------------------------------------- lateral */
+.side{
+  background:var(--tierra-900); color:var(--arena);
+  display:flex; flex-direction:column;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.side-brand{padding:1.15rem 1.25rem 1rem; border-bottom:1px solid rgba(216,203,160,.16)}
+.side-brand .logo{
+  font-family:var(--display); font-variation-settings:"SOFT" 40,"opsz" 120;
+  font-weight:800; font-size:1.3rem; letter-spacing:.04em; color:var(--crema);
+  display:block; line-height:1;
+}
+.side-brand .logo span{color:var(--naranja)}
+.side-brand .sub{
+  font-size:.63rem; letter-spacing:.17em; text-transform:uppercase;
+  color:var(--arena-media); margin-top:.42rem;
+}
+.side nav{padding:.7rem 0 1.5rem; flex:1}
+.navgroup{
+  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(216,203,160,.5); padding:1rem 1.25rem .4rem; font-weight:700;
+}
+.navlink{
+  display:flex; align-items:center; gap:.6rem; width:100%;
+  padding:.44rem 1.25rem; background:none; border:0; cursor:pointer;
+  color:rgba(251,243,234,.8); font-size:.855rem; text-align:left;
+  border-left:3px solid transparent; transition:background .18s,color .18s,border-color .18s;
+}
+.navlink:hover{background:rgba(251,243,234,.06); color:#fff}
+.navlink.on{background:rgba(11,138,107,.2); color:#fff; border-left-color:var(--naranja); font-weight:600}
+.navlink .st{
+  font-size:.85rem; width:1.05rem; flex:none; color:var(--arena-media);
+  font-variant-numeric:tabular-nums;
+}
+.navlink.on .st{color:var(--naranja)}
+.navlink .cnt{
+  margin-left:auto; font-size:.66rem; font-weight:700;
+  background:rgba(251,243,234,.13); color:var(--arena);
+  padding:.05rem .38rem; border-radius:99px; min-width:1.35rem; text-align:center;
+}
+.navlink .cnt.warn{background:var(--naranja); color:#fff}
+.side-foot{
+  padding:.85rem 1.25rem; border-top:1px solid rgba(216,203,160,.16);
+  font-size:.68rem; color:rgba(216,203,160,.62); line-height:1.45;
+}
+
+/* ------------------------------------------------------------------ main */
+.main{min-width:0; display:flex; flex-direction:column}
+.top{
+  position:sticky; top:0; z-index:40;
+  background:color-mix(in srgb, var(--crema) 90%, transparent);
+  backdrop-filter:blur(10px) saturate(1.3);
+  border-bottom:var(--rule);
+  padding:.8rem clamp(1rem,2.4vw,2rem);
+  display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+}
+.top h1{font-size:1.32rem}
+.top .eyebrow{
+  font-size:.6rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--verde-900); margin-bottom:.2rem;
+}
+.top-actions{margin-left:auto; display:flex; align-items:center; gap:.5rem}
+.content{padding:clamp(1rem,2.4vw,2rem); flex:1; max-width:1500px; width:100%}
+
+/* ==========================================================================
+   COMPONENTES
+   ========================================================================== */
+.btn{
+  border:1px solid color-mix(in srgb, var(--tierra) 30%, transparent);
+  background:var(--crema); color:var(--tierra-900);
+  padding:.35rem .75rem; border-radius:7px; cursor:pointer;
+  font-size:.8rem; font-weight:600; transition:background .16s,border-color .16s;
+}
+.btn:hover{background:var(--arena); border-color:var(--tierra)}
+.btn.pri{background:var(--verde); border-color:var(--verde); color:#fff}
+.btn.pri:hover{background:var(--verde-900); border-color:var(--verde-900)}
+.btn.gh{border-color:transparent; background:none}
+.btn.gh:hover{background:var(--arena)}
+.btn.sm{padding:.2rem .5rem; font-size:.72rem}
+
+.seg{display:inline-flex; border:1px solid color-mix(in srgb,var(--tierra) 26%,transparent); border-radius:7px; overflow:hidden}
+.seg button{
+  border:0; background:var(--crema); padding:.3rem .6rem; cursor:pointer;
+  font-size:.73rem; font-weight:700; letter-spacing:.06em; color:var(--gris);
+}
+.seg button.on{background:var(--tierra-900); color:var(--crema)}
+
+input[type=text],input[type=number],input[type=date],select,textarea{
+  border:1px solid color-mix(in srgb, var(--tierra) 26%, transparent);
+  background:#fff; border-radius:7px; padding:.34rem .55rem; font-size:.83rem;
+  width:100%; max-width:100%;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--menta); outline-offset:0; border-color:var(--verde)}
+label.fld{display:block; margin-bottom:.6rem}
+label.fld > span{
+  display:block; font-size:.66rem; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--gris); font-weight:700; margin-bottom:.2rem;
+}
+
+/* ------------------------------------------------------------------ card */
+.card{
+  background:#fff; border:var(--rule-soft); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:1.05rem 1.15rem; margin-bottom:1.15rem;
+}
+.card > h2{font-size:1.02rem; margin-bottom:.15rem}
+.card > .hint,.hint{font-size:.78rem; color:var(--gris); margin:.1rem 0 .8rem; max-width:78ch}
+.card-head{display:flex; align-items:flex-start; gap:1rem; margin-bottom:.7rem}
+.card-head .hint{margin:.15rem 0 0}
+.card-head .sp{margin-left:auto; display:flex; gap:.4rem; align-items:center; flex:none}
+
+.grid{display:grid; gap:1.15rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(185px,1fr))}
+
+/* -------------------------------------------------------------- stat tile */
+.tile{
+  background:#fff; border:var(--rule-soft); border-radius:var(--radius);
+  padding:.85rem .95rem; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:.1rem;
+}
+.tile .lbl{
+  font-size:.63rem; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--gris); font-weight:700; line-height:1.35;
+}
+.tile .num{
+  font-family:var(--display); font-variation-settings:"SOFT" 20,"opsz" 130;
+  font-size:2.05rem; font-weight:600; line-height:1; color:var(--tierra-900);
+  font-variant-numeric:tabular-nums; margin:.28rem 0 .1rem;
+}
+.tile .num .u{font-size:.95rem; color:var(--gris); margin-left:.12rem; font-family:var(--body); font-weight:600}
+.tile .foot{font-size:.7rem; color:var(--gris); line-height:1.4}
+.tile.flag{border-color:color-mix(in srgb,var(--naranja) 40%,transparent)}
+
+/* --------------------------------------------------------------- meter
+   Barra de magnitud contra umbral. Extremo redondeado 4px anclado a la base,
+   marca del umbral como línea fina. */
+.meter{margin-top:.4rem}
+.meter .track{
+  position:relative; height:8px; border-radius:99px;
+  background:color-mix(in srgb, var(--tierra) 11%, transparent); overflow:visible;
+}
+.meter .fill{height:100%; border-radius:99px; background:var(--verde); transition:width .5s ease}
+.meter .fill.ok{background:var(--st-ok)}
+.meter .fill.ambar{background:var(--st-ambar)}
+.meter .fill.mal{background:var(--st-mal)}
+.meter .mark{
+  position:absolute; top:-3px; bottom:-3px; width:2px;
+  background:var(--tierra-900); opacity:.55; border-radius:2px;
+}
+.meter .cap{display:flex; justify-content:space-between; font-size:.66rem; color:var(--gris); margin-top:.28rem}
+
+/* -------------------------------------------------------------- semáforo
+   El punto NUNCA va solo: siempre con etiqueta (relieve de contraste). */
+.sem{display:inline-flex; align-items:center; gap:.36rem; font-size:.75rem; font-weight:600; white-space:nowrap}
+.sem::before{content:""; width:9px; height:9px; border-radius:99px; flex:none; background:var(--st-neutro)}
+.sem.ok::before{background:var(--st-ok)}
+.sem.ambar::before{background:var(--st-ambar)}
+.sem.mal::before{background:var(--st-mal)}
+.sem.ok{color:var(--verde-900)}
+.sem.ambar{color:#8A5E00}
+.sem.mal{color:var(--st-mal)}
+
+/* ------------------------------------------------------------------ chip */
+.chip{
+  display:inline-block; font-size:.68rem; font-weight:700; letter-spacing:.03em;
+  padding:.1rem .45rem; border-radius:5px; white-space:nowrap;
+  background:color-mix(in srgb, var(--tierra) 10%, transparent); color:var(--tierra);
+}
+.chip.verde{background:color-mix(in srgb,var(--verde) 15%,transparent); color:var(--verde-900)}
+.chip.naranja{background:color-mix(in srgb,var(--naranja) 16%,transparent); color:#9C3D00}
+.chip.menta{background:var(--menta); color:var(--verde-900)}
+.chip.rojo{background:color-mix(in srgb,var(--st-mal) 13%,transparent); color:var(--st-mal)}
+.chip.demo{background:transparent; border:1px dashed color-mix(in srgb,var(--tierra) 40%,transparent); color:var(--gris); font-weight:600}
+.chip.st{font-family:var(--body); font-size:.72rem}
+
+/* ----------------------------------------------------------------- tabla */
+.tw{overflow-x:auto; margin:0 -1.15rem; padding:0 1.15rem}
+table{border-collapse:collapse; width:100%; font-size:.82rem}
+th{
+  text-align:left; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--gris); font-weight:700; padding:.42rem .55rem; white-space:nowrap;
+  border-bottom:1px solid color-mix(in srgb,var(--tierra) 22%,transparent);
+  position:sticky; top:0; background:#fff; z-index:1;
+}
+td{padding:.42rem .55rem; border-bottom:var(--rule-soft); vertical-align:top}
+tbody tr:hover{background:var(--arena)}
+tr.clic{cursor:pointer}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+.t-strong{font-weight:600; color:var(--tierra-900)}
+.t-mut{color:var(--gris)}
+.t-empty{color:color-mix(in srgb,var(--tierra) 35%,transparent)}
+
+/* -------------------------------------------------------------- barras
+   Serie única (una sola magnitud): sin leyenda, el título la nombra.
+   Rampa secuencial de un solo tono. */
+.bars{display:flex; align-items:flex-end; gap:2px; height:110px; margin-top:.5rem}
+.bars .b{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; position:relative}
+.bars .b i{
+  display:block; width:100%; border-radius:4px 4px 0 0; background:var(--seq-3);
+  transition:height .4s ease; min-height:3px;
+}
+.bars .b.crit i{background:var(--naranja)}
+.bars .b em{font-style:normal; font-size:.6rem; color:var(--gris); margin-top:.3rem; letter-spacing:.02em}
+.bars .b:hover i{filter:brightness(.9)}
+.bars .b .tip{
+  position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%);
+  background:var(--tierra-900); color:var(--crema); font-size:.68rem; line-height:1.35;
+  padding:.3rem .45rem; border-radius:6px; width:max-content; max-width:190px;
+  opacity:0; pointer-events:none; transition:opacity .14s; z-index:5;
+}
+.bars .b:hover .tip{opacity:1}
+
+/* --------------------------------------------------------------- rail loop */
+.rail{display:flex; gap:.4rem; flex-wrap:wrap}
+.rail button{
+  flex:1 1 130px; text-align:left; cursor:pointer; border-radius:8px; padding:.55rem .6rem;
+  border:1px solid color-mix(in srgb,var(--tierra) 18%,transparent); background:#fff;
+  transition:border-color .16s, background .16s;
+}
+.rail button:hover{border-color:var(--verde); background:var(--arena)}
+.rail .n{font-size:1rem; color:var(--naranja); font-weight:700; line-height:1}
+.rail .nm{font-family:var(--display); font-size:.9rem; color:var(--tierra-900); margin-top:.15rem}
+.rail .eu{font-size:.66rem; color:var(--gris); font-style:italic}
+.rail .v{font-size:.72rem; color:var(--verde-900); font-weight:700; margin-top:.3rem}
+
+/* ---------------------------------------------------------------- avisos */
+.avisos{list-style:none; margin:0; padding:0}
+.avisos li{
+  display:flex; gap:.65rem; align-items:flex-start; padding:.55rem 0; border-bottom:var(--rule-soft);
+}
+.avisos li:last-child{border-bottom:0}
+.avisos .bang{
+  flex:none; width:20px; height:20px; border-radius:99px; display:grid; place-items:center;
+  font-size:.68rem; font-weight:800; color:#fff; background:var(--st-neutro); margin-top:.1rem;
+}
+.avisos .bang.alta{background:var(--st-mal)}
+.avisos .bang.media{background:var(--st-ambar); color:#4A3200}
+.avisos .tt{font-weight:600; color:var(--tierra-900); font-size:.85rem}
+.avisos .dd{font-size:.75rem; color:var(--gris)}
+
+/* --------------------------------------------------------------- checklist */
+.chk{list-style:none; margin:0; padding:0}
+.chk li{display:flex; gap:.55rem; align-items:flex-start; padding:.28rem 0; font-size:.82rem}
+.chk input{margin-top:.28rem; flex:none; width:auto; accent-color:var(--verde)}
+.chk li.done{color:var(--gris); text-decoration:line-through}
+
+/* ----------------------------------------------------------------- drawer */
+.scrim{position:fixed; inset:0; background:rgba(58,49,35,.42); z-index:100; backdrop-filter:blur(2px)}
+.drawer{
+  position:fixed; top:0; right:0; bottom:0; width:min(560px,94vw); z-index:101;
+  background:var(--crema); border-left:var(--rule); overflow-y:auto;
+  box-shadow:-16px 0 44px -22px rgba(58,49,35,.5);
+}
+.drawer-head{
+  position:sticky; top:0; background:var(--crema); border-bottom:var(--rule);
+  padding:1rem 1.2rem; display:flex; gap:1rem; align-items:flex-start; z-index:2;
+}
+.drawer-head h2{font-size:1.12rem}
+.drawer-body{padding:1.1rem 1.2rem 3rem}
+.drawer-body .card{box-shadow:none; background:#fff}
+
+/* ------------------------------------------------------------------ misc */
+.kv{display:grid; grid-template-columns:auto 1fr; gap:.3rem .9rem; font-size:.82rem}
+.kv dt{font-size:.63rem; letter-spacing:.11em; text-transform:uppercase; color:var(--gris); font-weight:700; padding-top:.18rem}
+.kv dd{margin:0}
+.note{
+  border-left:3px solid var(--naranja); background:var(--arena);
+  padding:.6rem .8rem; border-radius:0 7px 7px 0; font-size:.8rem; margin:.7rem 0;
+}
+.note.verde{border-left-color:var(--verde); background:color-mix(in srgb,var(--menta) 40%,var(--crema))}
+.note strong{color:var(--tierra-900)}
+.empty{text-align:center; padding:2.2rem 1rem; color:var(--gris); font-size:.85rem}
+.empty b{display:block; font-family:var(--display); font-size:1rem; color:var(--tierra-900); margin-bottom:.25rem}
+.filters{display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; margin-bottom:.85rem}
+.filters input[type=text]{max-width:230px}
+.filters select{width:auto; min-width:120px}
+.demobar{
+  background:color-mix(in srgb,var(--naranja) 12%,var(--crema));
+  border:1px dashed color-mix(in srgb,var(--naranja) 45%,transparent);
+  border-radius:8px; padding:.5rem .8rem; font-size:.78rem; margin-bottom:1.1rem;
+  display:flex; gap:.8rem; align-items:center; flex-wrap:wrap;
+}
+.demobar .sp{margin-left:auto}
+
+/* --------------------------------------------------------------- responsive */
+@media (max-width:900px){
+  .app{grid-template-columns:1fr; background:none}   /* sin franja lateral pintada */
+  .side{position:static; height:auto; flex-direction:column}
+  .side nav{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); padding:.5rem}
+  .navgroup{grid-column:1/-1; padding:.6rem .6rem .2rem}
+  .navlink{border-left:0; border-bottom:2px solid transparent; padding:.4rem .6rem}
+  .navlink.on{border-left:0; border-bottom-color:var(--naranja)}
+  .side-foot{display:none}
+  .tw{margin:0 -1.15rem}
+}
+@media print{
+  .side,.top-actions,.demobar,.btn{display:none!important}
+  .app{grid-template-columns:1fr}
+  .card{break-inside:avoid; box-shadow:none; border:1px solid #ccc}
+  body::before{display:none}
+}

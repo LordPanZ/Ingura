@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INGURA · ERP del loop maestro</title>
+<meta name="description" content="Sistema operativo interno de INGURA: cartera institucional, las seis estaciones del loop maestro, evidencia de impacto, cumplimiento y modelo económico.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..900,0..100;1,9..144,400..900,0..100&family=Karla:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/erp.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%233A3123'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='700' fill='%23FBF3EA' text-anchor='middle'%3EI%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================================================== lateral -->
+  <aside class="side">
+    <div class="side-brand">
+      <a href="#/panel" class="logo">INGUR<span>A</span></a>
+      <div class="sub" data-l="eu">Loop nagusiaren ERPa</div>
+      <div class="sub" data-l="es">ERP del loop maestro</div>
+    </div>
+    <nav id="nav" aria-label="Módulos"></nav>
+    <div class="side-foot">
+      <div data-l="eu">Datuak nabigatzailean gordetzen dira. Ez da ezer kanpora bidaltzen.</div>
+      <div data-l="es">Los datos se guardan en el navegador. No sale nada a ningún servidor.</div>
+    </div>
+  </aside>
+
+  <!-- ================================================== principal -->
+  <main class="main">
+    <header class="top">
+      <div id="cabecera"></div>
+      <div class="top-actions">
+        <div class="seg" role="group" aria-label="Idioma">
+          <button data-lang="eu" onclick="INGURA.cambiarIdioma('eu')">EU</button>
+          <button data-lang="es" class="on" onclick="INGURA.cambiarIdioma('es')">ES</button>
+        </div>
+      </div>
+    </header>
+    <div class="content" id="contenido"></div>
+  </main>
+
+</div>
+
+<script src="data/seed.js"></script>
+<script src="app/core.js"></script>
+<script src="app/views-base.js"></script>
+<script src="app/views-loop.js"></script>
+<script src="app/views-control.js"></script>
+<script>
+  document.querySelectorAll('.seg button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.lang === INGURA.store.get().lang);
+  });
+  INGURA.arrancar();
+</script>
+
+</body>
+</html>
