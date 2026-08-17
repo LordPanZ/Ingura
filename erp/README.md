@@ -61,18 +61,38 @@ sincronización en tiempo real entre varios usuarios.
 
 ---
 
+## Unificación en INGURA
+
+Arima repartía el negocio en tres divisiones —`ARI` (talleres), `KOP` · Ateki
+(escape rooms) y `DIS` · Diskofesta.eus— y esa dimensión atravesaba toda la
+aplicación. INGURA es una sola cosa, así que la dimensión se ha eliminado
+entera:
+
+| Fuera | Dónde estaba |
+|---|---|
+| Selector «División» | formulario de oferta |
+| Columna «Div.» | tablas de Ofertas, Pedidos, Facturación, Resumen (y el Excel) y trabajos del monitor |
+| Badges de color `ARI` / `KOP` / `DIS` | CSS y las cinco tablas |
+| Tarjeta «🎯 Facturación por división» | pestaña Datos |
+| Tarjeta «🎯 Por división» | panel lateral del calendario |
+| Leyenda de tres colores | calendario |
+| Segmento de división en la referencia de factura | `F-2026-ARI-001` → `F-2026-001` |
+
+Y en su lugar:
+
+- La **comparativa año por año** pasa de tres series apiladas a una sola, `INGURA`.
+- El **calendario** usa un color único para todos los trabajos.
+- El campo `division` sigue existiendo en los registros, siempre con el valor
+  `INGURA`, para que la numeración de facturas y los datos ya guardados no se
+  rompan.
+
+---
+
 ## Lo que sigue siendo de Arima
 
-No lo he tocado porque pediste copia literal, pero es lo primero a decidir:
-
-1. **El subtítulo** dice «Talleres · Escape Rooms · Diskofestas».
-2. **Las tres divisiones** siguen siendo las de Arima:
-   `ARI` (talleres), `KOP` · Ateki (escape rooms) y `DIS` · Diskofesta.eus.
-   Están cableadas en los badges, en los colores del calendario y en dos
-   gráficas de la pestaña Datos.
-3. **El campo «Pueblo»** hace de cliente. En INGURA el cliente suele ser un
+1. **El campo «Pueblo»** hace de cliente. En INGURA el cliente suele ser un
    ayuntamiento o una mancomunidad, que no siempre coincide con un pueblo.
-4. **«Pago Monitores»** asume la figura del monitor con tipo de pago A o B.
+2. **«Pago Monitores»** asume la figura del monitor con tipo de pago A o B.
 
 ---
 

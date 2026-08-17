@@ -65,9 +65,6 @@
 <style>
   body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
   .tab-active { background-color: #1e293b; color: #fff; }
-  .badge-ARI { background:#fde68a; color:#92400e; }
-  .badge-KOP { background:#bfdbfe; color:#1e40af; }
-  .badge-DIS { background:#fbcfe8; color:#9d174d; }
   .badge-espera     { background:#fef3c7; color:#92400e; }
   .badge-confirmada { background:#bbf7d0; color:#166534; }
   .badge-cerrada    { background:#e5e7eb; color:#374151; }
@@ -100,7 +97,7 @@
       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-400 via-rose-400 to-fuchsia-500 grid place-items-center font-black text-slate-900">I</div>
       <div>
         <h1 class="text-xl font-bold leading-tight">INGURA · Sistema de Gestión</h1>
-        <p class="text-xs text-slate-400">Talleres · Escape Rooms · Diskofestas · Multiusuario en tiempo real</p>
+        <p class="text-xs text-slate-400">Talleres · Campañas de sensibilización · Programas escolares · Multiusuario en tiempo real</p>
       </div>
     </div>
     <div class="flex items-center gap-3 text-sm">
@@ -143,7 +140,7 @@
   </div>
   <div class="mb-5 flex items-center gap-2">
     <input id="ofertasSearch" type="search"
-           placeholder="🔍 Buscar por cualquier campo (pueblo, división, actividad, contacto, ref, estado...)"
+           placeholder="🔍 Buscar por cualquier campo (pueblo, actividad, contacto, ref, estado...)"
            class="w-full md:w-[28rem] px-4 py-2 border rounded-lg text-sm shadow-sm"/>
     <span id="ofertasSearchCount" class="text-xs text-slate-500"></span>
   </div>
@@ -167,13 +164,6 @@
       </label>
       <label class="text-sm">Actividad
         <input type="text" id="of_actividad" class="w-full mt-1 px-3 py-2 border rounded-lg" placeholder="Ej: Taller pintura"/>
-      </label>
-      <label class="text-sm">División
-        <select id="of_division" class="w-full mt-1 px-3 py-2 border rounded-lg">
-          <option value="ARI">ARI · Ingura (Talleres)</option>
-          <option value="KOP">KOP · Ateki (Escape Rooms)</option>
-          <option value="DIS">DIS · Diskofesta.eus</option>
-        </select>
       </label>
       <label class="text-sm">Persona de contacto
         <input type="text" id="of_contacto" class="w-full mt-1 px-3 py-2 border rounded-lg"/>
@@ -240,7 +230,6 @@
             <th class="px-3 py-3 text-left">Fecha</th>
             <th class="px-3 py-3 text-left">Pueblo</th>
             <th class="px-3 py-3 text-left">Actividad</th>
-            <th class="px-3 py-3 text-left">Div.</th>
             <th class="px-3 py-3 text-left">Contacto</th>
             <th class="px-3 py-3 text-left">Entrega</th>
             <th class="px-3 py-3 text-right">Presup.</th>
@@ -304,7 +293,6 @@
           <tr>
             <th class="px-3 py-3 text-left">EVT</th>
             <th class="px-3 py-3 text-left">Pueblo / Actividad</th>
-            <th class="px-3 py-3 text-left">Div.</th>
             <th class="px-3 py-3 text-left">Tipo Cliente</th>
             <th class="px-3 py-3 text-left">Referencia</th>
             <th class="px-3 py-3 text-left">IVA</th>
@@ -369,7 +357,7 @@
 <section id="tab-datos" class="tab-panel hidden">
   <div class="mb-5">
     <h2 class="text-2xl font-bold text-slate-900">Datos analíticos</h2>
-    <p class="text-sm text-slate-500">Indicadores clave de facturación, cobros y rendimiento por división</p>
+    <p class="text-sm text-slate-500">Indicadores clave de facturación, cobros y rendimiento</p>
   </div>
 
   <!-- KPIs principales -->
@@ -437,17 +425,10 @@
     </div>
   </div>
 
-  <!-- Gráficas división y año vs año -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-    <div class="bg-white rounded-xl shadow-md p-5">
-      <h3 class="text-lg font-bold text-slate-800 mb-3">🎯 Facturación por división</h3>
-      <div style="height: 320px;"><canvas id="chartDivisiones"></canvas></div>
-      <div id="divisionesLeyenda" class="mt-3 text-sm space-y-1"></div>
-    </div>
-    <div class="bg-white rounded-xl shadow-md p-5">
-      <h3 class="text-lg font-bold text-slate-800 mb-3">📈 Comparativa año por año</h3>
-      <div style="height: 320px;"><canvas id="chartAnios"></canvas></div>
-    </div>
+  <!-- Gráfica: comparativa año por año -->
+  <div class="bg-white rounded-xl shadow-md p-5">
+    <h3 class="text-lg font-bold text-slate-800 mb-3">📈 Comparativa año por año</h3>
+    <div style="height: 320px;"><canvas id="chartAnios"></canvas></div>
   </div>
 </section>
 
@@ -570,7 +551,6 @@
             <th class="px-3 py-2 text-left">Fecha</th>
             <th class="px-3 py-2 text-left">Lugar (pueblo)</th>
             <th class="px-3 py-2 text-left">Actividad</th>
-            <th class="px-3 py-2 text-left">Div.</th>
             <th class="px-3 py-2 text-left">EVT</th>
             <th class="px-3 py-2 text-right">Cantidad</th>
           </tr>
@@ -609,11 +589,8 @@
     </div>
   </div>
 
-  <!-- Leyenda divisiones -->
   <div class="mb-4 flex flex-wrap gap-3 text-xs">
-    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#f59e0b"></span> ARI</span>
-    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#3b82f6"></span> KOP</span>
-    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#ec4899"></span> DIS</span>
+    <span class="flex items-center gap-1"><span class="inline-block w-3 h-3 rounded-full" style="background:#f59e0b"></span> Trabajo</span>
     <span class="flex items-center gap-1 ml-4"><span class="inline-block w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-emerald-300"></span> Hoy</span>
   </div>
 
@@ -641,10 +618,6 @@
       <div class="bg-white rounded-xl shadow-md p-5">
         <h4 class="text-sm font-bold text-slate-700 mb-2">👥 Monitores más activos</h4>
         <ul id="calKpiMonitores" class="text-sm text-slate-600 space-y-1"><li class="text-slate-400">—</li></ul>
-      </div>
-      <div class="bg-white rounded-xl shadow-md p-5">
-        <h4 class="text-sm font-bold text-slate-700 mb-2">🎯 Por división</h4>
-        <ul id="calKpiDivision" class="text-sm text-slate-600 space-y-1"><li class="text-slate-400">—</li></ul>
       </div>
     </aside>
   </div>
@@ -1097,7 +1070,6 @@ function buildCalendarEventBody(oferta) {
   const prefix = estado === 'Confirmada' ? '[CONFIRMADA]' : '[PROPUESTA]';
   const descLines = [
     `Estado: ${estado}`,
-    oferta.division ? `División: ${oferta.division}` : null,
     oferta.contacto ? `Contacto: ${oferta.contacto} (${oferta.via || ''})` : null,
     oferta.participantes ? `Participantes: ${oferta.participantes}` : null,
     oferta.edad ? `Edad: ${oferta.edad}` : null,
@@ -1222,7 +1194,6 @@ document.getElementById('btnNuevaOferta').addEventListener('click', async () => 
   document.getElementById('of_fecha').value = new Date().toISOString().slice(0,10);
   document.getElementById('of_pueblo').value = '';
   document.getElementById('of_actividad').value = '';
-  document.getElementById('of_division').value = 'ARI';
   document.getElementById('of_contacto').value = '';
   document.getElementById('of_via').value = 'Email';
   document.getElementById('of_contactoDato').value = '';
@@ -1252,7 +1223,7 @@ document.getElementById('btnGuardarOferta').addEventListener('click', async () =
     fecha:       document.getElementById('of_fecha').value,
     pueblo:      document.getElementById('of_pueblo').value.trim(),
     actividad:   document.getElementById('of_actividad').value.trim(),
-    division:    document.getElementById('of_division').value,
+    division:    'INGURA',
     contacto:    document.getElementById('of_contacto').value.trim(),
     via:         document.getElementById('of_via').value,
     contactoDato:document.getElementById('of_contactoDato').value.trim(),
@@ -1300,7 +1271,6 @@ document.getElementById('btnGuardarOferta').addEventListener('click', async () =
   fOferta.classList.add('hidden');
 });
 
-function badgeDiv(d) { return `<span class="badge-${d} text-xs font-bold px-2 py-0.5 rounded">${d}</span>`; }
 function badgeEstado(e) {
   if (e === 'Sin Enviar') {
     return `<span class="badge-sinenviar text-xs px-2 py-0.5 rounded">⚠ ${e}</span>`;
@@ -1326,7 +1296,7 @@ function renderOfertas() {
   if (q) {
     rows = rows.filter(o => {
       const haystack = [
-        o.ref, o.fecha, o.pueblo, o.actividad, o.division,
+        o.ref, o.fecha, o.pueblo, o.actividad,
         o.contacto, o.via, o.entrega, o.presupuesto, o.estado,
         o.dias, o.horarios, o.participantes, o.edad
       ].map(v => String(v ?? '').toLowerCase()).join(' | ');
@@ -1347,7 +1317,6 @@ function renderOfertas() {
       <td class="px-3 py-2">${o.fecha||''}</td>
       <td class="px-3 py-2">${o.pueblo||''}</td>
       <td class="px-3 py-2">${o.actividad||''}</td>
-      <td class="px-3 py-2">${badgeDiv(o.division||'ARI')}</td>
       <td class="px-3 py-2">${o.contacto||''} <span class="text-xs text-slate-400">· ${o.via||''}</span>${o.contactoDato ? `<div class="text-xs text-slate-500">${o.contactoDato}</div>` : ''}</td>
       <td class="px-3 py-2">${o.entrega||''}</td>
       <td class="px-3 py-2 text-right font-semibold">${fmtEur(o.presupuesto)}</td>
@@ -1369,7 +1338,6 @@ function _cargarOfertaEnForm(o) {
   document.getElementById('of_fecha').value = o.fecha||'';
   document.getElementById('of_pueblo').value = o.pueblo||'';
   document.getElementById('of_actividad').value = o.actividad||'';
-  document.getElementById('of_division').value = o.division||'ARI';
   document.getElementById('of_contacto').value = o.contacto||'';
   document.getElementById('of_via').value = o.via||'Email';
   document.getElementById('of_contactoDato').value = o.contactoDato||'';
@@ -1483,7 +1451,6 @@ function renderPedidos() {
             <th class="px-3 py-3 text-left">Ref</th>
             <th class="px-3 py-3 text-left">Pueblo</th>
             <th class="px-3 py-3 text-left">Actividad</th>
-            <th class="px-3 py-3 text-left">Div.</th>
             <th class="px-3 py-3 text-right">Presupuesto</th>
             <th class="px-3 py-3 text-center">Acciones</th>
           </tr>
@@ -1502,7 +1469,6 @@ function renderPedidos() {
       <td class="px-3 py-2 font-mono font-bold text-slate-800">${p.ref||''}</td>
       <td class="px-3 py-2">${p.pueblo||''}</td>
       <td class="px-3 py-2">${p.actividad||''}</td>
-      <td class="px-3 py-2">${badgeDiv(p.division||'ARI')}</td>
       <td class="px-3 py-2 text-right font-semibold text-emerald-700">${fmtEur(p.presupuesto)}</td>
       <td class="px-3 py-2 text-center whitespace-nowrap">
         <button class="text-slate-600 hover:underline text-xs font-semibold" onclick="togglePedido('${p._id}','ver')">Ver</button>
@@ -1827,7 +1793,6 @@ function renderFacturas() {
     <tr class="hover:bg-slate-50">
       <td class="px-3 py-2 font-mono">${ped.ref}</td>
       <td class="px-3 py-2">${ped.pueblo} · ${ped.actividad}</td>
-      <td class="px-3 py-2">${badgeDiv(ped.division)}</td>
       <td class="px-3 py-2">
         <select class="px-2 py-1 border rounded text-xs" onchange="cambiarTipoCliente('${ped._id}',this.value)">
           <option value="">— Selecciona —</option>
@@ -1900,10 +1865,10 @@ window.cambiarTipoCliente = async function(pedidoId, tipo) {
   if (tipo) {
     const prefix = tipo === 'ef4ktur-face' ? 'F' : 'DBF';
     const year = new Date().getFullYear();
-    const { key, seq } = await nextInvoiceNumber(prefix, ped.division, year);
+    const { key, seq } = await nextInvoiceNumber(prefix, 'INGURA', year);
     refKey = key;
     refSeq = String(seq).padStart(3,'0');
-    referencia = `${prefix}-${year}-${ped.division}-${refSeq}`;
+    referencia = `${prefix}-${year}-${refSeq}`;
   }
   await dbUpdate('facturas', fac._id, { tipoCliente: tipo, referencia, refKey, refSeq });
 };
@@ -1941,7 +1906,6 @@ const RESUMEN_COLS = [
   { k:'fecha',       t:'Fecha oferta' },
   { k:'pueblo',      t:'Pueblo' },
   { k:'actividad',   t:'Actividad' },
-  { k:'division',    t:'Div.' },
   { k:'contacto',    t:'Contacto' },
   { k:'via',         t:'Vía' },
   { k:'entrega',     t:'F. entrega' },
@@ -1985,7 +1949,7 @@ function buildResumenRows() {
     const cuota = iva !== '' ? base * (iva/100) : 0;
     const total = base + cuota;
     return {
-      ref: o.ref, fecha:o.fecha, pueblo:o.pueblo, actividad:o.actividad, division:o.division,
+      ref: o.ref, fecha:o.fecha, pueblo:o.pueblo, actividad:o.actividad,
       contacto:o.contacto, via:o.via, entrega:o.entrega, presupuesto:o.presupuesto, estado:o.estado,
       dias:o.dias, horarios:o.horarios, participantes:o.participantes||'', edad:o.edad||'',
       nMonitores: ped.nMonitores||'', monitores: (ped.monitores||[]).join(', '),
@@ -2044,13 +2008,9 @@ document.getElementById('btnExportar').addEventListener('click', () => {
 /* ================================================================
    📈 MÓDULO DATOS (ANALÍTICAS)
 ================================================================ */
-const DIV_COLORS = {
-  ARI: { bg:'rgba(245, 158, 11, 0.7)',  border:'rgb(217, 119, 6)'  }, // ámbar
-  KOP: { bg:'rgba(59, 130, 246, 0.7)',  border:'rgb(37, 99, 235)'  }, // azul
-  DIS: { bg:'rgba(236, 72, 153, 0.7)',  border:'rgb(219, 39, 119)' }  // rosa
-};
+const INGURA_COLOR = { bg:'rgba(245, 158, 11, 0.7)', border:'rgb(217, 119, 6)' };
 const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-let chartMeses = null, chartDivisiones = null, chartAnios = null;
+let chartMeses = null, chartAnios = null;
 
 // Obtiene una lista de facturas "enriquecidas" con datos del pedido/oferta vinculados.
 // SOLO devuelve las facturas REGISTRADAS de verdad: aquellas que tienen un número
@@ -2072,7 +2032,7 @@ function facturasEnriquecidas() {
         referencia: f.referencia || '',
         pueblo: ped.pueblo || oferta.pueblo || '—',
         actividad: ped.actividad || oferta.actividad || '',
-        division: f.division || ped.division || oferta.division || 'ARI',
+        division: 'INGURA',
         base, cuota, total,
         fEnvio: f.fEnvio || '',
         fCobro: f.fCobro || ''
@@ -2194,63 +2154,12 @@ function renderDatos() {
     });
   }
 
-  // ---- Gráfica: facturación por divisiones (doughnut) ----
-  const porDiv = { ARI:0, KOP:0, DIS:0 };
-  facturadas.forEach(f => {
-    if (porDiv[f.division] !== undefined) porDiv[f.division] += f.total;
-  });
-  const totDiv = porDiv.ARI + porDiv.KOP + porDiv.DIS;
-  if (chartDivisiones) chartDivisiones.destroy();
-  const ctxDiv = document.getElementById('chartDivisiones');
-  if (ctxDiv) {
-    chartDivisiones = new Chart(ctxDiv, {
-      type: 'doughnut',
-      data: {
-        labels: ['ARI · Talleres', 'KOP · Escape Rooms', 'DIS · Diskofesta'],
-        datasets: [{
-          data: [porDiv.ARI, porDiv.KOP, porDiv.DIS],
-          backgroundColor: [DIV_COLORS.ARI.bg, DIV_COLORS.KOP.bg, DIV_COLORS.DIS.bg],
-          borderColor:    [DIV_COLORS.ARI.border, DIV_COLORS.KOP.border, DIV_COLORS.DIS.border],
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive:true, maintainAspectRatio:false,
-        plugins: {
-          legend: { position:'bottom' },
-          tooltip: {
-            callbacks: {
-              label: (c) => {
-                const v = c.parsed;
-                const pct = totDiv ? ((v/totDiv)*100).toFixed(1) : 0;
-                return ` ${c.label}: ${fmtEur(v)} (${pct}%)`;
-              }
-            }
-          }
-        }
-      }
-    });
-  }
-  // Leyenda detallada con importes y %
-  const ley = document.getElementById('divisionesLeyenda');
-  if (ley) {
-    ley.innerHTML = ['ARI','KOP','DIS'].map(d => {
-      const v = porDiv[d];
-      const pct = totDiv ? ((v/totDiv)*100).toFixed(1) : '0.0';
-      return `<div class="flex items-center justify-between border-b border-slate-100 pb-1">
-        <span class="font-semibold">${badgeDiv(d)}</span>
-        <span class="font-mono text-slate-800">${fmtEur(v)} <span class="text-slate-500">(${pct}%)</span></span>
-      </div>`;
-    }).join('');
-  }
-
-  // ---- Gráfica: comparativa año por año (apilada por división) ----
+  // ---- Gráfica: comparativa año por año ----
   const porAnio = {};
   facturadas.forEach(f => {
     const a = (f.fEnvio || '').slice(0,4);
     if (!a) return;
-    if (!porAnio[a]) porAnio[a] = { ARI:0, KOP:0, DIS:0 };
-    if (porAnio[a][f.division] !== undefined) porAnio[a][f.division] += f.total;
+    porAnio[a] = (porAnio[a] || 0) + f.total;
   });
   const aniosOrden = Object.keys(porAnio).sort();
   if (chartAnios) chartAnios.destroy();
@@ -2261,12 +2170,8 @@ function renderDatos() {
       data: {
         labels: aniosOrden,
         datasets: [
-          { label:'ARI', data: aniosOrden.map(a=>porAnio[a].ARI),
-            backgroundColor: DIV_COLORS.ARI.bg, borderColor: DIV_COLORS.ARI.border, borderWidth:2 },
-          { label:'KOP', data: aniosOrden.map(a=>porAnio[a].KOP),
-            backgroundColor: DIV_COLORS.KOP.bg, borderColor: DIV_COLORS.KOP.border, borderWidth:2 },
-          { label:'DIS', data: aniosOrden.map(a=>porAnio[a].DIS),
-            backgroundColor: DIV_COLORS.DIS.bg, borderColor: DIV_COLORS.DIS.border, borderWidth:2 }
+          { label:'INGURA', data: aniosOrden.map(a=>porAnio[a]),
+            backgroundColor: INGURA_COLOR.bg, borderColor: INGURA_COLOR.border, borderWidth:2 }
         ]
       },
       options: {
@@ -2322,7 +2227,7 @@ function trabajosDelMonitor(nombre) {
         fecha: oferta.fecha || (p.createdAt||'').slice(0,10) || '',
         pueblo: p.pueblo || oferta.pueblo || '—',
         actividad: p.actividad || oferta.actividad || '',
-        division: p.division || oferta.division || 'ARI',
+        division: 'INGURA',
         sueldoMon: sueldo,
         sueldoCoche: sumarCoche ? sueldoCoche : 0,
         cantidad: sueldo + (sumarCoche ? sueldoCoche : 0),
@@ -2472,7 +2377,6 @@ function renderMonitorDetalle(nombre) {
         <td class="px-3 py-2">${t.fecha || '—'}</td>
         <td class="px-3 py-2 font-semibold">${t.pueblo}</td>
         <td class="px-3 py-2">${t.actividad}</td>
-        <td class="px-3 py-2">${badgeDiv(t.division)}</td>
         <td class="px-3 py-2 font-mono text-xs">${t.ref}</td>
         <td class="px-3 py-2 text-right font-mono font-bold text-slate-800">
           ${fmtEur(t.cantidad)} <span class="text-xs text-slate-500">(${t.tipoPago||'A'})</span>
@@ -2865,11 +2769,7 @@ const calState = {
   month: new Date().getMonth(),   // 0-11
   search: ''
 };
-const DIV_COLOR = {
-  ARI: { bg:'#fde68a', text:'#92400e', dot:'#f59e0b' },
-  KOP: { bg:'#bfdbfe', text:'#1e40af', dot:'#3b82f6' },
-  DIS: { bg:'#fbcfe8', text:'#9d174d', dot:'#ec4899' }
-};
+const EVT_COLOR = { bg:'#fde68a', text:'#92400e', dot:'#f59e0b' };
 
 // Parsea el campo libre "días propuestos" (ej. "12-13 julio 2026", "5, 7 y 9 mayo")
 // y devuelve un array de fechas ISO YYYY-MM-DD. fechaBase se usa como ancla
@@ -2938,7 +2838,7 @@ function buildCalendarEvents() {
       monitores:     (p.monitores || []).filter(m => m && String(m).trim()),
       presupuesto:   presupuesto,
       importePorDia: importePorDia,
-      division:      p.division || of.division || 'ARI'
+      division:      'INGURA'
     };
   }).filter(e => e.dias && e.dias.length); // descarta pedidos sin fecha
 }
@@ -3032,7 +2932,7 @@ function renderCalendario() {
       <div class="flex flex-col gap-0.5">`;
 
     cellEvts.slice(0, 3).forEach(e => {
-      const c = DIV_COLOR[e.division] || DIV_COLOR.ARI;
+      const c = EVT_COLOR;
       const label = (e.pueblo || e.actividad || e.ref || '?').slice(0, 22);
       html += `<button class="cal-evt-btn text-left text-[11px] leading-tight px-1.5 py-1 rounded truncate font-semibold hover:opacity-80 transition"
         style="background:${c.bg};color:${c.text}" data-evt-id="${e._id}" title="${(e.pueblo||'') + ' · ' + (e.actividad||'')}">
@@ -3092,26 +2992,6 @@ function renderCalKpis(monthEvts) {
     ? topMon.map(([m,n]) => `<li class="flex justify-between"><span>${m}</span><span class="font-bold text-slate-800">${n}</span></li>`).join('')
     : '<li class="text-slate-400">Aún sin monitores asignados</li>';
 
-  // Por división (€ = parte que corresponde al mes mostrado)
-  const divs = { ARI:0, KOP:0, DIS:0 };
-  const divEur = { ARI:0, KOP:0, DIS:0 };
-  monthEvts.forEach(e => {
-    const diasEnMes = e.dias.filter(d => {
-      const [y,m] = d.split('-');
-      return Number(y) === calState.year && Number(m) === calState.month+1;
-    }).length;
-    divs[e.division]   = (divs[e.division]||0) + 1;
-    divEur[e.division] = (divEur[e.division]||0) + (e.importePorDia * diasEnMes);
-  });
-  document.getElementById('calKpiDivision').innerHTML = Object.entries(divs)
-    .filter(([d,n]) => n>0)
-    .map(([d,n]) => {
-      const c = DIV_COLOR[d];
-      return `<li class="flex items-center justify-between">
-        <span class="flex items-center gap-2"><span class="inline-block w-2.5 h-2.5 rounded-full" style="background:${c.dot}"></span>${d}</span>
-        <span class="font-semibold text-slate-800">${n} · ${fmtEur(divEur[d])}</span>
-      </li>`;
-    }).join('') || '<li class="text-slate-400">Sin datos</li>';
 }
 
 let calModalEvtId  = null;
@@ -3139,9 +3019,9 @@ function pintarCalModal() {
   const e = evts.find(x => x._id === calModalEvtId);
   if (!e) { cerrarCalModal(); return; }
 
-  const c = DIV_COLOR[e.division] || DIV_COLOR.ARI;
+  const c = EVT_COLOR;
   document.getElementById('calModalHeader').style.background = c.dot;
-  document.getElementById('calModalRef').textContent = (e.ref || '—') + '  ·  ' + e.division;
+  document.getElementById('calModalRef').textContent = (e.ref || '—');
   document.getElementById('calModalTitulo').textContent = e.actividad || 'Sin actividad';
   document.getElementById('calModalEditBtn').textContent = calModalEdit ? '✓ Listo' : '✏️ Editar';
   document.getElementById('calModalSaveStatus').textContent = calModalEdit ? '✏️ Modo edición — los cambios se guardan automáticamente.' : '';
