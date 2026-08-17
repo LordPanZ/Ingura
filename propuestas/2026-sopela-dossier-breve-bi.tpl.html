@@ -1,0 +1,632 @@
+<title>Sopelako dosier laburra</title>
+<style>
+/* ============================================================
+   INGURA · Sopela, dosier laburra · elebiduna (EU/ES)
+   Tratamiento: cartel. Sans pesada y grande, texto mínimo,
+   la fotografía de campaña lleva el peso. Las imágenes van
+   incrustadas como data URI (el CSP bloquea hosts externos)
+   y a tamaño honesto: el original más grande es de 435 px,
+   así que sólo la del módulo va a sangre, con velo oscuro.
+   Paleta de la barra validada en las seis comprobaciones.
+
+   Bilingüe: abre en EUSKERA sin depender de JavaScript — el
+   castellano está oculto por defecto y sólo aparece cuando el
+   conmutador marca data-lang="es" en la raíz. Así no hay
+   parpadeo inicial ni riesgo de mostrar las dos lenguas.
+   ============================================================ */
+:root{
+  --ground:#F7F4ED;
+  --surface:#FFFFFF;
+  --surface-2:#FBF3E9;
+  --ink:#241E15;
+  --ink-2:#6B6152;
+  --ink-3:#948977;
+  --line:#DED7C7;
+  --line-strong:#BEB49C;
+  --verde:#0A7A5E;
+  --naranja:#C24A02;
+  --menta:#E4F3ED;
+  --dark:#1A1611;          /* fondo de las bandas fotográficas, igual en ambos temas */
+  --dark-ink:#F6F1E6;
+  --dark-ink-2:#B5A992;
+
+  --c1:#0A7A5E; --c2:#B0431A; --c3:#175E96; --c0:#CFC7B4;
+
+  --sans:ui-sans-serif,"Segoe UI Variable Display","Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+
+  --maxw:70rem;
+  --pad:clamp(1.15rem,4vw,3rem);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#13100C; --surface:#1C1812; --surface-2:#231E16;
+    --ink:#F3EEE3; --ink-2:#A99E8A; --ink-3:#7C7362;
+    --line:#302A20; --line-strong:#493F31;
+    --verde:#22A480; --naranja:#FF8A45; --menta:#12332A;
+    --c1:#22A480; --c2:#E0713C; --c3:#4E9BD1; --c0:#3A3529;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#13100C; --surface:#1C1812; --surface-2:#231E16;
+  --ink:#F3EEE3; --ink-2:#A99E8A; --ink-3:#7C7362;
+  --line:#302A20; --line-strong:#493F31;
+  --verde:#22A480; --naranja:#FF8A45; --menta:#12332A;
+  --c1:#22A480; --c2:#E0713C; --c3:#4E9BD1; --c0:#3A3529;
+}
+
+/* ---------- conmutación de lengua: euskara por defecto ---------- */
+[data-l="es"]{display:none}
+html[data-lang="es"] [data-l="es"]{display:inline}
+html[data-lang="es"] [data-l="eu"]{display:none}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:1.0625rem; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block; max-width:100%}
+figure{margin:0}
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--pad)}
+
+h1,h2,h3{margin:0; font-weight:800; letter-spacing:-.032em; line-height:.98; text-wrap:balance}
+h1{font-size:clamp(2.2rem,6vw,4.4rem)}
+h2{font-size:clamp(1.6rem,3.6vw,2.7rem)}
+h3{font-size:1.05rem; letter-spacing:-.012em; font-weight:700}
+p{margin:0 0 .85em; max-width:60ch}
+p:last-child{margin-bottom:0}
+:focus-visible{outline:2px solid var(--naranja); outline-offset:3px}
+
+.eyebrow{
+  font-size:.7rem; font-weight:800; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--verde); display:block; margin-bottom:1rem;
+}
+
+/* ---------- conmutador ---------- */
+.lang{
+  position:fixed; z-index:70; top:1rem; right:clamp(1.15rem,4vw,3rem);
+  display:flex; border:1.5px solid rgba(246,241,230,.5); border-radius:999px; overflow:hidden;
+  background:rgba(26,22,17,.78); backdrop-filter:blur(8px) saturate(1.3);
+  font-size:.72rem; font-weight:800; letter-spacing:.1em;
+}
+.lang button{
+  appearance:none; border:0; background:transparent; cursor:pointer; font:inherit;
+  color:rgba(246,241,230,.82); padding:.38rem .74rem; transition:background .18s, color .18s;
+}
+.lang button[aria-pressed="true"]{background:#F6F1E6; color:#1A1611}
+.lang button:focus-visible{outline:2px solid #FF8A45; outline-offset:-2px}
+
+/* ---------- hero a sangre ---------- */
+.hero{position:relative; min-height:min(74vh,620px); display:grid; align-items:end; overflow:hidden; background:var(--dark)}
+.hero img{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center 58%; filter:saturate(.8) contrast(1.06);
+}
+.hero .scrim{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(26,22,17,.62) 0%, rgba(26,22,17,.55) 38%, rgba(26,22,17,.93) 100%);
+}
+.hero .grain{
+  position:absolute; inset:0; opacity:.5; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+}
+.hero .in{position:relative; padding-block:clamp(2.5rem,7vw,4.5rem)}
+.hero .crest{font-size:1.05rem; font-weight:800; letter-spacing:.1em; color:var(--dark-ink); margin-bottom:auto}
+.hero .crest span{color:#FF8A45}
+.hero h1{color:var(--dark-ink); max-width:26ch; margin-bottom:1.2rem}
+.hero h1 em{font-style:normal; color:#FF8A45}
+.hero .lede{color:var(--dark-ink-2); max-width:40ch; font-size:clamp(1rem,1.4vw,1.15rem); margin-bottom:1.8rem}
+.hero .strip{display:flex; flex-wrap:wrap; gap:.5rem 2.2rem; border-top:1px solid rgba(246,241,230,.22); padding-top:1.1rem}
+.hero .strip div{display:grid}
+.hero .strip .k{font-size:.64rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:rgba(181,169,146,.9)}
+.hero .strip .val{font-size:1.02rem; font-weight:700; color:var(--dark-ink); margin-top:.15rem}
+.hero .strip .val.big{font-size:1.3rem; color:#FF8A45}
+
+/* ---------- cifras ---------- */
+.figs{border-bottom:1px solid var(--line); background:var(--surface-2)}
+.figs .in{display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:2rem 2.5rem; padding-block:clamp(2rem,4vw,2.8rem)}
+.fig .n{font-size:clamp(2.2rem,4.6vw,3.2rem); font-weight:800; letter-spacing:-.04em; line-height:.9; display:flex; align-items:baseline; gap:.35rem; flex-wrap:wrap}
+.fig .n .was{font-size:.42em; font-weight:700; color:var(--ink-3)}
+.fig .n .ar{font-size:.38em; color:var(--ink-3)}
+.fig .n .now{color:var(--verde)}
+.fig .n .alert{color:var(--naranja)}
+.fig .u{font-size:.28em; font-weight:700; color:var(--ink-3); letter-spacing:0}
+.fig p{margin:.7rem 0 0; font-size:.9rem; color:var(--ink-2); max-width:24ch}
+
+/* ---------- secciones ---------- */
+section{padding-block:clamp(2.6rem,6vw,4.2rem)}
+section + section{border-top:1px solid var(--line)}
+.lead{font-size:clamp(1.05rem,1.6vw,1.28rem); color:var(--ink-2); max-width:46ch; margin-top:1.1rem}
+
+/* dos columnas texto + foto vertical */
+.split{display:grid; grid-template-columns:1fr minmax(0,15rem); gap:clamp(1.5rem,4vw,3rem); align-items:center}
+@media (max-width:52rem){.split{grid-template-columns:1fr}.split figure{max-width:15rem}}
+.split figure{margin:0}
+.split img{width:100%; height:auto; border:1px solid var(--line)}
+.split figcaption{font-size:.74rem; color:var(--ink-3); margin-top:.5rem; line-height:1.45}
+
+/* ---------- barra de caracterización ---------- */
+.bar-block{margin-top:1.8rem; max-width:44rem}
+.bar-t{font-size:.82rem; font-weight:700; color:var(--ink); margin-bottom:.15rem}
+.bar-s{font-size:.76rem; color:var(--ink-3); margin-bottom:.9rem}
+.stack{display:flex; gap:2px; height:2.4rem}
+.seg{border:0; padding:0; background:var(--sg); min-width:2px; cursor:default; transition:filter .16s}
+.seg:first-child{border-radius:4px 0 0 4px}
+.seg:last-child{border-radius:0 4px 4px 0}
+.seg:hover,.seg:focus-visible{filter:brightness(1.12)}
+.mark{margin-top:.5rem; height:3px}
+.mark span{display:block; height:3px; width:49.16%; background:var(--naranja)}
+.mark-t{font-size:.85rem; color:var(--ink-2); margin:.5rem 0 0}
+.mark-t b{color:var(--naranja); font-weight:800}
+.key{list-style:none; padding:0; margin:1.1rem 0 0; display:grid; gap:.38rem; max-width:28rem}
+.key li{display:grid; grid-template-columns:.75rem 1fr auto; gap:.6rem; align-items:baseline; font-size:.86rem; color:var(--ink-2)}
+.key i{width:.75rem; height:.75rem; background:var(--sg); border-radius:2px; transform:translateY(.1rem)}
+.key .pc{font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums}
+details.tv{margin-top:.9rem; font-size:.82rem}
+details.tv summary{cursor:pointer; color:var(--verde); font-weight:700}
+details.tv table{border-collapse:collapse; margin-top:.6rem; font-size:.84rem}
+details.tv th,details.tv td{text-align:left; padding:.35rem .8rem .35rem 0; border-bottom:1px solid var(--line)}
+details.tv td.n{text-align:right; font-variant-numeric:tabular-nums}
+
+/* ---------- tres tarjetas con foto ---------- */
+.cards{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.5rem; margin-top:2rem}
+@media (max-width:56rem){.cards{grid-template-columns:1fr; max-width:26rem}}
+.card{background:var(--surface); border:1px solid var(--line)}
+.card .ph{aspect-ratio:4/3; overflow:hidden; background:var(--dark)}
+.card .ph img{width:100%; height:100%; object-fit:cover; filter:saturate(.85)}
+.card .tx{padding:1rem 1.1rem 1.2rem}
+.card .k{font-family:var(--mono); font-size:.72rem; color:var(--naranja); letter-spacing:.05em; display:block; margin-bottom:.4rem}
+.card h3{margin-bottom:.35rem}
+.card p{font-size:.88rem; color:var(--ink-2); margin:0}
+
+/* ---------- incluye ---------- */
+.inc{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:1.9rem}
+.inc div{background:var(--surface); padding:1rem 1.1rem 1.15rem}
+@media (max-width:56rem){.inc{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:38rem){.inc{grid-template-columns:1fr}}
+.inc .q{font-family:var(--mono); font-size:1.1rem; font-weight:600; color:var(--verde); display:block; line-height:1}
+.inc b{display:block; font-size:.95rem; margin:.5rem 0 .2rem; letter-spacing:-.01em}
+.inc p{font-size:.85rem; color:var(--ink-2); margin:0}
+
+/* ---------- precio ---------- */
+.price{background:var(--dark); color:var(--dark-ink)}
+.price .in{display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:center; padding-block:clamp(2.2rem,5vw,3.4rem)}
+@media (max-width:48rem){.price .in{grid-template-columns:1fr}}
+.price .eyebrow{color:#8FD9BF}
+.price h2{color:var(--dark-ink); max-width:28ch}
+.price p{color:var(--dark-ink-2); margin-top:.9rem; max-width:44ch; font-size:.98rem}
+.tagbig{
+  font-size:clamp(2.6rem,7vw,4.2rem); font-weight:800; letter-spacing:-.045em;
+  color:#FF8A45; line-height:.9; white-space:nowrap;
+}
+.tagbig small{display:block; font-size:.19em; font-weight:800; letter-spacing:.16em; color:rgba(181,169,146,.95); margin-top:.6rem; white-space:normal}
+
+/* ---------- ampliación ---------- */
+.ext{display:grid; grid-template-columns:minmax(0,1fr) 11rem 11rem; gap:1.5rem; align-items:center}
+@media (max-width:52rem){.ext{grid-template-columns:1fr 1fr; gap:1.2rem}.ext > div:first-child{grid-column:1/-1}}
+.ext figure{margin:0}
+.ext img{width:100%; height:13rem; object-fit:cover; border:1px solid var(--line); filter:saturate(.88)}
+.ext figcaption{font-size:.72rem; color:var(--ink-3); margin-top:.45rem}
+
+.pull{
+  font-family:var(--serif); font-size:clamp(1.15rem,2vw,1.5rem); line-height:1.36;
+  border-left:3px solid var(--verde); padding-left:1.1rem; margin:1.8rem 0 0; max-width:38ch; color:var(--ink);
+}
+.note{
+  margin-top:1.8rem; border:1px dashed var(--naranja); padding:.85rem 1rem;
+  font-size:.85rem; color:var(--ink-2); max-width:52ch;
+}
+.note b{color:var(--naranja); font-size:.68rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; display:block; margin-bottom:.35rem}
+
+footer{border-top:1px solid var(--line); padding-block:2rem 3rem}
+footer .crest{font-size:1.05rem; font-weight:800; letter-spacing:.1em; margin-bottom:.7rem}
+footer .crest span{color:var(--naranja)}
+footer p{font-size:.83rem; color:var(--ink-3); max-width:56ch}
+
+#tip{
+  position:fixed; z-index:60; pointer-events:none; opacity:0; transition:opacity .12s;
+  background:var(--ink); color:var(--ground); font-size:.8rem; padding:.35rem .55rem;
+  border-radius:3px; line-height:1.35; max-width:13rem;
+}
+#tip b{display:block}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.lang,#tip{display:none}}
+</style>
+
+<div class="lang" role="group" aria-label="Hizkuntza / Idioma">
+  <button type="button" data-set="eu" aria-pressed="true">EU</button>
+  <button type="button" data-set="es" aria-pressed="false">ES</button>
+</div>
+
+<!-- ============ PORTADA ============ -->
+<figure class="hero">
+  <img src="__IMG_MODULO__"
+       alt="INGURAren erakusketa-modulua plaza publiko batean jarrita, panel informatiboekin eta herritarrentzako arretarekin"
+       data-alt-es="Módulo expositivo de INGURA instalado en una plaza pública, con paneles informativos y atención al público">
+  <div class="scrim"></div>
+  <div class="grain"></div>
+  <div class="in wrap">
+    <div class="crest">INGUR<span>A</span></div>
+    <h1>
+      <span data-l="eu">Sopelak kopuruaren bataila irabazi du. Orain, <em>kalitatearena</em>.</span>
+      <span data-l="es">Sopela ha ganado la batalla de la cantidad. Queda la de <em>la calidad</em>.</span>
+    </h1>
+    <p class="lede">
+      <span data-l="eu">Kanpaina-aste bat kalean eta ikasgeletan, materia organikoa ondo bereiz dadin.</span>
+      <span data-l="es">Una semana de campaña en la calle y en las aulas para que la separación de la materia orgánica se haga bien.</span>
+    </p>
+    <div class="strip">
+      <div>
+        <span class="k"><span data-l="eu">Norentzat</span><span data-l="es">Para</span></span>
+        <span class="val"><span data-l="eu">Sopelako Udala</span><span data-l="es">Ayuntamiento de Sopela</span></span>
+      </div>
+      <div>
+        <span class="k"><span data-l="eu">Noiz</span><span data-l="es">Cuándo</span></span>
+        <span class="val"><span data-l="eu">Urria · Asteklima 2026</span><span data-l="es">Octubre · Asteklima 2026</span></span>
+      </div>
+      <div>
+        <span class="k"><span data-l="eu">Zenbatekoa</span><span data-l="es">Importe</span></span>
+        <span class="val big">11.400 €</span>
+      </div>
+    </div>
+  </div>
+</figure>
+
+<!-- ============ CIFRAS ============ -->
+<div class="figs">
+  <div class="in wrap">
+    <div class="fig">
+      <span class="n">
+        <span class="was"><span data-l="eu">% 18</span><span data-l="es">18 %</span></span>
+        <span class="ar">→</span>
+        <span class="now"><span data-l="eu">% 26</span><span data-l="es">26 %</span></span>
+      </span>
+      <p><span data-l="eu">Igo zen Sopelako birziklatze-tasa 2020tik 2021era.</span>
+         <span data-l="es">Subió la tasa de reciclaje de Sopela entre 2020 y 2021.</span></p>
+    </div>
+    <div class="fig">
+      <span class="n">
+        <span class="was">0,98</span><span class="ar">→</span><span class="now">0,76</span>
+        <span class="u"><span data-l="eu">kg/biztanle·egun</span><span data-l="es">kg/hab·día</span></span>
+      </span>
+      <p><span data-l="eu">Jaitsi zen hondakin-sorkuntza: % 22 gutxiago.</span>
+         <span data-l="es">Bajó la generación de residuos: un 22 % menos.</span></p>
+    </div>
+    <div class="fig">
+      <span class="n"><span class="alert"><span data-l="eu">% 49</span><span data-l="es">49 %</span></span></span>
+      <p><span data-l="eu">Uribe Kostan biltzen denetik, beste bide batetik joan beharko litzateke.</span>
+         <span data-l="es">De lo que se recoge en Uribe Kosta debería ir por otro canal.</span></p>
+    </div>
+    <div class="fig">
+      <span class="n"><span class="alert"><span data-l="eu">+% 59</span><span data-l="es">+59 %</span></span></span>
+      <p><span data-l="eu">Biztanle gehiago 1996an baino. Jende asko kanpainen ondoren etorri zen.</span>
+         <span data-l="es">Habitantes más que en 1996. Mucha gente llegó después de las campañas.</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ EL PROBLEMA ============ -->
+<section class="wrap">
+  <div class="split">
+    <div>
+      <span class="eyebrow"><span data-l="eu">Diagnostikoa</span><span data-l="es">El diagnóstico</span></span>
+      <h2>
+        <span data-l="eu">Arazoa ez da zenbat biltzen den, nola biltzen den baizik.</span>
+        <span data-l="es">El problema no es cuánto. Es cómo.</span>
+      </h2>
+      <p class="lead">
+        <span data-l="eu">2021ean bilketa-sistema berriak kopurua konpondu zuen. 2023an, eskualdeko karakterizazioak beste zerbait erakutsi zuen: materia organikoa ez da ondo bereizten.</span>
+        <span data-l="es">En 2021 el sistema nuevo de recogida resolvió la cantidad. En 2023 la caracterización comarcal reveló otra cosa: la orgánica no se separa bien.</span>
+      </p>
+      <p style="margin-top:1.1rem">
+        <span data-l="eu">Edukiontzi berri batek ez dio inori erakusten inausketako hondarrak ez doazela janari-hondarrekin. Hori sentsibilizazioak baino ez du aldatzen.</span>
+        <span data-l="es">Un contenedor nuevo no enseña a nadie que los restos de poda no van con los restos de comida. Eso sólo lo cambia la sensibilización.</span>
+      </p>
+
+      <div class="bar-block">
+        <p class="bar-t"><span data-l="eu">Zer aurkitzen da Uribe Kostako hondakinetan</span><span data-l="es">Qué se encuentra en los residuos de Uribe Kosta</span></p>
+        <p class="bar-s"><span data-l="eu">Mankomunitateko zazpi udalerrien karakterizazioa · 2023</span><span data-l="es">Caracterización de los siete municipios de la Mancomunidad · 2023</span></p>
+        <div class="stack" role="img"
+             aria-label="Barra pilatua: lorezaintzako eta inausketako hondarrak % 17,13, materia organikoa % 16,37, zelulosa % 15,66, gainerako frakzioak % 50,84."
+             data-al-es="Barra apilada: restos de jardinería y poda 17,13 %, materia orgánica 16,37 %, celulosa 15,66 %, resto de fracciones 50,84 %.">
+          <button class="seg" style="--sg:var(--c1); flex:17.13"
+                  data-n="Lorezaintza eta inausketa" data-v="% 17,13" aria-label="Lorezaintzako eta inausketako hondarrak: % 17,13"
+                  data-n-es="Jardinería y poda" data-v-es="17,13 %" data-al-es="Restos de jardinería y poda: 17,13 %"></button>
+          <button class="seg" style="--sg:var(--c2); flex:16.37"
+                  data-n="Materia organikoa" data-v="% 16,37" aria-label="Materia organikoa: % 16,37"
+                  data-n-es="Materia orgánica" data-v-es="16,37 %" data-al-es="Materia orgánica: 16,37 %"></button>
+          <button class="seg" style="--sg:var(--c3); flex:15.66"
+                  data-n="Zelulosa" data-v="% 15,66" aria-label="Zelulosa: % 15,66"
+                  data-n-es="Celulosa" data-v-es="15,66 %" data-al-es="Celulosa: 15,66 %"></button>
+          <button class="seg" style="--sg:var(--c0); flex:50.84"
+                  data-n="Gainerako frakzioak" data-v="% 50,84" aria-label="Gainerako frakzioak: % 50,84"
+                  data-n-es="Resto de fracciones" data-v-es="50,84 %" data-al-es="Resto de fracciones: 50,84 %"></button>
+        </div>
+        <div class="mark" aria-hidden="true"><span></span></div>
+        <p class="mark-t">
+          <span data-l="eu">Lehen hirurek <b>% 49,16</b> osatzen dute — bildutako guztiaren erdia, gutxi gorabehera.</span>
+          <span data-l="es">Las tres primeras suman <b>49,16 %</b> — casi la mitad de todo lo recogido.</span>
+        </p>
+        <ul class="key">
+          <li style="--sg:var(--c1)"><i></i>
+            <span><span data-l="eu">Lorezaintzako eta inausketako hondarrak</span><span data-l="es">Restos de jardinería y poda</span></span>
+            <span class="pc"><span data-l="eu">% 17,13</span><span data-l="es">17,13 %</span></span></li>
+          <li style="--sg:var(--c2)"><i></i>
+            <span><span data-l="eu">Materia organikoa</span><span data-l="es">Materia orgánica</span></span>
+            <span class="pc"><span data-l="eu">% 16,37</span><span data-l="es">16,37 %</span></span></li>
+          <li style="--sg:var(--c3)"><i></i>
+            <span><span data-l="eu">Zelulosa</span><span data-l="es">Celulosa</span></span>
+            <span class="pc"><span data-l="eu">% 15,66</span><span data-l="es">15,66 %</span></span></li>
+          <li style="--sg:var(--c0)"><i></i>
+            <span><span data-l="eu">Gainerako frakzioak</span><span data-l="es">Resto de fracciones</span></span>
+            <span class="pc"><span data-l="eu">% 50,84</span><span data-l="es">50,84 %</span></span></li>
+        </ul>
+        <details class="tv">
+          <summary><span data-l="eu">Ikusi datuak taulan</span><span data-l="es">Ver los datos en tabla</span></summary>
+          <table>
+            <thead><tr>
+              <th><span data-l="eu">Frakzioa</span><span data-l="es">Fracción</span></th>
+              <th class="n">%</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><span data-l="eu">Lorezaintzako eta inausketako hondarrak</span><span data-l="es">Restos de jardinería y poda</span></td><td class="n">17,13</td></tr>
+              <tr><td><span data-l="eu">Materia organikoa</span><span data-l="es">Materia orgánica</span></td><td class="n">16,37</td></tr>
+              <tr><td><span data-l="eu">Zelulosa</span><span data-l="es">Celulosa</span></td><td class="n">15,66</td></tr>
+              <tr><td><span data-l="eu">Gainerako frakzioak</span><span data-l="es">Resto de fracciones</span></td><td class="n">50,84</td></tr>
+            </tbody>
+          </table>
+        </details>
+      </div>
+    </div>
+    <figure>
+      <img src="__IMG_BOLSA__"
+           alt="Materia organikoa biltzeko poltsa konpostagarria"
+           data-alt-es="Bolsa compostable de recogida de materia orgánica">
+      <figcaption><span data-l="eu">Frakzio organikoa: kanpainaren helburua.</span><span data-l="es">La fracción orgánica: el objetivo de la campaña.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ QUÉ PASA ============ -->
+<section class="wrap">
+  <span class="eyebrow"><span data-l="eu">Kanpaina-astea</span><span data-l="es">La semana de campaña</span></span>
+  <h2><span data-l="eu">Ez da hitzaldi bat. Eskuekin egiten da.</span><span data-l="es">No es una charla. Se hace con las manos.</span></h2>
+  <p class="lead">
+    <span data-l="eu">Gure modulua, plastikoaren estrusore-injektagailua eta konpostagailuak eramaten ditugu. Jendeak ez du panel bat ikusten: prozesu bat ikusten du.</span>
+    <span data-l="es">Llevamos nuestro módulo, nuestra extrusora-inyectora de plástico y nuestras compostadoras. La gente no ve un panel: ve un proceso.</span>
+  </p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="ph"><img src="__IMG_ESCOLARES__"
+           alt="Ikasle-taldea erakusketa-moduluaren aurrean txanda zain"
+           data-alt-es="Grupo escolar esperando su turno frente al módulo expositivo"></div>
+      <div class="tx">
+        <span class="k">01</span>
+        <h3><span data-l="eu">Ikastetxeak</span><span data-l="es">Los centros educativos</span></h3>
+        <p><span data-l="eu">50 minutuko lau saio Lehen Hezkuntzan, eta jardunaldi bat eko-ordezkariekin. % 59 hazi den herri batean, ikasleak dira etxe berrietara sartzeko biderik eraginkorrena.</span>
+           <span data-l="es">Cuatro sesiones de 50 minutos en Primaria, más una jornada con los eco-ordezkariak. En un municipio que ha crecido un 59 %, el alumnado es la vía más eficaz de entrada a los hogares nuevos.</span></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ph"><img src="__IMG_CENTRO__"
+           alt="Dinamizatzailea hondakinen kudeaketa azaltzen, herriaren mapa duen panelaren aurrean"
+           data-alt-es="Dinamizador explicando la gestión de residuos ante un panel con el mapa del municipio"></div>
+      <div class="tx">
+        <span class="k">02</span>
+        <h3><span data-l="eu">Herriaren datu propioak</span><span data-l="es">Los datos del propio municipio</span></h3>
+        <p><span data-l="eu">Panel bat Sopelan zer biltzen den eta karakterizazioak zer dioen azaltzeko. Eta sailkapen-mahai bat benetako hondakinekin, ez kartoizko fitxekin: bertan bereizi eta zuzentzen da.</span>
+           <span data-l="es">Panel con lo que se recoge en Sopela y lo que dice la caracterización. Y una mesa de clasificación con residuos de verdad, no fichas de cartón: se separa y se corrige en el momento.</span></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ph"><img src="__IMG_DEMO__"
+           alt="Klima-aldaketari buruzko saioetan erabiltzen den erakustaldi-materiala"
+           data-alt-es="Material de demostración utilizado en las sesiones sobre cambio climático"></div>
+      <div class="tx">
+        <span class="k">03</span>
+        <h3><span data-l="eu">Erakustaldia</span><span data-l="es">La demostración</span></h3>
+        <p><span data-l="eu">Herriko plastikoa jendaurrean birrindu eta injektatzen da, eta parte-hartzaile bakoitzak pieza eramaten du. Konpostagailu didaktikoa, eta landare edo kokedama bat oparitzen dugu.</span>
+           <span data-l="es">El plástico del propio municipio se tritura e inyecta delante del público, y cada participante se lleva la pieza. Compostadora didáctica y entrega de plantón o kokedama.</span></p>
+      </div>
+    </div>
+  </div>
+
+  <p class="pull">
+    <span data-l="eu">«Zure herritarrek ikusi, ukitu eta gogoratzen duten ingurumen-sentsibilizazioa.»</span>
+    <span data-l="es">«Sensibilización ambiental que su ciudadanía ve, toca y recuerda.»</span>
+  </p>
+</section>
+
+<!-- ============ QUÉ INCLUYE ============ -->
+<section class="wrap">
+  <span class="eyebrow"><span data-l="eu">Giltza eskuan</span><span data-l="es">Llave en mano</span></span>
+  <h2><span data-l="eu">Zuek baietz esatea besterik ez.</span><span data-l="es">Ustedes sólo tienen que decir sí.</span></h2>
+
+  <div class="inc">
+    <div><span class="q">6</span>
+      <b><span data-l="eu">Egun modulua kalean</span><span data-l="es">Días de módulo en la calle</span></b>
+      <p><span data-l="eu">Erdiguneko kokapena, goizez eta arratsaldez, herritik kanpo lan egiten duena baztertu gabe.</span>
+         <span data-l="es">Emplazamiento céntrico, mañana y tarde, para no excluir a quien trabaja fuera.</span></p></div>
+    <div><span class="q">6</span>
+      <b><span data-l="eu">Saio herritarrekin</span><span data-l="es">Sesiones con público</span></b>
+      <p><span data-l="eu">Lau eskolan, bat eko-ordezkariekin eta bat familientzat, eskolaz kanpoko orduetan.</span>
+         <span data-l="es">Cuatro escolares, una con eco-ordezkariak y una familiar fuera del horario escolar.</span></p></div>
+    <div><span class="q">2</span>
+      <b><span data-l="eu">Hizkuntza, euskara lehenik</span><span data-l="es">Lenguas, euskera primero</span></b>
+      <p><span data-l="eu">Material guztiak eta zuzeneko arreta. Euskaraz sortzen dugu, ez dugu itzultzen.</span>
+         <span data-l="es">Todos los materiales y la atención directa. Redactamos en euskera, no traducimos.</span></p></div>
+    <div><span class="q">4</span>
+      <b><span data-l="eu">Neurketa-maila</span><span data-l="es">Niveles de medición</span></b>
+      <p><span data-l="eu">Irismena, profila, adierazitako aldaketa eta frakzioaren benetako aldakuntza, sei hilabete geroago.</span>
+         <span data-l="es">Alcance, perfil, cambio declarado y variación real en la fracción, seis meses después.</span></p></div>
+    <div><span class="q">1</span>
+      <b><span data-l="eu">Txosten aurkezgarria</span><span data-l="es">Informe presentable</span></b>
+      <p><span data-l="eu">Orrialde bateko laburpena, sei adierazle eta hurrengo urterako gomendioak.</span>
+         <span data-l="es">Resumen de una página, seis indicadores y recomendaciones para el año siguiente.</span></p></div>
+    <div><span class="q">0</span>
+      <b><span data-l="eu">Lan zuen taldearentzat</span><span data-l="es">Trabajo para su equipo</span></b>
+      <p><span data-l="eu">Diseinua, ekoizpena, dinamizazioa eta emaitzen itzulketa: dena guk egiten dugu.</span>
+         <span data-l="es">Diseño, producción, dinamización y devolución de resultados: nos encargamos de todo.</span></p></div>
+  </div>
+
+  <div class="note">
+    <b><span data-l="eu">Gainera, kostu gehigarririk gabe</span><span data-l="es">Además, sin coste añadido</span></b>
+    <span data-l="eu">Asteklimaren herritarren sentsibilizazio-sariaren hautagaitza prestatzen dugu, eta astean zehar herritarrek egiten dizkiguten eskaerak helarazten dizuegu, maiztasunaren arabera ordenatuta.</span>
+    <span data-l="es">Preparamos la candidatura al premio de sensibilización ciudadana de Asteklima, y les trasladamos las demandas que la ciudadanía nos plantee durante la semana, ordenadas por frecuencia.</span>
+  </div>
+</section>
+
+<!-- ============ PRECIO ============ -->
+<div class="price">
+  <div class="in wrap">
+    <div>
+      <span class="eyebrow"><span data-l="eu">Proposamena</span><span data-l="es">Propuesta</span></span>
+      <h2><span data-l="eu">Aste oso bat: neurtua eta justifikagarria.</span><span data-l="es">Una semana completa, medida y justificable.</span></h2>
+      <p><span data-l="eu">Modulua, eskola-saioak, plastikoen tailerra, material elebiduna, eraginaren txostena eta sei hilabeteko jarraipena. Hiru mugarritan fakturatuta: % 30 balidazioan, % 40 astea amaitzean, % 30 txostena entregatzean.</span>
+         <span data-l="es">Módulo, sesiones escolares, taller de plásticos, materiales bilingües, informe de impacto y seguimiento a seis meses. Facturación en tres hitos: 30 % a la validación, 40 % al cierre de la semana, 30 % a la entrega del informe.</span></p>
+    </div>
+    <div class="tagbig">11.400 €<small><span data-l="eu">BEZ gabe</span><span data-l="es">sin IVA</span></small></div>
+  </div>
+</div>
+
+<!-- ============ AMPLIACIÓN ============ -->
+<section class="wrap">
+  <div class="ext">
+    <div>
+      <span class="eyebrow"><span data-l="eu">Urrunago joan nahi baduzue</span><span data-l="es">Si quieren ir más lejos</span></span>
+      <h2><span data-l="eu">Merkataritza eta ostalaritza</span><span data-l="es">Comercio y hostelería</span></h2>
+      <p class="lead">
+        <span data-l="eu">Establezimenduetara banakako bisitak, erakuslehiorako bereizgarria eta testigantzekin egindako bideoa.</span>
+        <span data-l="es">Visitas una a una a los establecimientos, distintivo para el escaparate y vídeo con testimonios.</span>
+      </p>
+      <p style="margin-top:1rem">
+        <span data-l="eu">Hondartza-herri batean ostalaritzak frakzio organiko asko sortzen du, eta denboraldiaren arabera. Bertan nabaritzen da lehenbailehen kalitate-hobekuntza datuetan. <strong>11.500 €-tik, 75 establezimendura arte.</strong></span>
+        <span data-l="es">En un municipio de playa la hostelería genera fracción orgánica de forma intensiva y estacional. Es donde una mejora de calidad se nota antes en el dato. <strong>Desde 11.500 €, hasta 75 establecimientos.</strong></span>
+      </p>
+      <p style="margin-top:1rem; font-size:.92rem; color:var(--ink-2)">
+        <span data-l="eu">Eta itzulkin handiena duen aukera: kanpaina <strong>Uribe Kostako Mankomunitateko zazpi udalerrietan</strong> errepikatzea, Sopela pilotu gisa. Karakterizazioak agerian uzten duen arazoa eskualdekoa da, eta Mankomunitateak hemen du egoitza.</span>
+        <span data-l="es">Y la opción de mayor retorno: replicar la campaña en los <strong>siete municipios de la Mancomunidad de Uribe Kosta</strong>, con Sopela como piloto. El problema que revela la caracterización es comarcal, y la Mancomunidad tiene su sede aquí.</span>
+      </p>
+    </div>
+    <figure>
+      <img src="__IMG_COMERCIO__"
+           alt="Fruta eta barazki postua hurbileko merkataritzan"
+           data-alt-es="Puesto de fruta y verdura en un comercio de proximidad">
+      <figcaption><span data-l="eu">Hurbileko merkataritza.</span><span data-l="es">Comercio de proximidad.</span></figcaption>
+    </figure>
+    <figure>
+      <img src="__IMG_HOSTELERIA__"
+           alt="Mahaia zerbitzatuta ostalaritza-establezimendu batean"
+           data-alt-es="Mesa servida en un establecimiento hostelero">
+      <figcaption><span data-l="eu">Tokiko ostalaritza.</span><span data-l="es">Hostelería local.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ CIERRE ============ -->
+<section class="wrap">
+  <span class="eyebrow"><span data-l="eu">Hurrengo urratsa</span><span data-l="es">Siguiente paso</span></span>
+  <h2><span data-l="eu">Ordu erdi, eta esango dizuegu bat datorren ala ez.</span><span data-l="es">Media hora, y les decimos si encaja.</span></h2>
+  <p class="lead">
+    <span data-l="eu">Bilera bat diagnostiko hau zuen talde teknikoak egunero ikusten duenarekin alderatzeko. Ikuspegia bat badator, irismena, egutegia eta aurrekontua doituko ditugu. Eta bat ez badator, esango dizuegu.</span>
+    <span data-l="es">Una reunión para contrastar este diagnóstico con lo que su equipo técnico ve en el día a día. Si el enfoque encaja, ajustamos alcance, calendario y presupuesto. Y si no encaja, se lo diremos.</span>
+  </p>
+  <p style="margin-top:1.4rem">
+    <span data-l="eu"><strong>Hemengoak gara.</strong> Gure egoitza Palatueta bidea 25C-n dago. Kanpaina hau, zuen herrian bertan, edukiontzi berberetan hondakinak bereizten dituen jendeak egingo luke.</span>
+    <span data-l="es"><strong>Somos de aquí.</strong> Nuestra sede está en Palatueta bidea 25C. Esta campaña la haría, en su propio municipio, gente que separa sus residuos en los mismos contenedores.</span>
+  </p>
+
+  <div class="note">
+    <b><span data-l="eu">Barne-zirriborroa · ez bidali oraindik</span><span data-l="es">Borrador interno · no enviar todavía</span></b>
+    <span data-l="eu">Birziklatze-datuak 2021ekoak dira, eta Udalak hileko datu eguneratuak argitaratzen ditu: bidali aurretik ordeztu behar dira. Falta dira, halaber, kontaktu teknikoa, karakterizazioaren berrespena jatorrizko azterlanean, eta Asteklima 2026ren datak. Xehetasun guztiak proposamen luzean.</span>
+    <span data-l="es">Las cifras de reciclaje son de 2021 y el Ayuntamiento publica datos mensuales actualizados: hay que sustituirlas antes de enviar. Faltan también el contacto técnico, la confirmación de la caracterización en el estudio original y las fechas de Asteklima 2026. Detalle completo en la propuesta larga.</span>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="crest">INGUR<span>A</span></div>
+  <p>
+    <span data-l="eu">Ingurumen estrategiak eta ekintzak · Palatueta bidea 25C, 48600 Sopela (Bizkaia) · IFZ J098128850 · Erref. INGURA-2026-SOP-01. Zenbatekoak BEZ gabe. Kanpaina propioen argazkiak.</span>
+    <span data-l="es">Ingurumen estrategiak eta ekintzak · Palatueta bidea 25C, 48600 Sopela (Bizkaia) · CIF J098128850 · Ref. INGURA-2026-SOP-01. Importes sin IVA. Fotografías de campañas propias.</span>
+  </p>
+</footer>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  const root = document.documentElement;
+  const TITLES = { eu: 'Sopelako dosier laburra', es: 'Sopela en una página' };
+
+  // Lo que el CSS no puede conmutar: atributos (alt, aria-label y los datos
+  // del gráfico). El euskera es el valor por defecto en el marcado.
+  const swappable = [...document.querySelectorAll('[data-alt-es],[data-al-es],[data-n-es]')]
+    .map(el => ({
+      el,
+      eu: { alt: el.getAttribute('alt'), aria: el.getAttribute('aria-label'),
+            n: el.dataset.n, v: el.dataset.v },
+      es: { alt: el.dataset.altEs, aria: el.dataset.alEs,
+            n: el.dataset.nEs, v: el.dataset.vEs }
+    }));
+
+  function apply(lang){
+    root.dataset.lang = lang;
+    root.lang = lang;
+    document.title = TITLES[lang];
+    for (const { el, eu, es } of swappable) {
+      const s = lang === 'es' ? es : eu;
+      if (s.alt)  el.setAttribute('alt', s.alt);
+      if (s.aria) el.setAttribute('aria-label', s.aria);
+      if (s.n)    el.dataset.n = s.n;
+      if (s.v)    el.dataset.v = s.v;
+    }
+    for (const b of document.querySelectorAll('.lang button')) {
+      b.setAttribute('aria-pressed', String(b.dataset.set === lang));
+    }
+    try { localStorage.setItem('ingura-sopela-lang', lang); } catch (e) {}
+  }
+
+  document.querySelectorAll('.lang button').forEach(b => {
+    b.addEventListener('click', () => apply(b.dataset.set));
+  });
+
+  // Abre en euskera. Sólo respeta una elección previa de quien lee.
+  let start = 'eu';
+  try {
+    const saved = localStorage.getItem('ingura-sopela-lang');
+    if (saved === 'es' || saved === 'eu') start = saved;
+  } catch (e) {}
+  apply(start);
+
+  // Tooltip del gráfico. Balioak legendan eta taulan daude; lagungarria baino ez da.
+  const tip = document.getElementById('tip');
+  let raf = null;
+  function show(seg, x, y){
+    tip.innerHTML = '<b>' + seg.dataset.n + '</b>' + seg.dataset.v;
+    tip.style.opacity = '1';
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      const r = tip.getBoundingClientRect();
+      const left = Math.max(8, Math.min(x - r.width / 2, window.innerWidth - r.width - 8));
+      let top = y - r.height - 12;
+      if (top < 8) top = y + 16;
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+    });
+  }
+  const hide = () => { tip.style.opacity = '0'; };
+  document.querySelectorAll('.seg').forEach(seg => {
+    seg.addEventListener('mousemove', e => show(seg, e.clientX, e.clientY));
+    seg.addEventListener('mouseleave', hide);
+    seg.addEventListener('focus', () => {
+      const r = seg.getBoundingClientRect();
+      show(seg, r.left + r.width / 2, r.top);
+    });
+    seg.addEventListener('blur', hide);
+  });
+  window.addEventListener('scroll', hide, { passive: true });
+})();
+</script>
