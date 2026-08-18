@@ -9,6 +9,7 @@ de Ingura, listas para enviar en la ventana de septiembre.
 | [muskiz.md](muskiz.md) | Del contenedor al hábito — 12.400 € | ✅ Sí |
 | [berango.md](berango.md) | Ongi etorri Berangora — 11.800 € | ✅ Sí |
 | [barrika.md](barrika.md) | Itsasertz bizia — 6.200 € | ✅ Sí |
+| [alerta-uribe-kosta.md](alerta-uribe-kosta.md) | Cómo dar de alta las alertas del poder adjudicador de la Mancomunidad de Uribe Kosta en `arimacooltour@gmail.com`, paso a paso | Interno |
 | [emails-de-envio.md](emails-de-envio.md) | El email exacto que acompaña a cada ficha, y la llamada de los tres días | Interno (el texto sí se envía) |
 
 ## Antes de enviar
