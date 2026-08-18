@@ -27,6 +27,20 @@ cuentas, el plan de 90 días y todas las plantillas listas para usar.
 | 08 | [Materiales y herramientas](docs/08-materiales-y-herramientas.md) | Qué hay que producir y con qué (coste ≈ 0) |
 | 09 | [Cambios en la web](docs/09-web-y-marca.md) | Qué tocar en webingura.netlify.app para que venda |
 
+## Fichas personalizadas — listas para enviar
+
+Fichas de proyecto subvencionable para los tres clientes dormidos, con el
+briefing comercial de cada municipio: [`fichas/`](fichas/README.md)
+
+| Municipio | Proyecto | Importe |
+|---|---|---|
+| [Muskiz](fichas/muskiz.md) | Del contenedor al hábito | 12.400 € |
+| [Berango](fichas/berango.md) | Ongi etorri Berangora | 11.800 € |
+| [Barrika](fichas/barrika.md) | Itsasertz bizia | 6.200 € |
+
+⚠️ Leer antes el [briefing interno](fichas/00-briefing-interno.md): contiene una
+alerta de licitación de la Mancomunidad de Uribe Kosta que no cabe en las fichas.
+
 ## Plantillas listas para usar
 
 - [Secuencias de email y llamada (ES/EU)](plantillas/email-secuencias.md)
@@ -49,3 +63,8 @@ cuentas, el plan de 90 días y todas las plantillas listas para usar.
 El plan completo, maquetado con la línea de imagen de Ingura, está en
 [`web/loop-ingura.html`](web/loop-ingura.html) y publicado aquí:
 **https://claude.ai/code/artifact/796e173a-6645-4720-b581-e54dc74a3703**
+
+Las tres fichas, maquetadas y listas para imprimir o exportar a PDF, están en
+[`web/fichas-muskiz-barrika-berango.html`](web/fichas-muskiz-barrika-berango.html)
+y publicadas aquí:
+**https://claude.ai/code/artifact/3aa111a4-d7fa-404e-869e-fd5bf0dcff4f**

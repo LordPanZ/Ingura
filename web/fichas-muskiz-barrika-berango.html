@@ -1,0 +1,729 @@
+<title>Muskiz, Barrika, Berango</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f5f0e6; --surface:#fffdf7; --surface-2:#ece5d3;
+  --text:#1a2418; --muted:#5c6b53; --heading:#1f3d2b;
+  --accent:#9CB81C; --accent-deep:#5f7513; --on-accent:#16210f;
+  --earth:#a8724a; --border:rgba(31,61,43,.16); --border-soft:rgba(31,61,43,.09);
+  --band-bg:#1f3d2b; --band-text:#f0ece0; --band-muted:#a9bfa8; --band-border:rgba(240,236,224,.18);
+  --shadow:0 1px 2px rgba(31,61,43,.05), 0 12px 32px -18px rgba(31,61,43,.28);
+  --measure:66ch;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1510; --surface:#151d17; --surface-2:#1b251d;
+    --text:#e8e3d5; --muted:#98a891; --heading:#dfe7d6;
+    --accent:#b7d62c; --accent-deep:#c9e648; --on-accent:#101a0b;
+    --earth:#cf9a72; --border:rgba(232,227,213,.16); --border-soft:rgba(232,227,213,.08);
+    --band-bg:#16211a; --band-text:#e8e3d5; --band-muted:#94a891; --band-border:rgba(232,227,213,.14);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -20px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1510; --surface:#151d17; --surface-2:#1b251d;
+  --text:#e8e3d5; --muted:#98a891; --heading:#dfe7d6;
+  --accent:#b7d62c; --accent-deep:#c9e648; --on-accent:#101a0b;
+  --earth:#cf9a72; --border:rgba(232,227,213,.16); --border-soft:rgba(232,227,213,.08);
+  --band-bg:#16211a; --band-text:#e8e3d5; --band-muted:#94a891; --band-border:rgba(232,227,213,.14);
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -20px rgba(0,0,0,.7);
+}
+
+body{
+  background:var(--bg); color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-weight:400; font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+*,*::before,*::after{box-sizing:border-box;}
+img{max-width:100%;}
+
+/* ---------- type ---------- */
+h1,h2,h3,h4{font-family:"Cormorant Garamond",Georgia,serif; color:var(--heading); text-wrap:balance; font-weight:600; line-height:1.12;}
+h1{font-size:clamp(2.9rem,8vw,5.4rem); font-weight:500; letter-spacing:-.015em;}
+h2{font-size:clamp(2rem,4.6vw,3.1rem); font-weight:500; letter-spacing:-.01em;}
+h3{font-size:1.5rem; font-weight:600;}
+h4{font-size:1.16rem; font-weight:600;}
+p{margin:0;}
+a{color:inherit;}
+strong{font-weight:600; color:var(--heading);}
+.eyebrow{
+  font-family:Inter,sans-serif; font-size:.7rem; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--muted);
+}
+.lede{font-size:1.24rem; line-height:1.6; color:var(--muted); font-weight:300;}
+.small{font-size:.9rem; line-height:1.6; color:var(--muted);}
+.tiny{font-size:.79rem; line-height:1.5; color:var(--muted);}
+.num{font-variant-numeric:tabular-nums;}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1080px; margin-inline:auto; padding-inline:clamp(20px,5vw,48px);}
+.prose{max-width:var(--measure); display:flex; flex-direction:column; gap:1.1rem;}
+section{padding-block:clamp(56px,9vw,104px); border-top:1px solid var(--border-soft);}
+section:first-of-type{border-top:none;}
+.sec-head{display:flex; flex-direction:column; gap:.7rem; margin-bottom:2.6rem;}
+.sec-head .eyebrow{display:flex; align-items:center; gap:.7rem;}
+.sec-head .eyebrow::after{content:""; flex:1; height:1px; background:var(--border); max-width:120px;}
+.stack{display:flex; flex-direction:column; gap:1.4rem;}
+.grid{display:grid; gap:18px;}
+@media(min-width:720px){ .g2{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);} }
+@media(min-width:520px) and (max-width:719px){ .g4{grid-template-columns:repeat(2,1fr);} }
+
+/* ---------- hero ---------- */
+.hero{padding-block:clamp(64px,12vw,132px) clamp(48px,7vw,88px);}
+.hero-rule{width:100%; height:1px; background:linear-gradient(90deg,var(--accent),var(--border) 55%,transparent); margin-block:2.4rem;}
+.hero h1 em{font-style:italic; color:var(--accent-deep);}
+.hero-meta{display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:2.2rem;}
+.hero-meta div{display:flex; flex-direction:column; gap:2px;}
+.hero-meta b{font-family:"Cormorant Garamond",serif; font-size:1.5rem; font-weight:600; color:var(--heading); line-height:1.1;}
+
+.alert{
+  margin-top:2.6rem; border:1px solid var(--border); border-left:3px solid var(--accent);
+  background:var(--surface); border-radius:3px; padding:20px 22px;
+  display:flex; flex-direction:column; gap:.5rem; max-width:var(--measure); box-shadow:var(--shadow);
+}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--surface); border:1px solid var(--border-soft); border-radius:4px;
+  padding:22px 22px 24px; display:flex; flex-direction:column; gap:.6rem; box-shadow:var(--shadow);
+}
+.card .idx{
+  font-size:.72rem; font-weight:700; letter-spacing:.16em; color:var(--accent-deep);
+  font-variant-numeric:tabular-nums;
+}
+.card h4{margin-top:.1rem;}
+
+.prod{border-top:3px solid var(--accent);}
+.prod .tag{
+  align-self:flex-start; font-size:.68rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--border); border-radius:2px; padding:3px 8px;
+}
+.prod .price{
+  margin-top:auto; padding-top:.9rem; border-top:1px dashed var(--border);
+  font-family:"Cormorant Garamond",serif; font-size:1.35rem; color:var(--heading); font-weight:600;
+}
+.prod .price span{font-family:Inter,sans-serif; font-size:.76rem; font-weight:500; color:var(--muted); letter-spacing:.04em; display:block; margin-top:.15rem;}
+
+/* ---------- band ---------- */
+.band{background:var(--band-bg); color:var(--band-text); border-top:none;}
+.band h2,.band h3,.band h4{color:var(--band-text);}
+.band .eyebrow{color:var(--band-muted);}
+.band .eyebrow::after{background:var(--band-border);}
+.band .lede,.band .small,.band .tiny{color:var(--band-muted);}
+.band strong{color:var(--band-text);}
+.band .card{background:rgba(255,255,255,.04); border-color:var(--band-border); box-shadow:none;}
+.band .card .idx{color:var(--accent);}
+.band .price{border-color:var(--band-border);}
+
+/* ---------- loop diagram ---------- */
+.loopfig{margin:0; display:flex; flex-direction:column; align-items:center; gap:1rem;}
+.loopfig svg{width:100%; max-width:660px; height:auto; display:block;}
+.ring-label{font-family:Inter,sans-serif; font-size:13px; font-weight:600; letter-spacing:.13em; fill:var(--band-text);}
+.ring-sub{font-family:Inter,sans-serif; font-size:11px; font-weight:500; letter-spacing:.1em; fill:var(--band-muted);}
+.node-n{font-family:"Cormorant Garamond",serif; font-size:30px; font-weight:600; fill:var(--band-text);}
+.hub-t{font-family:"Cormorant Garamond",serif; font-size:26px; font-weight:600; fill:var(--band-text);}
+
+/* ---------- stations ---------- */
+.stations{display:flex; flex-direction:column; gap:0; margin-top:2.6rem;}
+.station{
+  display:grid; gap:.35rem 20px; padding:20px 0; border-top:1px solid var(--band-border);
+  grid-template-columns:44px 1fr;
+}
+@media(min-width:760px){ .station{grid-template-columns:44px 190px 1fr; align-items:baseline;} }
+.station .n{
+  font-family:"Cormorant Garamond",serif; font-size:1.8rem; font-weight:600; color:var(--accent); line-height:1;
+}
+.station .t{font-family:"Cormorant Garamond",serif; font-size:1.32rem; font-weight:600; color:var(--band-text);}
+.station .d{font-size:.96rem; line-height:1.6; color:var(--band-muted); grid-column:2/-1;}
+@media(min-width:760px){ .station .d{grid-column:3/4;} }
+.station .kpi{
+  display:inline-block; margin-top:.5rem; font-size:.74rem; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--accent); border:1px solid var(--band-border); padding:3px 9px; border-radius:2px;
+}
+
+/* ---------- windows ---------- */
+.win{
+  display:grid; gap:.5rem 22px; padding:24px 0; border-top:1px solid var(--border);
+  grid-template-columns:1fr;
+}
+@media(min-width:800px){ .win{grid-template-columns:150px 1fr 210px;} }
+.win .when{font-family:"Cormorant Garamond",serif; font-size:1.42rem; font-weight:600; color:var(--heading); line-height:1.15;}
+.win .when small{display:block; font-family:Inter,sans-serif; font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-deep); margin-top:.25rem;}
+.win .sell{
+  font-size:.88rem; color:var(--muted); border-left:2px solid var(--accent); padding-left:14px; line-height:1.55;
+}
+.win .sell b{display:block; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:.3rem;}
+
+/* ---------- funnel ---------- */
+.funnel{display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none;}
+.funnel li{
+  display:flex; align-items:baseline; gap:16px; padding:14px 20px; border-radius:3px;
+  background:var(--surface); border:1px solid var(--border-soft);
+}
+.funnel li .v{font-family:"Cormorant Garamond",serif; font-size:1.9rem; font-weight:600; color:var(--heading); min-width:3.6ch; font-variant-numeric:tabular-nums;}
+.funnel li .l{flex:1; font-size:.97rem;}
+.funnel li .r{font-size:.78rem; font-weight:600; letter-spacing:.1em; color:var(--accent-deep); font-variant-numeric:tabular-nums;}
+.funnel li:nth-child(1){width:100%;}
+.funnel li:nth-child(2){width:88%;}
+.funnel li:nth-child(3){width:76%;}
+.funnel li:nth-child(4){width:64%;}
+.funnel li:nth-child(5){width:56%; border-color:var(--accent); border-left:3px solid var(--accent);}
+@media(max-width:700px){ .funnel li{width:100% !important;} }
+
+/* ---------- stat row ---------- */
+.stats{display:grid; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;}
+@media(min-width:640px){ .stats{grid-template-columns:repeat(4,1fr);} }
+.stat{background:var(--surface); padding:20px 18px; display:flex; flex-direction:column; gap:.25rem;}
+.stat b{font-family:"Cormorant Garamond",serif; font-size:2.1rem; font-weight:600; color:var(--heading); line-height:1; font-variant-numeric:tabular-nums;}
+.stat span{font-size:.8rem; color:var(--muted); line-height:1.4;}
+
+/* ---------- table ---------- */
+.tablewrap{overflow-x:auto; border:1px solid var(--border); border-radius:4px; background:var(--surface);}
+table{border-collapse:collapse; width:100%; min-width:520px; font-size:.92rem;}
+th,td{text-align:left; padding:12px 16px; border-bottom:1px solid var(--border-soft); vertical-align:top;}
+th{font-size:.7rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); background:var(--surface-2);}
+tr:last-child td{border-bottom:none;}
+td.n{font-variant-numeric:tabular-nums; white-space:nowrap;}
+tfoot td{font-weight:600; color:var(--heading); background:var(--surface-2);}
+
+/* ---------- timeline ---------- */
+.tl{display:flex; flex-direction:column; gap:0; border-left:2px solid var(--border); margin-left:6px; padding-left:0;}
+.tl-item{position:relative; padding:0 0 30px 28px;}
+.tl-item::before{
+  content:""; position:absolute; left:-7px; top:6px; width:12px; height:12px; border-radius:50%;
+  background:var(--accent); border:2px solid var(--bg);
+}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item .when{font-size:.74rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-deep);}
+.tl-item h4{margin:.3rem 0 .45rem;}
+.tl-item ul{margin:0; padding-left:1.1rem; display:flex; flex-direction:column; gap:.35rem; font-size:.95rem; color:var(--muted);}
+
+/* ---------- misc ---------- */
+.pull{
+  font-family:"Cormorant Garamond",serif; font-style:italic; font-size:clamp(1.5rem,3.4vw,2.1rem);
+  line-height:1.35; color:var(--heading); max-width:26ch; margin:0; font-weight:500;
+}
+.checklist{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.7rem;}
+.checklist li{display:flex; gap:12px; align-items:flex-start; font-size:.97rem;}
+.checklist li::before{content:""; flex:none; width:7px; height:7px; margin-top:.6rem; border-radius:50%; background:var(--accent);}
+.dot-earth li::before{background:var(--earth);}
+.foot{padding-block:44px 64px; border-top:1px solid var(--border); }
+.foot .small{max-width:var(--measure);}
+:where(a,button):focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px;}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important;}}
+</style><style>
+/* ---------- ficha-specific ---------- */
+.ficha{border-top:2px solid var(--accent);}
+.ficha-head{
+  display:grid; gap:1.4rem; align-items:start; margin-bottom:2.4rem;
+}
+@media(min-width:860px){ .ficha-head{grid-template-columns:1fr 280px;} }
+.ficha-head .who{display:flex; flex-direction:column; gap:.55rem;}
+.ficha-head h2{margin:0;}
+.ficha-head .eus{font-family:"Cormorant Garamond",serif; font-style:italic; font-size:1.2rem; color:var(--muted);}
+.factbox{
+  background:var(--surface-2); border:1px solid var(--border-soft); border-radius:4px; padding:16px 18px;
+  display:flex; flex-direction:column; gap:.55rem;
+}
+.factbox div{display:flex; justify-content:space-between; gap:14px; font-size:.85rem; line-height:1.4;}
+.factbox div span:first-child{color:var(--muted);}
+.factbox div span:last-child{text-align:right; font-weight:600; color:var(--heading); font-variant-numeric:tabular-nums;}
+.factbox .big{border-top:1px dashed var(--border); padding-top:.6rem; margin-top:.15rem;}
+.factbox .big span:last-child{font-family:"Cormorant Garamond",serif; font-size:1.5rem; font-weight:600;}
+
+.subhead{
+  font-size:.72rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent-deep); margin:2.4rem 0 .9rem; display:flex; align-items:center; gap:.8rem;
+}
+.subhead::after{content:""; flex:1; height:1px; background:var(--border-soft);}
+.ficha .subhead:first-of-type{margin-top:0;}
+
+.cal td.on{background:color-mix(in srgb, var(--accent) 26%, transparent);}
+.cal th{text-align:center;}
+.cal td{text-align:center; padding:9px 6px;}
+.cal td:first-child, .cal th:first-child{text-align:left; min-width:180px;}
+.cal table{min-width:460px;}
+
+.urgent{
+  border:1px solid var(--accent); border-left:4px solid var(--accent); border-radius:3px;
+  background:rgba(255,255,255,.05); padding:22px 24px; display:flex; flex-direction:column; gap:.7rem;
+}
+.finding{display:grid; gap:.5rem 22px; padding:22px 0; border-top:1px solid var(--band-border); grid-template-columns:1fr;}
+@media(min-width:820px){ .finding{grid-template-columns:230px 1fr;} }
+.finding .h{font-family:"Cormorant Garamond",serif; font-size:1.3rem; font-weight:600; color:var(--band-text); line-height:1.2;}
+.finding .b{color:var(--band-muted); font-size:.97rem; line-height:1.62;}
+.finding .b strong{color:var(--band-text);}
+.finding .read{
+  margin-top:.7rem; padding-left:14px; border-left:2px solid var(--accent);
+  color:var(--band-text); font-size:.95rem;
+}
+.warnbox{
+  border:1px solid var(--border); border-left:3px solid var(--earth); background:var(--surface);
+  border-radius:3px; padding:16px 18px; display:flex; flex-direction:column; gap:.4rem;
+}
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:1rem;}
+.chip{
+  font-size:.75rem; font-weight:600; letter-spacing:.06em; padding:5px 11px; border-radius:2px;
+  border:1px solid var(--border); color:var(--muted); background:var(--surface);
+}
+.emailblock{
+  background:var(--surface-2); border:1px solid var(--border-soft); border-radius:4px; padding:18px 20px;
+  display:flex; flex-direction:column; gap:.5rem;
+}
+.emailblock .subj{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.86rem; color:var(--heading);
+  background:var(--surface); border:1px solid var(--border-soft); border-radius:2px; padding:7px 10px;
+}
+</style>
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Ingura · Fichas de proyecto subvencionable · Ventana de septiembre 2026</p>
+    <div class="hero-rule"></div>
+    <h1>Muskiz,<br>Barrika,<br><em>Berango</em></h1>
+    <div style="max-width:var(--measure); margin-top:1.8rem;">
+      <p class="lede">Tres fichas de proyecto para la convocatoria de subvenciones a entidades locales. Se entregan gratis y sin compromiso: el técnico ahorra medio día de redacción y, cuando llegue el momento de ejecutar, el proyecto ya lleva vuestra forma.</p>
+    </div>
+    <div class="hero-meta">
+      <div><b>12.400&nbsp;€</b><span class="tiny">Muskiz · Del contenedor al hábito</span></div>
+      <div><b>11.800&nbsp;€</b><span class="tiny">Berango · Ongi etorri Berangora</span></div>
+      <div><b>6.200&nbsp;€</b><span class="tiny">Barrika · Itsasertz bizia</span></div>
+      <div><b>30.400&nbsp;€</b><span class="tiny">Sobre la mesa, en tres emails</span></div>
+    </div>
+  </header>
+</div>
+
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Uso interno · esto no se envía</p>
+      <h2>Lo que hemos averiguado</h2>
+      <p class="lede" style="max-width:var(--measure)">Cuatro hallazgos de fuentes públicas que cambian cómo se trabaja cada una de las tres cuentas. Uno de ellos es urgente.</p>
+    </div>
+
+    <div class="urgent">
+      <p class="eyebrow" style="color:var(--accent)">⚠ Lo más importante de todo el documento</p>
+      <p><strong>Barrika y Berango no compran solos: compran a través de la Mancomunidad de Servicios Uribe Kosta</strong> (Sopela, Plentzia, Berango, Urduliz, Gorliz, Lemoiz y Barrika), que tiene oficina propia de sostenibilidad, <strong>Ekogune</strong>, en Sopela. Y la Mancomunidad <strong>licita</strong> por procedimiento abierto el servicio de cursos Ekogune y talleres <em>Inguru Minguru</em> —educación ambiental infantil <strong>en euskera</strong>—, con CPV 80540000. El contrato localizado cubría <strong>2022-2024 y, en su caso, 2024-2026</strong>.</p>
+      <p>Si esa prórroga agota su recorrido, la nueva licitación sale ahora o en los próximos meses. Es la oportunidad más grande de las tres cuentas y no cabe en ninguna ficha, porque no es una subvención: es un contrato.</p>
+      <p class="small"><strong>Esta semana:</strong> localizar en KontratazioA y en la Plataforma de Contratación el perfil de contratante de la Mancomunidad, ver importe, fecha de fin y adjudicatario actual, suscribirse a las alertas de ese poder adjudicador y tener lista la carpeta de licitación <em>antes</em> de que se publique. Y una advertencia: Inguru Minguru se imparte en euskera. Sin capacidad real de trabajar en euskera, esta cuenta no se gana.</p>
+    </div>
+
+    <div style="margin-top:2.6rem">
+      <div class="finding">
+        <p class="h">Muskiz ya tiene montado justo lo que Ingura sabe hacer</p>
+        <div class="b">
+          <p>El Ayuntamiento tiene <strong>Agenda 21/2030 Escolar activa con tres centros</strong> —IES Muskiz BHI, San Juan Bautista y el Centro de Formación Somorrostro— y dedicó un curso completo al <strong>consumo sostenible</strong>: producto de temporada, ecoetiquetas, compra en comercio local, reducción de envases y <strong>reutilización de aceite doméstico</strong>. Además implantó un servicio de recogida de aceite usado con <strong>14 contenedores automatizados</strong>, y tiene Línea Verde Muskiz como canal ambiental propio.</p>
+          <p class="read">Han puesto la infraestructura y el discurso. Falta el eslabón: la experiencia práctica que convierte un contenedor en un hábito. El taller estrella de Ingura —aceite usado → velas y jabones— es literalmente esa pieza. No hay que convencerles de la temática: la eligieron ellos.</p>
+        </div>
+      </div>
+
+      <div class="finding">
+        <p class="h">Berango es el municipio que más crece, y eso es el argumento</p>
+        <div class="b">
+          <p>De <strong>7.647 habitantes en 2024</strong>, Berango sumó <strong>638 personas en un solo año</strong>, entre los que más crecieron de Bizkaia, casi todo por saldo migratorio.</p>
+          <p class="read">Cientos de hogares nuevos que estrenan el sistema de recogida de Uribe Kosta sin que nadie se lo explique — y basta un porcentaje pequeño de usuarios mal informados para degradar la fracción de todo un barrio. Es también la población más fácil de convencer, porque aún no tiene la rutina hecha. Nadie les está vendiendo eso.</p>
+        </div>
+      </div>
+
+      <div class="finding" style="border-bottom:1px solid var(--band-border)">
+        <p class="h">Barrika es pequeño, y por eso el proyecto es un piloto</p>
+        <div class="b">
+          <p><strong>1.513 habitantes</strong> (1/1/2025) y un patrimonio desproporcionado: acantilados de <strong>flysch</strong> entre los mejores de Bizkaia y tres playas naturales —Barrika, <strong>Meñakoz</strong> y <strong>Muriola</strong>— con fuerte presión estacional de visitantes y accesos difíciles.</p>
+          <p class="read">A un municipio de 1.500 habitantes no se le vende un plan de 12.000 €. Se le vende un programa pequeño, muy fotografiable, centrado en su litoral, <strong>que sirva de piloto para proponérselo después a los otros seis municipios de la Mancomunidad</strong>. Barrika es la referencia, no la facturación.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:2.6rem">
+      <div class="card">
+        <p class="idx">DOS OPORTUNIDADES LATERALES</p>
+        <p class="small"><strong>Centro de Formación Somorrostro (Muskiz)</strong> — centro de FP grande, ya participante en la Agenda Escolar: encaja en P1 Eskola y también en P4 Lantegia.</p>
+        <p class="small"><strong>Petronor y el tejido industrial del Barbadun</strong> — alta sensibilidad ambiental y presupuestos de RSC y patrocinio. Es la vía más probable de entrada de facturación privada en la zona, que es justo lo que el plan necesita.</p>
+      </div>
+      <div class="card">
+        <p class="idx">ORDEN DE TRABAJO</p>
+        <p class="small"><strong>Día 1</strong> · enviar las tres fichas en PDF y Word · buscar el expediente de Ekogune en KontratazioA<br>
+        <strong>Día 3</strong> · llamar a los tres · preguntar en Barrika y Berango quién lo lleva en Ekogune y pedir la presentación<br>
+        <strong>Día 8</strong> · enviar la memoria retrospectiva de lo que ya hicimos con cada uno<br>
+        <strong>Antes del 20 de septiembre</strong> · ofrecer por escrito redactar la memoria técnica de su solicitud</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- ============ MUSKIZ ============ -->
+<section class="ficha">
+  <div class="ficha-head">
+    <div class="who">
+      <p class="eyebrow">Ficha de proyecto 01 · Ayuntamiento de Muskiz</p>
+      <h2>Del contenedor al hábito</h2>
+      <p class="eus">Edukiontzitik ohiturara</p>
+      <p class="small">Programa municipal de consumo sostenible y prevención de residuos, en continuidad con la línea ya trabajada por los tres centros del municipio en la Agenda 2030 Escolar.</p>
+    </div>
+    <div class="factbox">
+      <div><span>Población</span><span>7.465 hab.</span></div>
+      <div><span>Comarca</span><span>Meatzaldea</span></div>
+      <div><span>Duración</span><span>Ene – jun 2027</span></div>
+      <div><span>Participantes previstos</span><span>~1.200</span></div>
+      <div class="big"><span>Coste estimado</span><span>12.400 €</span></div>
+    </div>
+  </div>
+
+  <p class="subhead">Justificación</p>
+  <div class="prose">
+    <p>Muskiz ha hecho ya las dos cosas difíciles. Ha puesto la <strong>infraestructura</strong>: un servicio de recogida selectiva de aceite doméstico con 14 contenedores automatizados. Y ha puesto el <strong>discurso</strong>: la Agenda 21/2030 Escolar del municipio, con el IES Muskiz BHI, San Juan Bautista y el Centro de Formación Somorrostro, dedicó un curso completo al consumo sostenible, trabajando el producto de temporada, las ecoetiquetas, la compra en el comercio local, la reducción de envases y precisamente la reutilización del aceite doméstico.</p>
+    <p>Falta el eslabón intermedio: <strong>la experiencia práctica que convierte un contenedor en un hábito</strong>. Un vecino que ha fabricado jabón con su propio aceite usado no vuelve a tirarlo por el fregadero. Un comercio que ha medido sus residuos de envases cambia de proveedor. Eso no lo consigue una campaña de cartelería; lo consigue el trabajo con las manos, repetido y medido.</p>
+    <p>Muskiz reúne además condiciones que hacen especialmente rentable este trabajo: 7.465 habitantes en un término que combina el valle del río Barbadun, la playa de La Arena —la segunda mayor de la costa de Bizkaia— y un entorno industrial de fuerte presencia. Y cuenta con Línea Verde Muskiz como canal de comunicación ambiental ya operativo.</p>
+  </div>
+  <div class="warnbox" style="margin-top:1.4rem">
+    <p class="tiny"><strong>A completar por el Ayuntamiento antes de presentar:</strong> tasa de recogida selectiva y kg/habitante/año · litros de aceite recogidos desde la implantación de los 14 contenedores.</p>
+  </div>
+
+  <p class="subhead">Objetivos</p>
+  <p class="small" style="margin-bottom:1rem"><strong>General:</strong> aumentar de forma medible el uso correcto de los sistemas de recogida selectiva ya disponibles en Muskiz —singularmente el de aceite doméstico— y consolidar hábitos de consumo sostenible en ciudadanía, alumnado y comercio local.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th></th><th>Objetivo específico</th><th>Indicador</th></tr></thead>
+      <tbody>
+        <tr><td class="n">OE1</td><td>Que el alumnado de los tres centros experimente de forma práctica la reutilización de residuos domésticos</td><td>≥ 350 escolares; mejora ≥ 30 % en el test inicial/final</td></tr>
+        <tr><td class="n">OE2</td><td>Llevar la práctica a las familias y a la población adulta</td><td>≥ 120 personas adultas en talleres abiertos</td></tr>
+        <tr><td class="n">OE3</td><td>Incrementar la aportación al servicio municipal de recogida de aceite</td><td>Variación de litros recogidos respecto al año anterior</td></tr>
+        <tr><td class="n">OE4</td><td>Implicar al comercio local en la reducción de envases y el consumo de proximidad</td><td>≥ 25 comercios diagnosticados y adheridos</td></tr>
+        <tr><td class="n">OE5</td><td>Dejar en el municipio evidencia evaluable y comunicable</td><td>Memoria de impacto con datos, encuestas y fotografía cedida</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="subhead">Acciones previstas</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th></th><th>Acción</th><th>Destinatarios</th><th>Dimensión</th></tr></thead>
+      <tbody>
+        <tr><td class="n">A1</td><td><strong>Programa escolar de consumo sostenible.</strong> 18 sesiones en IES Muskiz BHI, San Juan Ikastetxea y CF Somorrostro, adaptadas a cada etapa y a la temática de la Agenda 2030 del curso</td><td>Alumnado</td><td class="n">18 sesiones<br>~350 escolares</td></tr>
+        <tr><td class="n">A2</td><td><strong>Talleres abiertos de aceite doméstico.</strong> Elaboración de velas y jabones naturales con aceite usado, en el centro cívico y en el mercado</td><td>Familias y adultos</td><td class="n">6 talleres<br>~120 personas</td></tr>
+        <tr><td class="n">A3</td><td><strong>Campaña de calle y mercado.</strong> Cuatro acciones sobre envases, producto de temporada y compra de proximidad</td><td>Población general</td><td class="n">4 acciones<br>~500 contactos</td></tr>
+        <tr><td class="n">A4</td><td><strong>Muskizko Merkataritza.</strong> Visita y ficha de mejoras a 25 comercios, dos formaciones y distintivo de comercio adherido</td><td>Comercio y hostelería</td><td class="n">25 comercios</td></tr>
+        <tr><td class="n">A5</td><td><strong>Escape room «El Último Recurso».</strong> Instalación móvil con acertijos sobre agua, residuos y energía. Una jornada escolar y una abierta</td><td>Jóvenes y familias</td><td class="n">2 jornadas<br>~200 personas</td></tr>
+        <tr><td class="n">A6</td><td><strong>Evaluación y memoria de impacto.</strong> Encuestas, indicadores, reportaje fotográfico y acto de presentación de resultados</td><td>Ayuntamiento</td><td class="n">1 memoria</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tiny" style="margin-top:.8rem">Todas las acciones se desarrollan en euskera y castellano.</p>
+
+  <p class="subhead">Presupuesto y calendario</p>
+  <div class="grid g2">
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><td>Diseño, coordinación y materiales didácticos</td><td class="n">1.200 €</td></tr>
+          <tr><td>A1 · Programa escolar, 18 sesiones en 3 centros</td><td class="n">3.600 €</td></tr>
+          <tr><td>A2 · 6 talleres abiertos de aceite doméstico</td><td class="n">1.500 €</td></tr>
+          <tr><td>A3 · Campaña de calle y mercado, 4 acciones</td><td class="n">2.000 €</td></tr>
+          <tr><td>A4 · Comercio local, 25 diagnósticos y distintivo</td><td class="n">2.400 €</td></tr>
+          <tr><td>A5 · Escape room, 2 jornadas</td><td class="n">1.100 €</td></tr>
+          <tr><td>A6 · Evaluación, indicadores y memoria</td><td class="n">600 €</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total (IVA no incluido)</td><td class="n">12.400 €</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="stack" style="gap:1rem">
+      <div class="tablewrap cal">
+        <table>
+          <thead><tr><th></th><th>E</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th></tr></thead>
+          <tbody>
+            <tr><td>A1 Programa escolar</td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td></tr>
+            <tr><td>A2 Talleres abiertos</td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td></tr>
+            <tr><td>A3 Campaña de calle</td><td></td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td></tr>
+            <tr><td>A4 Comercio local</td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td></tr>
+            <tr><td>A5 Escape room</td><td></td><td></td><td></td><td class="on"></td><td></td><td class="on"></td></tr>
+            <tr><td>A6 Evaluación y memoria</td><td></td><td></td><td></td><td></td><td></td><td class="on"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="box-shadow:none">
+        <p class="tiny"><strong>Modular.</strong> Puede presentarse completo o por bloques. Una versión reducida centrada en A1, A2 y A6 supone <strong>5.300 €</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="subhead">Encaje con la convocatoria</p>
+  <div class="prose">
+    <p class="small">Responde a acciones de <strong>sensibilización ciudadana para el fomento de hábitos sostenibles</strong> y de <strong>prevención de residuos y economía circular</strong>, promovidas por una entidad local con papel ejemplarizante, y da continuidad a un trabajo ya iniciado por el municipio a través de la Agenda 2030 Escolar.</p>
+    <div class="chips">
+      <span class="chip">ODS 12 · Consumo responsable</span>
+      <span class="chip">ODS 4.7 · Educación para la sostenibilidad</span>
+      <span class="chip">ODS 11 · Comunidades sostenibles</span>
+      <span class="chip">ODS 14 · Vida submarina</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BERANGO ============ -->
+<section class="ficha">
+  <div class="ficha-head">
+    <div class="who">
+      <p class="eyebrow">Ficha de proyecto 02 · Ayuntamiento de Berango</p>
+      <h2>Ongi etorri Berangora</h2>
+      <p class="eus">Programa de acogida ambiental para el municipio que más crece</p>
+      <p class="small">Convertir el crecimiento demográfico en una mejora ambiental: que quien llega conozca y use bien el sistema de recogida de Uribe Kosta desde su primer mes.</p>
+    </div>
+    <div class="factbox">
+      <div><span>Población</span><span>~8.300 hab.</span></div>
+      <div><span>Crecimiento 2025</span><span>+638 hab.</span></div>
+      <div><span>Duración</span><span>Ene – jun 2027</span></div>
+      <div><span>Participantes previstos</span><span>~1.100</span></div>
+      <div class="big"><span>Coste estimado</span><span>11.800 €</span></div>
+    </div>
+  </div>
+
+  <p class="subhead">Justificación</p>
+  <div class="prose">
+    <p>Berango tiene un problema ambiental que casi ningún municipio de Bizkaia tiene, y es un problema de éxito: <strong>crece muy deprisa</strong>. De 7.647 habitantes en 2024, sumó <strong>638 personas en un solo año</strong>, situándose entre los que más crecieron del territorio, y ese crecimiento se debe casi por completo al saldo migratorio: gente que llega de fuera.</p>
+    <p>Cada una de esas personas es un hogar nuevo que estrena el sistema de recogida de la Mancomunidad de Uribe Kosta sin que nadie se lo haya explicado nunca. No sabe qué va en cada contenedor, no conoce el servicio de recogida de aceite, no sabe dónde está el garbigune. Y los sistemas de recogida selectiva son extraordinariamente sensibles a esto: <strong>un porcentaje pequeño de usuarios mal informados degrada la calidad de la fracción de todo el barrio</strong>, con el consiguiente coste de tratamiento.</p>
+    <p>Al mismo tiempo, esa población nueva es la más fácil de convencer: está estrenando rutinas y todavía no las tiene fijadas. <strong>Es el momento exacto de intervenir, y dura poco.</strong> El programa se apoya en dos activos del municipio: Berango-Merana Eskola y la Berangoko Haurreskola, que permiten llegar a las familias jóvenes por la vía más eficaz que existe, y la conexión directa por metro, que convierte la movilidad sostenible en un contenido con sentido local.</p>
+  </div>
+  <div class="warnbox" style="margin-top:1.4rem">
+    <p class="tiny"><strong>A completar por el Ayuntamiento antes de presentar:</strong> tasa de recogida selectiva y su evolución en tres años · altas en el padrón de los dos últimos ejercicios · % de impropios en la fracción orgánica, si la Mancomunidad lo publica.</p>
+  </div>
+
+  <p class="subhead">Objetivos</p>
+  <p class="small" style="margin-bottom:1rem"><strong>General:</strong> convertir el crecimiento demográfico de Berango en una oportunidad de mejora ambiental, garantizando que la población recién llegada conoce y usa correctamente los servicios de recogida selectiva desde su primer mes en el municipio.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th></th><th>Objetivo específico</th><th>Indicador</th></tr></thead>
+      <tbody>
+        <tr><td class="n">OE1</td><td>Informar de forma activa —no solo pasiva— a la población recién empadronada</td><td>≥ 250 hogares alcanzados</td></tr>
+        <tr><td class="n">OE2</td><td>Mejorar la calidad de la separación en origen</td><td>Variación del % de impropios y de la tasa de recogida selectiva</td></tr>
+        <tr><td class="n">OE3</td><td>Trabajar el consumo y la reutilización con el alumnado y sus familias</td><td>≥ 280 escolares y ≥ 80 familias</td></tr>
+        <tr><td class="n">OE4</td><td>Reducir el uso del vehículo privado en desplazamientos internos y al metro</td><td>Participantes en la campaña y encuesta de hábitos</td></tr>
+        <tr><td class="n">OE5</td><td>Dejar en el municipio evidencia evaluable y comunicable</td><td>Memoria de impacto con datos, encuestas y fotografía cedida</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="subhead">Acciones previstas</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th></th><th>Acción</th><th>Destinatarios</th><th>Dimensión</th></tr></thead>
+      <tbody>
+        <tr><td class="n">A1</td><td><strong>Kit de acogida ambiental y sesiones de bienvenida.</strong> Guía breve y visual del sistema de recogida de Uribe Kosta, bilingüe, entregada con el alta en el padrón, más cuatro sesiones presenciales abiertas</td><td>Población recién llegada</td><td class="n">~250 hogares<br>4 sesiones</td></tr>
+        <tr><td class="n">A2</td><td><strong>Programa escolar.</strong> 14 sesiones en Berango-Merana Eskola y Berangoko Haurreskola sobre residuos, consumo y reutilización, con acción final abierta a las familias</td><td>Alumnado y familias</td><td class="n">14 sesiones<br>~280 escolares</td></tr>
+        <tr><td class="n">A3</td><td><strong>Campaña de movilidad sostenible.</strong> Acciones en el entorno del metro y de los centros: caminos escolares, encuesta de hábitos y jornada en la Semana Europea de la Movilidad</td><td>Población general</td><td class="n">5 acciones<br>~400 contactos</td></tr>
+        <tr><td class="n">A4</td><td><strong>Talleres abiertos de reutilización.</strong> Seis talleres rotando temáticas: textil, papel y cartón, aceite doméstico y compostaje</td><td>Familias y adultos</td><td class="n">6 talleres<br>~120 personas</td></tr>
+        <tr><td class="n">A5</td><td><strong>Escape room «El Último Recurso».</strong> Una jornada escolar y una abierta en fiestas</td><td>Jóvenes y familias</td><td class="n">2 jornadas<br>~200 personas</td></tr>
+        <tr><td class="n">A6</td><td><strong>Evaluación y memoria de impacto.</strong> Encuestas, indicadores, reportaje fotográfico y presentación de resultados</td><td>Ayuntamiento</td><td class="n">1 memoria</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tiny" style="margin-top:.8rem">Todas las acciones se desarrollan en euskera y castellano. El registro de participantes distingue <strong>antigüedad en el municipio</strong> (menos / más de dos años): es lo que permite demostrar que el programa llega a quien se pretende.</p>
+
+  <p class="subhead">Presupuesto y calendario</p>
+  <div class="grid g2">
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><td>Diseño, coordinación y materiales didácticos</td><td class="n">1.100 €</td></tr>
+          <tr><td>A1 · Kit de acogida (diseño y contenidos) y 4 sesiones</td><td class="n">2.200 €</td></tr>
+          <tr><td>A2 · Programa escolar, 14 sesiones en 2 centros</td><td class="n">2.800 €</td></tr>
+          <tr><td>A3 · Campaña de movilidad, 5 acciones y encuesta</td><td class="n">2.500 €</td></tr>
+          <tr><td>A4 · 6 talleres abiertos de reutilización</td><td class="n">1.500 €</td></tr>
+          <tr><td>A5 · Escape room, 2 jornadas</td><td class="n">1.100 €</td></tr>
+          <tr><td>A6 · Evaluación, indicadores y memoria</td><td class="n">600 €</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total (IVA no incluido)</td><td class="n">11.800 €</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="stack" style="gap:1rem">
+      <div class="tablewrap cal">
+        <table>
+          <thead><tr><th></th><th>E</th><th>F</th><th>M</th><th>A</th><th>M</th><th>J</th></tr></thead>
+          <tbody>
+            <tr><td>A1 Acogida ambiental</td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td></tr>
+            <tr><td>A2 Programa escolar</td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td></tr>
+            <tr><td>A3 Movilidad sostenible</td><td></td><td></td><td></td><td></td><td class="on"></td><td class="on"></td></tr>
+            <tr><td>A4 Talleres abiertos</td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td></tr>
+            <tr><td>A5 Escape room</td><td></td><td></td><td></td><td class="on"></td><td></td><td class="on"></td></tr>
+            <tr><td>A6 Evaluación y memoria</td><td></td><td></td><td></td><td></td><td></td><td class="on"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="box-shadow:none">
+        <p class="tiny">No incluye la impresión del kit, que puede asumir el Ayuntamiento con su contrato de imprenta. Versión reducida centrada en A1, A2 y A6: <strong>6.700 €</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="subhead">Encaje con la convocatoria</p>
+  <div class="prose">
+    <p class="small">Responde a acciones de <strong>sensibilización ciudadana</strong>, <strong>prevención y correcta gestión de residuos</strong> y <strong>movilidad sostenible</strong>, con un enfoque de inclusión de la población recién llegada que refuerza la dimensión social de la intervención. Tiene además <strong>valor demostrativo para el conjunto de la Mancomunidad</strong>: el modelo de acogida es replicable en los siete municipios y su evaluación puede ponerse a disposición de Ekogune.</p>
+    <div class="chips">
+      <span class="chip">ODS 11 · Comunidades sostenibles</span>
+      <span class="chip">ODS 12 · Consumo responsable</span>
+      <span class="chip">ODS 4.7 · Educación para la sostenibilidad</span>
+      <span class="chip">ODS 10 · Reducción de desigualdades</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BARRIKA ============ -->
+<section class="ficha">
+  <div class="ficha-head">
+    <div class="who">
+      <p class="eyebrow">Ficha de proyecto 03 · Ayuntamiento de Barrika</p>
+      <h2>Itsasertz bizia</h2>
+      <p class="eus">Costa viva · Programa de custodia y sensibilización del litoral</p>
+      <p class="small">Dimensionado para un municipio de 1.513 habitantes y diseñado desde el principio para ser replicable en los siete municipios de la Mancomunidad de Uribe Kosta.</p>
+    </div>
+    <div class="factbox">
+      <div><span>Población</span><span>1.513 hab.</span></div>
+      <div><span>Comarca</span><span>Uribe Kosta</span></div>
+      <div><span>Duración</span><span>Mar – sep 2027</span></div>
+      <div><span>Participantes previstos</span><span>~430</span></div>
+      <div class="big"><span>Coste estimado</span><span>6.200 €</span></div>
+    </div>
+  </div>
+
+  <p class="subhead">Justificación</p>
+  <div class="prose">
+    <p>Barrika tiene 1.513 habitantes y un patrimonio natural absolutamente desproporcionado respecto a su tamaño: <strong>acantilados de flysch</strong> que están entre las mejores formaciones geológicas de Bizkaia, y tres playas de carácter natural —Barrika, Meñakoz y Muriola— encajadas entre esos acantilados. Muriola alcanzó notoriedad internacional tras el rodaje allí de una serie de televisión de gran audiencia.</p>
+    <p>De ahí se deriva el problema: <strong>un municipio pequeño soporta una presión de visitantes que corresponde a uno mucho mayor</strong>, concentrada en pocos meses, sobre un litoral frágil, de accesos difíciles y limpieza costosa. La basura marina y la abandonada en los accesos, la erosión de los senderos sobre los acantilados y el desconocimiento del valor geológico del entorno son tres caras del mismo asunto, y ninguna se resuelve con más contenedores o más limpieza mecánica: se resuelven con <strong>gente que entiende dónde está</strong>.</p>
+    <p>Barrika tiene además una ventaja que compensa su tamaño: forma parte de la Mancomunidad de Servicios Uribe Kosta junto a Sopela, Plentzia, Berango, Urduliz, Gorliz y Lemoiz. Un programa piloto bien evaluado en el municipio con el litoral más singular de los siete <strong>es directamente trasladable a toda la comarca</strong>, y esa condición demostrativa refuerza notablemente la solicitud.</p>
+  </div>
+  <div class="warnbox" style="margin-top:1.4rem">
+    <p class="tiny"><strong>A completar por el Ayuntamiento antes de presentar:</strong> estimación de visitantes en temporada alta · coste anual de limpieza de playas y accesos · nº de establecimientos de hostelería y escuelas de surf.</p>
+  </div>
+
+  <p class="subhead">Objetivos</p>
+  <p class="small" style="margin-bottom:1rem"><strong>General:</strong> reducir la presión ambiental sobre el litoral de Barrika implicando de forma activa a la población residente, al visitante y a los negocios de temporada en su cuidado, y poniendo en valor la geodiversidad del municipio como recurso educativo.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th></th><th>Objetivo específico</th><th>Indicador</th></tr></thead>
+      <tbody>
+        <tr><td class="n">OE1</td><td>Conocer y documentar qué residuos llegan realmente al litoral</td><td>4 caracterizaciones con datos publicables</td></tr>
+        <tr><td class="n">OE2</td><td>Implicar a la población en el cuidado directo de su costa</td><td>≥ 120 participantes en las limpiezas</td></tr>
+        <tr><td class="n">OE3</td><td>Dar a conocer el valor geológico del flysch de Barrika</td><td>≥ 90 participantes en los itinerarios</td></tr>
+        <tr><td class="n">OE4</td><td>Que los negocios de temporada trasladen el mensaje al visitante</td><td>≥ 12 establecimientos adheridos</td></tr>
+        <tr><td class="n">OE5</td><td>Dejar evidencia evaluable y replicable en la comarca</td><td>Memoria de impacto y protocolo replicable</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="subhead">Acciones previstas</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th></th><th>Acción</th><th>Destinatarios</th><th>Dimensión</th></tr></thead>
+      <tbody>
+        <tr><td class="n">A1</td><td><strong>Limpiezas participativas con caracterización de residuos.</strong> Cuatro jornadas en playas y accesos, con clasificación, pesaje y registro según protocolo de ciencia ciudadana. No es solo limpiar: es <strong>generar el dato</strong> de qué llega y de dónde viene</td><td>Población, familias, grupos de surf</td><td class="n">4 jornadas<br>~120 personas</td></tr>
+        <tr><td class="n">A2</td><td><strong>Itinerarios geológicos guiados por el flysch.</strong> Tres recorridos interpretados por los acantilados: formación del flysch, ciclos del planeta y relación entre geología, clima y costa</td><td>Población y visitantes</td><td class="n">3 itinerarios<br>~90 personas</td></tr>
+        <tr><td class="n">A3</td><td><strong>Campaña de temporada con hostelería, comercio y surf.</strong> Visita a establecimientos, materiales bilingües para el cliente, distintivo de adherido y compromisos de reducción de plásticos de un solo uso</td><td>Hostelería, comercio, surf</td><td class="n">~12 establecimientos</td></tr>
+        <tr><td class="n">A4</td><td><strong>Escape room «El Último Recurso».</strong> Instalación móvil en fiestas o en jornada abierta de verano</td><td>Jóvenes y familias</td><td class="n">1 jornada<br>~100 personas</td></tr>
+        <tr><td class="n">A5</td><td><strong>Evaluación, datos y memoria de impacto.</strong> Resultados de las caracterizaciones, encuestas, reportaje fotográfico y <strong>protocolo replicable</strong> para el resto de la Mancomunidad</td><td>Ayuntamiento y Mancomunidad</td><td class="n">1 memoria<br>1 protocolo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tiny" style="margin-top:.8rem">Todas las acciones se desarrollan en euskera y castellano. El registro de participantes distingue residente y visitante.</p>
+
+  <p class="subhead">Presupuesto y calendario</p>
+  <div class="grid g2">
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><td>Diseño, coordinación y materiales</td><td class="n">800 €</td></tr>
+          <tr><td>A1 · 4 limpiezas con caracterización de residuos</td><td class="n">1.600 €</td></tr>
+          <tr><td>A2 · 3 itinerarios geológicos guiados</td><td class="n">900 €</td></tr>
+          <tr><td>A3 · Campaña con hostelería, comercio y surf</td><td class="n">1.500 €</td></tr>
+          <tr><td>A4 · Escape room, 1 jornada</td><td class="n">800 €</td></tr>
+          <tr><td>A5 · Evaluación, memoria y protocolo replicable</td><td class="n">600 €</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total (IVA no incluido)</td><td class="n">6.200 €</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="stack" style="gap:1rem">
+      <div class="tablewrap cal">
+        <table>
+          <thead><tr><th></th><th>M</th><th>A</th><th>M</th><th>J</th><th>J</th><th>A</th><th>S</th></tr></thead>
+          <tbody>
+            <tr><td>A1 Limpiezas</td><td class="on"></td><td></td><td class="on"></td><td></td><td class="on"></td><td></td><td class="on"></td></tr>
+            <tr><td>A2 Itinerarios del flysch</td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td><td></td></tr>
+            <tr><td>A3 Campaña de temporada</td><td></td><td></td><td class="on"></td><td class="on"></td><td class="on"></td><td></td><td></td></tr>
+            <tr><td>A4 Escape room</td><td></td><td></td><td></td><td></td><td class="on"></td><td class="on"></td><td></td></tr>
+            <tr><td>A5 Evaluación y memoria</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="on"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card" style="box-shadow:none">
+        <p class="tiny"><strong>Versión mínima: 2.700 €</strong> — solo A1 y A5, cuatro limpiezas con caracterización y memoria con datos. Es la opción recomendada si el margen es ajustado, porque genera el dato que justifica ampliar el programa al año siguiente.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="subhead">Encaje con la convocatoria</p>
+  <div class="prose">
+    <p class="small">Responde a acciones de <strong>sensibilización ciudadana</strong>, <strong>prevención de residuos</strong>, <strong>protección de la biodiversidad y del patrimonio natural</strong> y <strong>gestión sostenible del litoral</strong>, con participación directa de la ciudadanía y del tejido económico local, y con un componente explícito de <strong>ciencia ciudadana</strong> que genera datos públicos. Su carácter piloto y replicable en los siete municipios refuerza el criterio de proyecto demostrativo y de efecto multiplicador.</p>
+    <div class="chips">
+      <span class="chip">ODS 14 · Vida submarina</span>
+      <span class="chip">ODS 15 · Ecosistemas terrestres</span>
+      <span class="chip">ODS 12 · Consumo responsable</span>
+      <span class="chip">ODS 11.4 · Patrimonio natural</span>
+      <span class="chip">ODS 4.7 · Educación para la sostenibilidad</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ENVÍO ============ -->
+<section>
+  <div class="sec-head">
+    <p class="eyebrow">Cómo se envían</p>
+    <h2>Tres emails, y una llamada a los tres días</h2>
+    <p class="lede" style="max-width:var(--measure)">A una persona con nombre, nunca a <span class="num">info@</span>. En PDF <strong>y en Word</strong>: el Word es lo que hace que la ficha acabe dentro de su solicitud.</p>
+  </div>
+
+  <div class="grid g3">
+    <div class="emailblock">
+      <p class="eyebrow">Muskiz</p>
+      <p class="subj">los 14 contenedores de aceite y lo que falta</p>
+      <p class="tiny">Abre por lo que ya han hecho ellos, no por lo que vendemos nosotros. La frase que lleva el peso: «quien ha hecho jabón con su propio aceite usado no vuelve a tirarlo por el fregadero».</p>
+    </div>
+    <div class="emailblock">
+      <p class="eyebrow">Berango</p>
+      <p class="subj">638 vecinos nuevos y el sistema de recogida</p>
+      <p class="tiny">Un dato suyo, público y sorprendente en el asunto. Cierra preguntando si lo deciden ellos o pasa por la Mancomunidad.</p>
+    </div>
+    <div class="emailblock">
+      <p class="eyebrow">Barrika</p>
+      <p class="subj">qué llega exactamente a Muriola y a Meñakoz</p>
+      <p class="tiny">Nombra sus playas. Vende el dato, no la limpieza. Cierra preguntando si lo llevan ellos o Ekogune.</p>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:2rem">
+    <div class="card">
+      <p class="idx">ANTES DE ENVIAR</p>
+      <ul class="checklist small" style="margin-top:.4rem">
+        <li>Poner nombre y cargo del destinatario. Ninguna ficha va a un buzón genérico.</li>
+        <li>Rellenar los datos marcados «a completar», o dejarlos y preguntarlos en la llamada — preguntarlos también funciona.</li>
+        <li>Exportar a PDF y a Word.</li>
+        <li>Verificar el texto de la convocatoria vigente y ajustar el apartado de encaje a su redacción literal.</li>
+        <li>Reconfirmar los datos citados de cada municipio: si uno está desactualizado, la ficha pierde justo la credibilidad que la hace útil.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <p class="idx">LA LLAMADA, A LOS TRES DÍAS</p>
+      <p class="small">«Kaixo [Nombre], soy [X] de Ingura, trabajamos con vosotros en [año]. Te mandé el martes una ficha de proyecto para la subvención que se abre a finales de septiembre. Te llamo por dos cosas: si te ha llegado, y qué tenéis pensado hacer este curso en medio ambiente.»</p>
+      <p class="small">Y luego se calla uno y escucha. <strong>En Barrika y Berango la llamada no termina sin esta pregunta:</strong> «¿quién lleva esto en Ekogune? ¿Nos presentas?»</p>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <p class="eyebrow">Procedencia de los datos</p>
+  <div class="prose" style="margin-top:1rem">
+    <p class="small">Los datos de contexto proceden de fuentes públicas consultadas en agosto de 2026: población de INE y Eustat; información del propio Ayuntamiento de Muskiz sobre su Agenda 21/2030 Escolar y su servicio de recogida de aceite; y datos de la Mancomunidad de Servicios Uribe Kosta y de su oficina Ekogune, incluida la referencia al contrato de cursos Ekogune e Inguru Minguru. <strong>Conviene reconfirmarlos antes de enviar.</strong></p>
+    <p class="tiny">Los importes son estimaciones de Ingura coherentes con su tarifario; los indicadores de participación son objetivos propuestos, no cifras históricas. Las fichas y el briefing interno están también en el repositorio, en <span class="num">fichas/</span>.</p>
+  </div>
+</footer>
+</div>
