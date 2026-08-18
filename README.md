@@ -43,3 +43,9 @@ cuentas, el plan de 90 días y todas las plantillas listas para usar.
 > lineal: se capta un ayuntamiento, se ejecuta el proyecto y se tira. **El Loop
 > Maestro convierte cada proyecto terminado en la materia prima del siguiente:
 > memoria → renovación → prescripción → nueva cuenta.** Cero residuo comercial.
+
+## Versión visual
+
+El plan completo, maquetado con la línea de imagen de Ingura, está en
+[`web/loop-ingura.html`](web/loop-ingura.html) y publicado aquí:
+**https://claude.ai/code/artifact/796e173a-6645-4720-b581-e54dc74a3703**

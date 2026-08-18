@@ -1,0 +1,700 @@
+<title>El Loop Ingura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f5f0e6; --surface:#fffdf7; --surface-2:#ece5d3;
+  --text:#1a2418; --muted:#5c6b53; --heading:#1f3d2b;
+  --accent:#9CB81C; --accent-deep:#5f7513; --on-accent:#16210f;
+  --earth:#a8724a; --border:rgba(31,61,43,.16); --border-soft:rgba(31,61,43,.09);
+  --band-bg:#1f3d2b; --band-text:#f0ece0; --band-muted:#a9bfa8; --band-border:rgba(240,236,224,.18);
+  --shadow:0 1px 2px rgba(31,61,43,.05), 0 12px 32px -18px rgba(31,61,43,.28);
+  --measure:66ch;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1510; --surface:#151d17; --surface-2:#1b251d;
+    --text:#e8e3d5; --muted:#98a891; --heading:#dfe7d6;
+    --accent:#b7d62c; --accent-deep:#c9e648; --on-accent:#101a0b;
+    --earth:#cf9a72; --border:rgba(232,227,213,.16); --border-soft:rgba(232,227,213,.08);
+    --band-bg:#16211a; --band-text:#e8e3d5; --band-muted:#94a891; --band-border:rgba(232,227,213,.14);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -20px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1510; --surface:#151d17; --surface-2:#1b251d;
+  --text:#e8e3d5; --muted:#98a891; --heading:#dfe7d6;
+  --accent:#b7d62c; --accent-deep:#c9e648; --on-accent:#101a0b;
+  --earth:#cf9a72; --border:rgba(232,227,213,.16); --border-soft:rgba(232,227,213,.08);
+  --band-bg:#16211a; --band-text:#e8e3d5; --band-muted:#94a891; --band-border:rgba(232,227,213,.14);
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px -20px rgba(0,0,0,.7);
+}
+
+body{
+  background:var(--bg); color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-weight:400; font-size:17px; line-height:1.65;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+*,*::before,*::after{box-sizing:border-box;}
+img{max-width:100%;}
+
+/* ---------- type ---------- */
+h1,h2,h3,h4{font-family:"Cormorant Garamond",Georgia,serif; color:var(--heading); text-wrap:balance; font-weight:600; line-height:1.12;}
+h1{font-size:clamp(2.9rem,8vw,5.4rem); font-weight:500; letter-spacing:-.015em;}
+h2{font-size:clamp(2rem,4.6vw,3.1rem); font-weight:500; letter-spacing:-.01em;}
+h3{font-size:1.5rem; font-weight:600;}
+h4{font-size:1.16rem; font-weight:600;}
+p{margin:0;}
+a{color:inherit;}
+strong{font-weight:600; color:var(--heading);}
+.eyebrow{
+  font-family:Inter,sans-serif; font-size:.7rem; font-weight:600;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--muted);
+}
+.lede{font-size:1.24rem; line-height:1.6; color:var(--muted); font-weight:300;}
+.small{font-size:.9rem; line-height:1.6; color:var(--muted);}
+.tiny{font-size:.79rem; line-height:1.5; color:var(--muted);}
+.num{font-variant-numeric:tabular-nums;}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1080px; margin-inline:auto; padding-inline:clamp(20px,5vw,48px);}
+.prose{max-width:var(--measure); display:flex; flex-direction:column; gap:1.1rem;}
+section{padding-block:clamp(56px,9vw,104px); border-top:1px solid var(--border-soft);}
+section:first-of-type{border-top:none;}
+.sec-head{display:flex; flex-direction:column; gap:.7rem; margin-bottom:2.6rem;}
+.sec-head .eyebrow{display:flex; align-items:center; gap:.7rem;}
+.sec-head .eyebrow::after{content:""; flex:1; height:1px; background:var(--border); max-width:120px;}
+.stack{display:flex; flex-direction:column; gap:1.4rem;}
+.grid{display:grid; gap:18px;}
+@media(min-width:720px){ .g2{grid-template-columns:repeat(2,1fr);} .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);} }
+@media(min-width:520px) and (max-width:719px){ .g4{grid-template-columns:repeat(2,1fr);} }
+
+/* ---------- hero ---------- */
+.hero{padding-block:clamp(64px,12vw,132px) clamp(48px,7vw,88px);}
+.hero-rule{width:100%; height:1px; background:linear-gradient(90deg,var(--accent),var(--border) 55%,transparent); margin-block:2.4rem;}
+.hero h1 em{font-style:italic; color:var(--accent-deep);}
+.hero-meta{display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:2.2rem;}
+.hero-meta div{display:flex; flex-direction:column; gap:2px;}
+.hero-meta b{font-family:"Cormorant Garamond",serif; font-size:1.5rem; font-weight:600; color:var(--heading); line-height:1.1;}
+
+.alert{
+  margin-top:2.6rem; border:1px solid var(--border); border-left:3px solid var(--accent);
+  background:var(--surface); border-radius:3px; padding:20px 22px;
+  display:flex; flex-direction:column; gap:.5rem; max-width:var(--measure); box-shadow:var(--shadow);
+}
+
+/* ---------- cards ---------- */
+.card{
+  background:var(--surface); border:1px solid var(--border-soft); border-radius:4px;
+  padding:22px 22px 24px; display:flex; flex-direction:column; gap:.6rem; box-shadow:var(--shadow);
+}
+.card .idx{
+  font-size:.72rem; font-weight:700; letter-spacing:.16em; color:var(--accent-deep);
+  font-variant-numeric:tabular-nums;
+}
+.card h4{margin-top:.1rem;}
+
+.prod{border-top:3px solid var(--accent);}
+.prod .tag{
+  align-self:flex-start; font-size:.68rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--border); border-radius:2px; padding:3px 8px;
+}
+.prod .price{
+  margin-top:auto; padding-top:.9rem; border-top:1px dashed var(--border);
+  font-family:"Cormorant Garamond",serif; font-size:1.35rem; color:var(--heading); font-weight:600;
+}
+.prod .price span{font-family:Inter,sans-serif; font-size:.76rem; font-weight:500; color:var(--muted); letter-spacing:.04em; display:block; margin-top:.15rem;}
+
+/* ---------- band ---------- */
+.band{background:var(--band-bg); color:var(--band-text); border-top:none;}
+.band h2,.band h3,.band h4{color:var(--band-text);}
+.band .eyebrow{color:var(--band-muted);}
+.band .eyebrow::after{background:var(--band-border);}
+.band .lede,.band .small,.band .tiny{color:var(--band-muted);}
+.band strong{color:var(--band-text);}
+.band .card{background:rgba(255,255,255,.04); border-color:var(--band-border); box-shadow:none;}
+.band .card .idx{color:var(--accent);}
+.band .price{border-color:var(--band-border);}
+
+/* ---------- loop diagram ---------- */
+.loopfig{margin:0; display:flex; flex-direction:column; align-items:center; gap:1rem;}
+.loopfig svg{width:100%; max-width:660px; height:auto; display:block;}
+.ring-label{font-family:Inter,sans-serif; font-size:13px; font-weight:600; letter-spacing:.13em; fill:var(--band-text);}
+.ring-sub{font-family:Inter,sans-serif; font-size:11px; font-weight:500; letter-spacing:.1em; fill:var(--band-muted);}
+.node-n{font-family:"Cormorant Garamond",serif; font-size:30px; font-weight:600; fill:var(--band-text);}
+.hub-t{font-family:"Cormorant Garamond",serif; font-size:26px; font-weight:600; fill:var(--band-text);}
+
+/* ---------- stations ---------- */
+.stations{display:flex; flex-direction:column; gap:0; margin-top:2.6rem;}
+.station{
+  display:grid; gap:.35rem 20px; padding:20px 0; border-top:1px solid var(--band-border);
+  grid-template-columns:44px 1fr;
+}
+@media(min-width:760px){ .station{grid-template-columns:44px 190px 1fr; align-items:baseline;} }
+.station .n{
+  font-family:"Cormorant Garamond",serif; font-size:1.8rem; font-weight:600; color:var(--accent); line-height:1;
+}
+.station .t{font-family:"Cormorant Garamond",serif; font-size:1.32rem; font-weight:600; color:var(--band-text);}
+.station .d{font-size:.96rem; line-height:1.6; color:var(--band-muted); grid-column:2/-1;}
+@media(min-width:760px){ .station .d{grid-column:3/4;} }
+.station .kpi{
+  display:inline-block; margin-top:.5rem; font-size:.74rem; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--accent); border:1px solid var(--band-border); padding:3px 9px; border-radius:2px;
+}
+
+/* ---------- windows ---------- */
+.win{
+  display:grid; gap:.5rem 22px; padding:24px 0; border-top:1px solid var(--border);
+  grid-template-columns:1fr;
+}
+@media(min-width:800px){ .win{grid-template-columns:150px 1fr 210px;} }
+.win .when{font-family:"Cormorant Garamond",serif; font-size:1.42rem; font-weight:600; color:var(--heading); line-height:1.15;}
+.win .when small{display:block; font-family:Inter,sans-serif; font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-deep); margin-top:.25rem;}
+.win .sell{
+  font-size:.88rem; color:var(--muted); border-left:2px solid var(--accent); padding-left:14px; line-height:1.55;
+}
+.win .sell b{display:block; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:600; margin-bottom:.3rem;}
+
+/* ---------- funnel ---------- */
+.funnel{display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none;}
+.funnel li{
+  display:flex; align-items:baseline; gap:16px; padding:14px 20px; border-radius:3px;
+  background:var(--surface); border:1px solid var(--border-soft);
+}
+.funnel li .v{font-family:"Cormorant Garamond",serif; font-size:1.9rem; font-weight:600; color:var(--heading); min-width:3.6ch; font-variant-numeric:tabular-nums;}
+.funnel li .l{flex:1; font-size:.97rem;}
+.funnel li .r{font-size:.78rem; font-weight:600; letter-spacing:.1em; color:var(--accent-deep); font-variant-numeric:tabular-nums;}
+.funnel li:nth-child(1){width:100%;}
+.funnel li:nth-child(2){width:88%;}
+.funnel li:nth-child(3){width:76%;}
+.funnel li:nth-child(4){width:64%;}
+.funnel li:nth-child(5){width:56%; border-color:var(--accent); border-left:3px solid var(--accent);}
+@media(max-width:700px){ .funnel li{width:100% !important;} }
+
+/* ---------- stat row ---------- */
+.stats{display:grid; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:4px; overflow:hidden;}
+@media(min-width:640px){ .stats{grid-template-columns:repeat(4,1fr);} }
+.stat{background:var(--surface); padding:20px 18px; display:flex; flex-direction:column; gap:.25rem;}
+.stat b{font-family:"Cormorant Garamond",serif; font-size:2.1rem; font-weight:600; color:var(--heading); line-height:1; font-variant-numeric:tabular-nums;}
+.stat span{font-size:.8rem; color:var(--muted); line-height:1.4;}
+
+/* ---------- table ---------- */
+.tablewrap{overflow-x:auto; border:1px solid var(--border); border-radius:4px; background:var(--surface);}
+table{border-collapse:collapse; width:100%; min-width:520px; font-size:.92rem;}
+th,td{text-align:left; padding:12px 16px; border-bottom:1px solid var(--border-soft); vertical-align:top;}
+th{font-size:.7rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); background:var(--surface-2);}
+tr:last-child td{border-bottom:none;}
+td.n{font-variant-numeric:tabular-nums; white-space:nowrap;}
+tfoot td{font-weight:600; color:var(--heading); background:var(--surface-2);}
+
+/* ---------- timeline ---------- */
+.tl{display:flex; flex-direction:column; gap:0; border-left:2px solid var(--border); margin-left:6px; padding-left:0;}
+.tl-item{position:relative; padding:0 0 30px 28px;}
+.tl-item::before{
+  content:""; position:absolute; left:-7px; top:6px; width:12px; height:12px; border-radius:50%;
+  background:var(--accent); border:2px solid var(--bg);
+}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item .when{font-size:.74rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent-deep);}
+.tl-item h4{margin:.3rem 0 .45rem;}
+.tl-item ul{margin:0; padding-left:1.1rem; display:flex; flex-direction:column; gap:.35rem; font-size:.95rem; color:var(--muted);}
+
+/* ---------- misc ---------- */
+.pull{
+  font-family:"Cormorant Garamond",serif; font-style:italic; font-size:clamp(1.5rem,3.4vw,2.1rem);
+  line-height:1.35; color:var(--heading); max-width:26ch; margin:0; font-weight:500;
+}
+.checklist{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:.7rem;}
+.checklist li{display:flex; gap:12px; align-items:flex-start; font-size:.97rem;}
+.checklist li::before{content:""; flex:none; width:7px; height:7px; margin-top:.6rem; border-radius:50%; background:var(--accent);}
+.dot-earth li::before{background:var(--earth);}
+.foot{padding-block:44px 64px; border-top:1px solid var(--border); }
+.foot .small{max-width:var(--measure);}
+:where(a,button):focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px;}
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important;}}
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Ingura · Plan de relanzamiento comercial · Agosto 2026</p>
+    <div class="hero-rule"></div>
+    <h1>El Loop<br><em>Ingura</em></h1>
+    <div style="max-width:var(--measure); margin-top:1.8rem;">
+      <p class="lede">Ingura vende economía circular y tiene una cartera de clientes lineal: se capta un ayuntamiento, se ejecuta el proyecto y se tira. Este plan instala el circuito que faltaba, para que ningún proyecto terminado vuelva a ser residuo.</p>
+    </div>
+    <div class="hero-meta">
+      <div><b>2022</b><span class="tiny">Fundación</span></div>
+      <div><b>5</b><span class="tiny">Productos, no 20 actividades</span></div>
+      <div><b>7</b><span class="tiny">Estaciones del Loop</span></div>
+      <div><b>90.000&nbsp;€</b><span class="tiny">Objetivo año 1</span></div>
+      <div><b>7&nbsp;h</b><span class="tiny">A la semana. Todo el coste</span></div>
+    </div>
+    <div class="alert">
+      <p class="eyebrow" style="color:var(--accent-deep)">La cuenta atrás</p>
+      <p>Quedan <strong>cinco semanas</strong> para que se abra el plazo de la convocatoria de subvenciones a entidades locales para acciones de desarrollo sostenible &mdash; el año pasado, del 24 de septiembre al 24 de octubre. Es la ventana en la que 251 ayuntamientos vascos buscan proyectos concretos que meter en una solicitud. Todo este plan está ordenado alrededor de esa fecha.</p>
+    </div>
+  </header>
+
+  <!-- 01 DIAGNÓSTICO -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">01 &nbsp;/&nbsp; Diagnóstico</p>
+      <h2>Por qué no hay trabajo</h2>
+      <p class="lede" style="max-width:var(--measure)">La causa es la nula actividad comercial, y es correcto. Pero se explica mejor en cinco fallos concretos, porque cada uno tiene su arreglo.</p>
+    </div>
+
+    <div class="grid g3">
+      <div class="card"><p class="idx">FALLO 01</p><h4>El trabajo llegó, no se buscó</h4><p class="small">Muskiz, Barrika y Berango entraron por contacto personal. Eso funciona mientras dura la red inicial y se agota exactamente cuando esa red se agota.</p></div>
+      <div class="card"><p class="idx">FALLO 02</p><h4>Se vendieron actividades, no programas</h4><p class="small">Un taller de 200 € se decide en cinco minutos y no se repite solo. Un programa anual de 8.000 € entra en presupuesto, tiene responsable y se renueva por defecto.</p></div>
+      <div class="card"><p class="idx">FALLO 03</p><h4>La venta se para cuando hay trabajo</h4><p class="small">El ciclo de compra pública tarda de 3 a 9 meses. Cada parón comercial se paga dos trimestres después: el hueco de hoy se generó hace un año.</p></div>
+      <div class="card"><p class="idx">FALLO 04</p><h4>No hubo memoria de impacto</h4><p class="small">Un ayuntamiento renueva cuando puede justificarlo. Sin memoria, la renovación depende de que el técnico se acuerde. Se acuerda el primer año; el segundo, no.</p></div>
+      <div class="card"><p class="idx">FALLO 05</p><h4>Ausencia del canal público formal</h4><p class="small">Los ayuntamientos no solo compran por contrato menor: piden subvenciones al Gobierno Vasco para financiar justo esto. Si no estás cuando el técnico redacta la solicitud, no existes.</p></div>
+      <div class="card" style="border-top:3px solid var(--earth)"><p class="idx" style="color:var(--earth)">Y SIN EMBARGO</p><h4>Lo que ya está ganado</h4><p class="small">Catálogo completo, un escape room propio que casi nadie tiene, una imagen de marca que compite con consultoras y no con monitores, cuatro años de trayectoria y tres clientes dormidos con buena experiencia.</p></div>
+    </div>
+
+    <p class="pull" style="margin-top:3rem">El error que hay que evitar al relanzar es bajar el precio. La salida del hueco es más actividad comercial, no menos margen.</p>
+  </section>
+
+  <!-- 02 CATÁLOGO -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">02 &nbsp;/&nbsp; Oferta</p>
+      <h2>De veinte actividades a cinco productos</h2>
+      <p class="lede" style="max-width:var(--measure)">Un catálogo de actividades obliga al cliente a diseñar el programa. El cliente no quiere diseñar nada: quiere comprar una solución con nombre, precio y memoria final. Las actividades no desaparecen &mdash; se convierten en el contenido de los productos.</p>
+    </div>
+
+    <div class="grid g3">
+      <div class="card prod">
+        <span class="tag">P1</span><h4>Ingura Eskola</h4>
+        <p class="small">El programa ambiental del curso, llave en mano, alineado con la situación-problema de Agenda 2030 Escolar. Tres niveles: 4 sesiones, curso completo o integral con familias.</p>
+        <p class="tiny"><strong>Atajo:</strong> no vendas a un colegio; vende los cuatro colegios del municipio al ayuntamiento.</p>
+        <p class="price">900 – 7.500 €<span>Ticket medio 3.200 € · ciclo 2-4 meses</span></p>
+      </div>
+      <div class="card prod">
+        <span class="tag">P2</span><h4>Ingura Herria</h4>
+        <p class="small">El plan de sensibilización ciudadana del municipio: campañas, calendario ambiental, acciones en calle, escape room y memoria anual. Ayuntamientos, mancomunidades y consorcios de residuos.</p>
+        <p class="tiny"><strong>Gancho:</strong> «te damos la ficha del proyecto ya redactada para la solicitud de subvención».</p>
+        <p class="price">4.500 – 30.000 €<span>Ticket medio 9.000 € · ciclo 3-6 meses</span></p>
+      </div>
+      <div class="card prod">
+        <span class="tag">P3</span><h4>Ingura Merkataritza</h4>
+        <p class="small">Comercio local y economía circular: diagnóstico de 25-30 comercios, formación, distintivo propio y campaña al cliente final.</p>
+        <p class="tiny"><strong>Por qué importa:</strong> lo paga comercio o promoción económica. Es un segundo bolsillo en el mismo cliente.</p>
+        <p class="price">3.500 – 12.000 €<span>Ticket medio 7.500 € · ciclo 3-5 meses</span></p>
+      </div>
+      <div class="card prod">
+        <span class="tag">P4</span><h4>Ingura Lantegia</h4>
+        <p class="small">Formación ambiental para plantillas de empresa: píldoras de 90 minutos, itinerarios de cuatro sesiones con reto medido, jornadas de equipo.</p>
+        <p class="tiny"><strong>Función estratégica:</strong> rompe la dependencia del calendario presupuestario público. Factura en 30 días.</p>
+        <p class="price">450 – 4.500 €<span>Ticket medio 2.400 € · ciclo 3-8 semanas</span></p>
+      </div>
+      <div class="card prod" style="border-top-color:var(--earth)">
+        <span class="tag">P5</span><h4>Ingura Jolas</h4>
+        <p class="small">«El Último Recurso» &mdash; escape room móvil &mdash; colonias, ferias y fiestas. Partidas de festejos, juventud o cultura: importe pequeño, decisión rápida, casi nunca concurso.</p>
+        <p class="tiny"><strong>Es la puerta, no el negocio:</strong> la jornada de 900 € en octubre es el diagnóstico gratis del plan de 12.000 € de enero.</p>
+        <p class="price">600 – 9.000 €<span>Ticket medio 950 € · ciclo 2-6 semanas</span></p>
+      </div>
+      <div class="card" style="background:var(--surface-2); box-shadow:none;">
+        <p class="idx">LAS CINCO REGLAS DE PRECIO</p>
+        <ul class="checklist tiny" style="margin-top:.4rem">
+          <li>Nunca un precio suelto: siempre tres opciones, y se vende la del medio.</li>
+          <li>Suelo de 450 € por intervención con desplazamiento.</li>
+          <li>Descuento solo por volumen o por plazo, jamás por presión.</li>
+          <li>Todo producto incluye memoria de impacto. No es un extra: es el mecanismo de renovación.</li>
+          <li>Bilingüismo ES/EU incluido y dicho en voz alta. En contratación pública puntúa.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 03 EL LOOP -->
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">03 &nbsp;/&nbsp; El motor</p>
+      <h2>El Loop Maestro Comercial</h2>
+      <p class="lede" style="max-width:var(--measure)">Siete estaciones que se recorren siempre, en orden, y una séptima que devuelve al principio. No es una campaña: es el funcionamiento normal de la empresa a partir de ahora.</p>
+    </div>
+
+    <figure class="loopfig">
+      <svg viewBox="-75 15 750 565" role="img" aria-labelledby="loopttl loopdesc">
+        <title id="loopttl">Diagrama del Loop Maestro Comercial de Ingura</title>
+        <desc id="loopdesc">Circuito cerrado de siete estaciones: Radar, Lista, Toque, Diagnóstico, Propuesta, Entrega con evidencia y Memoria–Renovación, que vuelve a Radar. En el centro, el Registro o CRM.</desc>
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="var(--accent)"></path>
+          </marker>
+        </defs>
+        <circle cx="300" cy="300" r="200" fill="none" stroke="var(--band-border)" stroke-width="1"></circle>
+        <circle cx="300" cy="300" r="112" fill="none" stroke="var(--band-border)" stroke-width="1" stroke-dasharray="3 6"></circle>
+
+        <g fill="none" stroke="var(--accent)" stroke-width="1.6" marker-end="url(#ar)" opacity=".85">
+          <path d="M 352.1 106.9 A 200 200 0 0 1 418.5 138.9"></path>
+          <path d="M 483.5 220.4 A 200 200 0 0 1 499.8 292.1"></path>
+          <path d="M 476.6 393.8 A 200 200 0 0 1 430.7 451.3"></path>
+          <path d="M 336.8 496.6 A 200 200 0 0 1 263.2 496.6"></path>
+          <path d="M 169.3 451.3 A 200 200 0 0 1 123.4 393.8"></path>
+          <path d="M 100.2 292.1 A 200 200 0 0 1 116.5 220.4"></path>
+          <path d="M 181.5 138.9 A 200 200 0 0 1 247.9 106.9"></path>
+        </g>
+
+        <g>
+          <circle cx="300" cy="100" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="300" y="111" text-anchor="middle">1</text>
+          <text class="ring-label" x="300" y="30" text-anchor="middle">RADAR</text>
+          <text class="ring-sub" x="300" y="48" text-anchor="middle">detectar antes</text>
+        </g>
+        <g>
+          <circle cx="456.4" cy="175.3" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="456.4" y="186" text-anchor="middle">2</text>
+          <text class="ring-label" x="497" y="137" text-anchor="start">LISTA</text>
+          <text class="ring-sub" x="497" y="155" text-anchor="start">300 cuentas</text>
+        </g>
+        <g>
+          <circle cx="495" cy="344.5" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="495" y="355" text-anchor="middle">3</text>
+          <text class="ring-label" x="545.7" y="350" text-anchor="start">TOQUE</text>
+          <text class="ring-sub" x="545.7" y="368" text-anchor="start">6 semanas</text>
+        </g>
+        <g>
+          <circle cx="386.8" cy="480.2" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="386.8" y="491" text-anchor="middle">4</text>
+          <text class="ring-label" x="409.3" y="533" text-anchor="start">DIAGNÓSTICO</text>
+          <text class="ring-sub" x="409.3" y="551" text-anchor="start">20 min, 8 preguntas</text>
+        </g>
+        <g>
+          <circle cx="213.2" cy="480.2" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="213.2" y="491" text-anchor="middle">5</text>
+          <text class="ring-label" x="190.7" y="533" text-anchor="end">PROPUESTA</text>
+          <text class="ring-sub" x="190.7" y="551" text-anchor="end">48 h, 3 opciones</text>
+        </g>
+        <g>
+          <circle cx="105" cy="344.5" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="105" y="355" text-anchor="middle">6</text>
+          <text class="ring-label" x="54.3" y="350" text-anchor="end">ENTREGA</text>
+          <text class="ring-sub" x="54.3" y="368" text-anchor="end">con evidencia</text>
+        </g>
+        <g>
+          <circle cx="143.6" cy="175.3" r="44" fill="var(--band-bg)" stroke="var(--accent)" stroke-width="1.4"></circle>
+          <text class="node-n" x="143.6" y="186" text-anchor="middle">7</text>
+          <text class="ring-label" x="103" y="137" text-anchor="end">MEMORIA</text>
+          <text class="ring-sub" x="103" y="155" text-anchor="end">renovación · prescripción</text>
+        </g>
+
+        <text class="hub-t" x="300" y="292" text-anchor="middle">El Registro</text>
+        <text class="ring-sub" x="300" y="316" text-anchor="middle">SI NO ESTÁ AQUÍ,</text>
+        <text class="ring-sub" x="300" y="332" text-anchor="middle">NO HA PASADO</text>
+      </svg>
+    </figure>
+
+    <div class="stations">
+      <div class="station">
+        <span class="n">1</span><span class="t">Radar</span>
+        <p class="d">Que ninguna oportunidad de Euskadi aparezca sin que Ingura se entere, y que muchas se detecten antes de existir. Fuentes fijas cada lunes: KontratazioA y la Plataforma de Contratación (incluidos los <strong>contratos menores ya adjudicados</strong>, que dicen quién compra esto y por cuánto), Ihobe, boletines, presupuestos y plenos municipales, centros de Agenda 2030, cambios de técnico. <br><em>Cuando una licitación se publica ya es tarde: el Radar sirve para encontrar al que comprará dentro de seis meses.</em><span class="kpi">8-15 señales / semana</span></p>
+      </div>
+      <div class="station">
+        <span class="n">2</span><span class="t">Lista</span>
+        <p class="d">Un universo cerrado de 300 cuentas, no «a ver a quién llamo hoy». Cada una con entidad, producto encajado, persona con nombre, señal reciente y próxima acción con fecha. Cualificación en cuatro preguntas: presupuesto o subvención, persona que decide, señal de menos de doce meses, y a menos de 90 minutos de coche.<span class="kpi">25 cuentas activadas / mes</span></p>
+      </div>
+      <div class="station">
+        <span class="n">3</span><span class="t">Toque</span>
+        <p class="d">Un email no vende nada: hacen falta de 7 a 12 impactos. Secuencia escrita de seis semanas &mdash; email, llamada, caso, redes, llamada, ficha subvencionable, llamada, cierre de ciclo. Nunca se pide «una reunión para presentarnos»: se piden veinte minutos para enseñar una ficha concreta. El «no» explícito es un buen resultado.<span class="kpi">30 % pasa a conversación</span></p>
+      </div>
+      <div class="station">
+        <span class="n">4</span><span class="t">Diagnóstico</span>
+        <p class="d">Veinte minutos, ocho preguntas, y no se habla de Ingura hasta el minuto quince. Qué hicisteis el año pasado, qué funcionó, qué temática toca, a quién queréis llegar, qué partida lo paga, <strong>¿vais a pedir la subvención?</strong>, quién más decide y <strong>en qué fecha</strong>. La fecha de decisión es el dato que más se olvida y el que más vale.<span class="kpi">70 % termina en propuesta</span></p>
+      </div>
+      <div class="station">
+        <span class="n">5</span><span class="t">Propuesta</span>
+        <p class="d">En 48 horas &mdash; la web ya lo promete, así que es una promesa comercial que se cumple. Cuatro páginas: la situación descrita <em>con sus palabras</em>, tres opciones con la del medio resaltada, calendario, impacto medible, caducidad con motivo real. Seguimiento obligatorio los días +3, +10 y +20; sin él, la mitad muere en silencio.<span class="kpi">35 % se cierra</span></p>
+      </div>
+      <div class="station">
+        <span class="n">6</span><span class="t">Entrega con evidencia</span>
+        <p class="d">Ejecutar produciendo, además del servicio, el material que vende el año siguiente: participantes contados, 10-15 fotos y un vídeo, encuesta de cuatro preguntas por QR, un dato ambiental medible, una frase del cliente y <strong>dos nombres nuevos</strong>. Una actividad sin evidencia recogida es una actividad que habrá que vender otra vez desde cero.<span class="kpi">100 % de las actividades</span></p>
+      </div>
+      <div class="station" style="border-bottom:1px solid var(--band-border)">
+        <span class="n">7</span><span class="t">Memoria, renovación y prescripción</span>
+        <p class="d"><strong>La estación que no existía y la que más dinero vale.</strong> Memoria de impacto a los diez días, en PDF y en papel. La última página es siempre la propuesta del año siguiente con tres opciones: el cliente recibe el cierre y la siguiente venta en el mismo documento, en el momento de máxima satisfacción. Después: ampliación a otra área del mismo cliente, dos contactos pedidos por escrito, y reactivación automática de todo el que lleve doce meses sin comprar.<span class="kpi">60 % de renovación</span></p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:3rem">
+      <div class="card">
+        <p class="idx">EL RITUAL SEMANAL</p>
+        <h4>Lunes, 9:00 a 12:00. Blindado.</h4>
+        <p class="small">Radar (45 min) · actualizar el Registro (30 min) · seis cuentas nuevas a la secuencia (45 min) · seguimiento de propuestas vivas (60 min). Martes y jueves, dos franjas de llamadas: 9:00 y 13:00. Viernes por la mañana, escribir propuestas y memorias.</p>
+        <p class="small"><strong>La única regla que no se rompe:</strong> el bloque del lunes se hace aunque haya trabajo, aunque haya talleres, aunque sea temporada alta. El mes que no se prospecta se factura cero dos trimestres después. Ése es exactamente el error que ha traído a Ingura hasta aquí.</p>
+      </div>
+      <div class="card">
+        <p class="idx">EL MOTOR EXTERNO</p>
+        <h4>Contenido que alimenta el circuito</h4>
+        <p class="small">Una publicación semanal en Instagram y <strong>LinkedIn</strong> &mdash; donde están los técnicos municipales y las empresas, y donde casi ningún competidor local publica con constancia. Una newsletter trimestral sincronizada con las ventanas: septiembre (subvenciones), diciembre (programación), marzo (fechas ambientales), junio (verano y memorias). Un caso de éxito publicado al mes, con su dato.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <!-- 04 VENTANAS -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">04 &nbsp;/&nbsp; Calendario</p>
+      <h2>Las cuatro ventanas del año</h2>
+      <p class="lede" style="max-width:var(--measure)">Un ayuntamiento no compra cuando tú llamas: compra cuando le toca decidir. En Euskadi ese momento está muy definido, y la actividad comercial hay que hacerla de dos a cuatro meses antes de cada ventana, no durante.</p>
+    </div>
+
+    <div class="win" style="border-top-color:var(--accent); border-top-width:2px">
+      <div class="when">Septiembre<br>Octubre<small>Se vende en jul-sep</small></div>
+      <div class="stack" style="gap:.6rem">
+        <h4>La ventana del dinero público</h4>
+        <p class="small">La más importante del año y la que Ingura ha estado desaprovechando. Se abre la convocatoria de subvenciones a entidades locales para acciones de desarrollo sostenible &mdash; el ejercicio pasado, del 24 de septiembre al 24 de octubre. Durante esas cuatro semanas los técnicos necesitan <strong>proyectos concretos con presupuesto</strong> que meter en la solicitud. Quien les pone la ficha delante, entra. Además: arranque de curso y elaboración de los presupuestos municipales del año siguiente.</p>
+        <p class="small"><strong>La jugada:</strong> ficha de proyecto de una página a las 80 cuentas prioritarias, y ofrecerse a redactar la memoria técnica de la solicitud sin coste. Es gratis para el cliente y te convierte en el proveedor preescrito del proyecto.</p>
+      </div>
+      <p class="sell"><b>Qué se vende</b>P2 Herria Anual<br>P1 Eskola Anual</p>
+    </div>
+
+    <div class="win">
+      <div class="when">Noviembre<br>a Febrero<small>Se vende en sep-oct</small></div>
+      <div class="stack" style="gap:.6rem">
+        <h4>La ventana de la programación</h4>
+        <p class="small">Presupuestos aprobados, partida nueva desde enero y prisa por comprometerla: enero y febrero son los meses en que un técnico adjudica rápido y sin concurso. En medio, la <strong>Semana Europea de la Prevención de Residuos</strong> (última semana de noviembre, coordinada por Ihobe en Euskadi), donde cientos de ayuntamientos y centros registran acciones. Es la excusa perfecta para la primera venta pequeña.</p>
+        <p class="small"><strong>La jugada:</strong> en diciembre, una sola pregunta a las 120 cuentas A &mdash; «¿qué habéis presupuestado para medio ambiente el año que viene?».</p>
+      </div>
+      <p class="sell"><b>Qué se vende</b>P5 Jolas (entrada)<br>P1 Eskola · P2 Campaña<br>P3 Merkataritza</p>
+    </div>
+
+    <div class="win">
+      <div class="when">Marzo<br>a Mayo<small>Se vende en dic-ene</small></div>
+      <div class="stack" style="gap:.6rem">
+        <h4>La ventana de las fechas</h4>
+        <p class="small">El calendario ambiental da un motivo de compra con fecha propia: Día del Agua (22 marzo), Día de la Tierra (22 abril), semanas verdes escolares, Día Mundial del Medio Ambiente (5 junio). Y algo que se pasa por alto: <strong>abril y mayo son los meses en que los centros deciden el programa del curso siguiente</strong>. Quien llega en septiembre llega tarde.</p>
+        <p class="small"><strong>La jugada:</strong> enviar en enero el calendario ambiental del año ya montado, con la acción y el precio de cada fecha. Es el email con mejor tasa de respuesta del año.</p>
+      </div>
+      <p class="sell"><b>Qué se vende</b>P5 Jolas<br>P2 Herria Campaña<br>P1 Eskola del curso siguiente</p>
+    </div>
+
+    <div class="win" style="border-bottom:1px solid var(--border)">
+      <div class="when">Junio<br>Julio<small>Se vende en mar-abr</small></div>
+      <div class="stack" style="gap:.6rem">
+        <h4>La ventana de la memoria y el verano</h4>
+        <p class="small">Colonias, udalekus y programas de ocio; fiestas patronales con sus partidas rápidas. Y sobre todo, el momento de entregar todas las memorias del curso: una memoria entregada en junio, con la propuesta del año siguiente dentro, es la renovación más barata que existe. Las renovaciones se cierran <strong>antes</strong> de vacaciones, no en septiembre.</p>
+        <p class="small"><strong>La jugada:</strong> julio se dedica entero a dejar listas las fichas de subvención antes del 1 de septiembre.</p>
+      </div>
+      <p class="sell"><b>Qué se vende</b>P5 colonias y fiestas<br>Renovaciones de todo</p>
+    </div>
+
+    <p class="pull" style="margin-top:3rem; max-width:34ch">En Ingura siempre se está vendiendo la ventana que viene mientras se ejecuta la actual.</p>
+  </section>
+
+  <!-- 05 NÚMEROS -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">05 &nbsp;/&nbsp; Números</p>
+      <h2>Cuántas puertas hay que tocar</h2>
+      <p class="lede" style="max-width:var(--measure)">El objetivo del primer año de relanzamiento es <strong>90.000 €</strong> con un mix que no dependa de un solo cliente ni de una sola ventana. Ningún cliente puede pesar más del 25 % de la facturación.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Producto</th><th class="n">Contratos</th><th class="n">Ticket medio</th><th class="n">Total</th></tr></thead>
+        <tbody>
+          <tr><td>P2 · Herria (municipal)</td><td class="n">4</td><td class="n">7.500 €</td><td class="n">30.000 €</td></tr>
+          <tr><td>P1 · Eskola (centros)</td><td class="n">11</td><td class="n">3.200 €</td><td class="n">35.200 €</td></tr>
+          <tr><td>P3 · Merkataritza</td><td class="n">1</td><td class="n">7.500 €</td><td class="n">7.500 €</td></tr>
+          <tr><td>P4 · Lantegia (empresa)</td><td class="n">4</td><td class="n">2.400 €</td><td class="n">9.600 €</td></tr>
+          <tr><td>P5 · Jolas (escape, ferias, colonia)</td><td class="n">8</td><td class="n">950 €</td><td class="n">7.600 €</td></tr>
+        </tbody>
+        <tfoot><tr><td>Año 1 · sept 2026 – ago 2027</td><td class="n">28</td><td class="n">3.210 €</td><td class="n">89.900 €</td></tr></tfoot>
+      </table>
+    </div>
+
+    <h3 style="margin-top:3rem; margin-bottom:1.2rem">El embudo, hacia atrás desde 28 contratos</h3>
+    <ul class="funnel">
+      <li><span class="v">300</span><span class="l">cuentas activadas en el año &mdash; 25 al mes, 6 a la semana</span><span class="r">▼ 30 %</span></li>
+      <li><span class="v">90</span><span class="l">conversaciones de diagnóstico</span><span class="r">▼ 70 %</span></li>
+      <li><span class="v">63</span><span class="l">propuestas enviadas &mdash; 5 al mes</span><span class="r">▼ 35 %</span></li>
+      <li><span class="v">22</span><span class="l">contratos nuevos</span><span class="r">+ 6</span></li>
+      <li><span class="v">28</span><span class="l">contratos, sumadas las renovaciones y reactivaciones</span><span class="r">89.900 €</span></li>
+    </ul>
+
+    <div class="stats" style="margin-top:2.4rem">
+      <div class="stat"><b>6</b><span>cuentas nuevas activadas cada semana</span></div>
+      <div class="stat"><b>25</b><span>toques ejecutados cada semana</span></div>
+      <div class="stat"><b>2</b><span>diagnósticos cada semana</span></div>
+      <div class="stat"><b>7 h</b><span>dedicación comercial semanal total</span></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:2.4rem">
+      <div class="card">
+        <p class="idx">SI LAS TASAS SON PEORES</p>
+        <p class="small">No se toca el objetivo de facturación: se toca el volumen de entrada. Con un cierre real del 25 % hacen falta 35 cuentas al mes; con un 15 %, 58 &mdash; y entonces el problema es de producto o de precio, no de volumen.</p>
+      </div>
+      <div class="card">
+        <p class="idx">AÑO 2 · 150.000 €</p>
+        <p class="small">Lo que cambia no es el esfuerzo, es de dónde viene el dinero: del 15 % de ingresos recurrentes en el año 1 al <strong>55 % en el año 2</strong>. Ésa es la diferencia entre tener una empresa y tener una sucesión de encargos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 PLAN 90 DÍAS -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">06 &nbsp;/&nbsp; Ejecución</p>
+      <h2>Los primeros noventa días</h2>
+      <p class="lede" style="max-width:var(--measure)">Del 18 de agosto al 22 de noviembre de 2026. La meta del trimestre no es facturar: es tener <strong>45.000 € en propuestas vivas</strong>, seis contratos firmados y tres clientes dormidos de vuelta.</p>
+    </div>
+
+    <div class="tl">
+      <div class="tl-item">
+        <p class="when">Bloque 0 · 18–30 agosto</p>
+        <h4>Cimientos y Operación Retorno</h4>
+        <ul>
+          <li>Montar el Registro e importar el CRM de arranque.</li>
+          <li>Reconstruir todo el histórico 2022-2025 y escribir una <strong>memoria retrospectiva de una página</strong> para cada cliente dormido.</li>
+          <li>Llamar a <strong>Muskiz, Barrika y Berango</strong> 48 h después de enviarla. Ahí hay entre 10.000 y 20.000 € casi ganados.</li>
+          <li>Cerrar el tarifario, construir las primeras 120 cuentas, escribir la ficha de proyecto subvencionable y los cinco one-pagers.</li>
+          <li>Bloquear en el calendario, hasta diciembre, el bloque comercial de los lunes.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <p class="when">Bloque 1 · 31 agosto – 27 septiembre</p>
+        <h4>Asalto a la ventana de subvenciones</h4>
+        <ul>
+          <li>Confirmar fechas exactas de la convocatoria en cuanto se publique.</li>
+          <li>Ficha subvencionable a 120 cuentas A en tres oleadas de 40.</li>
+          <li>Ofrecer por escrito redactar la memoria técnica del proyecto. <strong>Es la jugada que decide el año.</strong></li>
+          <li>Newsletter de septiembre a toda la base. Seis diagnósticos y seis propuestas en el bloque.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <p class="when">Bloque 2 · 28 septiembre – 25 octubre</p>
+        <h4>Curso escolar y contratos menores</h4>
+        <ul>
+          <li>Campaña a 120 centros para el primer y segundo trimestre.</li>
+          <li>Oferta cerrada «acción llave en mano» para la Semana Europea de Prevención de Residuos.</li>
+          <li>Campaña a empresas (P4), de ciclo corto, para facturar en noviembre y diciembre.</li>
+          <li>Primeras entregas instrumentadas y revisión de mitad de plan.</li>
+        </ul>
+      </div>
+      <div class="tl-item">
+        <p class="when">Bloque 3 · 26 octubre – 22 noviembre</p>
+        <h4>Presupuestos 2027 y consolidación</h4>
+        <ul>
+          <li>La pregunta del presupuesto a las 120 cuentas A: quien pregunta en noviembre, factura en marzo.</li>
+          <li>Ocho propuestas para el ejercicio siguiente.</li>
+          <li>Primeras memorias de impacto entregadas, con la propuesta de renovación dentro.</li>
+          <li>Semana Europea de Prevención de Residuos: máxima visibilidad y fotos para todo el año. Revisión de los 90 días.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:3rem">
+      <div class="card" style="border-top:3px solid var(--earth)">
+        <p class="idx" style="color:var(--earth)">RIESGO 01</p>
+        <h4>Que llegue trabajo y se abandone el lunes</h4>
+        <p class="small">Es la causa número uno. La agenda llena de octubre es la agenda vacía de marzo.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--earth)">
+        <p class="idx" style="color:var(--earth)">RIESGO 02</p>
+        <h4>Perseguir la venta grande e ignorar la puerta pequeña</h4>
+        <p class="small">El escape room de 900 € es el diagnóstico gratis del plan de 12.000 €. Land &amp; expand.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--earth)">
+        <p class="idx" style="color:var(--earth)">RIESGO 03</p>
+        <h4>No entregar memorias</h4>
+        <p class="small">Sin memoria no hay renovación, y sin renovación el año que viene hay que empezar de cero. Otra vez.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 CUADRO DE MANDO -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">07 &nbsp;/&nbsp; Control</p>
+      <h2>Las ocho cifras del lunes</h2>
+      <p class="lede" style="max-width:var(--measure)">Se miran cada lunes a las 11:45, al final del bloque comercial. Si una semana no se escriben, el Loop se ha parado.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Métrica</th><th>Objetivo</th><th>Qué predice</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Cuentas nuevas activadas</strong></td><td class="n">6 / semana</td><td>Las propuestas de dentro de dos meses</td></tr>
+          <tr><td><strong>Toques ejecutados</strong></td><td class="n">25 / semana</td><td>Lo único que depende al 100 % de ti</td></tr>
+          <tr><td><strong>Conversaciones de diagnóstico</strong></td><td class="n">2 / semana</td><td>La que mejor correlaciona con facturar</td></tr>
+          <tr><td><strong>Propuestas enviadas</strong></td><td class="n">5 / mes</td><td>Los contratos del trimestre</td></tr>
+          <tr><td><strong>€ en propuestas vivas</strong></td><td class="n">≥ 45.000 €</td><td>La facturación de dentro de 2-3 meses</td></tr>
+          <tr><td><strong>Contratos firmados</strong></td><td class="n">2,3 / mes</td><td>El resultado</td></tr>
+          <tr><td><strong>Facturación acumulada</strong></td><td class="n">90.000 € / año</td><td>El objetivo</td></tr>
+          <tr><td><strong>% de ingresos recurrentes</strong></td><td class="n">15 % → 55 %</td><td>Que no haya que repetir esta historia</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid g2" style="margin-top:2rem">
+      <div class="card">
+        <p class="idx">SEMÁFORO</p>
+        <ul class="checklist small dot-earth" style="margin-top:.4rem">
+          <li><strong>Dos semanas sin cuentas nuevas:</strong> el bloque del lunes se ha caído. Se recupera esta semana.</li>
+          <li><strong>Cuatro semanas sin diagnósticos:</strong> los emails no funcionan o la lista es mala. Más llamada, menos email.</li>
+          <li><strong>Propuestas altas y cierres bajos:</strong> problema de precio, de opciones o de seguimiento.</li>
+          <li><strong>Menos de 20.000 € en propuestas vivas:</strong> en tres meses no habrá trabajo. Activar el plan corto: P5 y P4, ciclo de 2-6 semanas.</li>
+          <li><strong>Cero memorias en un trimestre:</strong> parar y ponerse al día antes de vender nada nuevo.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="idx">LAS DOS CIFRAS PARA CUANDO DÉ MIEDO</p>
+        <p class="small">Los euros en propuestas vivas y las cuentas nuevas activadas este mes. Si esas dos están bien, la facturación llega aunque hoy el banco diga lo contrario. Si están a cero, en abril no habrá trabajo &mdash; exactamente igual que ha pasado este año.</p>
+        <p class="small"><strong>Revisión mensual, tres preguntas:</strong> ¿está girando el Loop?, ¿de dónde vinieron los contratos de este mes?, ¿qué cuenta se ha perdido y por qué exactamente? Cuatro pérdidas por la misma causa significan cambiar el producto o el precio, no llamar más.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 WEB -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">08 &nbsp;/&nbsp; Soporte</p>
+      <h2>Qué tocar en la web</h2>
+      <p class="lede" style="max-width:var(--measure)">La web está bien: sobria, adulta, compite con consultoras y no con asociaciones de monitores. Lo que le falta no es diseño, es función comercial.</p>
+    </div>
+    <div class="grid g2">
+      <div class="card">
+        <p class="idx">PRIORIDAD ALTA</p>
+        <ul class="checklist small" style="margin-top:.4rem">
+          <li><strong>Casos de éxito con nombre.</strong> Hoy no aparece ni un cliente. Muskiz, Barrika y Berango son la prueba de que esto funciona, y ya están hechos.</li>
+          <li><strong>Una página por producto</strong> &mdash; son las URL que se pegan en el email 1 de la secuencia.</li>
+          <li><strong>El escape room, arriba</strong>, con vídeo. Es el producto más memorable del catálogo y está enterrado a mitad de página.</li>
+          <li><strong>Formulario que cualifique:</strong> tipo de entidad, producto, participantes, fechas, presupuesto. Cada envío entra al Registro como cuenta cualificada.</li>
+          <li><strong>PDF a cambio del email.</strong> Es la única forma de que la web genere pipeline en vez de solo buena impresión.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p class="idx">DESPUÉS</p>
+        <ul class="checklist small" style="margin-top:.4rem">
+          <li>Euskera completo, no parcial. En centros y ayuntamientos, una web solo en castellano resta.</li>
+          <li>Números concretos en «Quiénes somos»: municipios, centros, participantes, talleres.</li>
+          <li>Un bloque propio para empresas, con su lenguaje: ISO 14001, memoria de sostenibilidad, equipo.</li>
+          <li>Servir en <strong>www.ingura.eus</strong>, no en el subdominio de Netlify: una URL <span class="tiny">.netlify.app</span> en un email a un ayuntamiento resta credibilidad.</li>
+          <li>Un caso o efeméride al mes para SEO local: «educación ambiental Bizkaia», «escape room medioambiental».</li>
+        </ul>
+      </div>
+    </div>
+    <div class="alert" style="margin-top:2rem">
+      <p class="eyebrow" style="color:var(--accent-deep)">El copy que vende</p>
+      <p style="font-family:'Cormorant Garamond',serif; font-size:1.35rem; line-height:1.4; color:var(--heading)">«Diseñamos y ejecutamos el programa ambiental de tu municipio, tu centro o tu empresa. Llave en mano, en euskera y castellano, con memoria de impacto incluida.»</p>
+      <p class="small">Y debajo, la frase que abre la ventana de septiembre: <em>«¿Vas a solicitar la subvención de desarrollo sostenible? Te preparamos la ficha del proyecto sin coste.»</em></p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p class="eyebrow">Lo que hay que hacer el lunes</p>
+    <div class="prose" style="margin-top:1rem">
+      <p>Abrir una hoja, escribir los nombres de Muskiz, Barrika y Berango, y llamar. Todo lo demás de este plan &mdash; las 300 cuentas, las cuatro ventanas, las siete estaciones &mdash; existe para que dentro de un año no vuelva a hacer falta empezar por ahí.</p>
+      <p class="tiny" style="margin-top:1.4rem">Plan completo, plantillas de email y llamada en euskera y castellano, guion de diagnóstico, propuesta tipo, memoria de impacto, ficha de proyecto subvencionable, checklist de contratación pública y CRM de arranque: en el repositorio, rama <span class="num">claude/ingura-relaunch-plan-kutm52</span>. Las fechas y condiciones de las convocatorias citadas corresponden al ejercicio anterior y deben verificarse en el texto publicado de cada convocatoria vigente.</p>
+    </div>
+  </footer>
+</div>
