@@ -1,0 +1,9 @@
+id,entidad,tipo,territorio,municipio,persona,cargo,email,telefono,producto,prioridad,estacion_loop,origen,senal,ultimo_toque,proxima_accion,fecha_proxima_accion,importe_estimado,probabilidad,estado,notas
+1,Ayuntamiento de Muskiz,ayuntamiento,Bizkaia,Muskiz,,Técnico/a de Medio Ambiente,,,P2 Herria,A,3-Toque,Cliente dormido,Trabajo previo 2022-2024,,Enviar memoria retrospectiva + llamada,2026-08-25,9000,40,Reactivacion,OPERACIÓN RETORNO — prioridad máxima
+2,Ayuntamiento de Barrika,ayuntamiento,Bizkaia,Barrika,,Técnico/a de Medio Ambiente,,,P2 Herria,A,3-Toque,Cliente dormido,Trabajo previo,,Enviar memoria retrospectiva + llamada,2026-08-25,6000,40,Reactivacion,OPERACIÓN RETORNO
+3,Ayuntamiento de Berango,ayuntamiento,Bizkaia,Berango,,Técnico/a de Medio Ambiente,,,P2 Herria,A,3-Toque,Cliente dormido,Trabajo previo,,Enviar memoria retrospectiva + llamada,2026-08-26,6000,40,Reactivacion,OPERACIÓN RETORNO
+4,,mancomunidad,Bizkaia,,,,,,P2 Herria,A,2-Lista,Radar,,,Identificar persona de contacto,2026-08-31,15000,10,Nueva,Una venta cubre varios municipios
+5,,consorcio residuos,Gipuzkoa,,,,,,P2 Herria,A,2-Lista,Radar,,,Identificar persona de contacto,2026-08-31,15000,10,Nueva,Máxima prioridad por euro de esfuerzo
+6,,centro escolar,Bizkaia,,,Dirección / coord. Agenda 2030,,,P1 Eskola,B,2-Lista,Agenda 2030 Escolar,,,Email 1 campaña escolar,2026-09-21,3200,10,Nueva,
+7,,empresa,Gipuzkoa,,,Resp. calidad/medio ambiente,,,P4 Lantegia,B,2-Lista,ISO 14001,,,Email 1 secuencia C,2026-10-12,2400,10,Nueva,Diversificación fuera del calendario público
+8,,asociacion comercio,Bizkaia,,,Gerente,,,P3 Merkataritza,B,2-Lista,Radar,,,Email 1,2026-10-05,7500,10,Nueva,
